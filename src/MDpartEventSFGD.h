@@ -46,7 +46,7 @@ class MDpartEventSFGD : public MDdataContainer {
   void AddTimeHit(MDdataWordSFGD &dw);
   void AddAmplitudeHit(MDdataWordSFGD &dw);
 
-  unsigned int GetTriggerTime()                                     { return _triggerTime; }
+  unsigned int GetTriggerTime()                                     { return _gtsTime; }
   unsigned int GetNLeadingEdgeHits(unsigned int ich)                { return _nLeadingEdgeHits[ich]; }
   unsigned int GetNTrailingEdgeHits(unsigned int ich)               { return _nTrailingEdgeHits[ich]; }
   unsigned int GetHitTime(unsigned int ih, unsigned int ich, char t);
@@ -64,11 +64,11 @@ class MDpartEventSFGD : public MDdataContainer {
 
   bool spillHeaderAExists()                                         {return _spillHeaderA;}
 
-  unsigned int GetTriggerTag()                                      {return _triggerTag;}
-  unsigned int GetTriggerTagId()                                    {return _triggerTagId;}
+  unsigned int GetTriggerTag()                                      {return _gtsTag;}
+  unsigned int GetTriggerTagId()                                    {return _gtsTagId;}
   
-  unsigned int GetSpillHeaderA()                                    {return _spillHeaderTag;}
-  unsigned int GetSpillHeaderABoardID()                             {return _spillHeaderTagBoardID;}
+  unsigned int GetSpillHeaderA()                                    {return _gateHeaderNumber;}
+  unsigned int GetSpillHeaderABoardID()                             {return _gateHeaderBoardID;}
   
   std::vector<unsigned int> GetLeadingTimes(unsigned int ich)       {return _leadingEdgeHitTime[ich]; }
   std::vector<unsigned int> GetTrailingTimes(unsigned int ich)      {return _trailingEdgeHitTime[ich]; }
@@ -79,11 +79,11 @@ class MDpartEventSFGD : public MDdataContainer {
 
 private:
 
-    unsigned int _triggerTime;
-    unsigned int _triggerTag;
-    unsigned int _triggerTagId;
-    unsigned int _spillHeaderTag;
-    unsigned int _spillHeaderTagBoardID;
+    unsigned int _gtsTime;
+    unsigned int _gtsTag;
+    unsigned int _gtsTagId;
+    unsigned int _gateHeaderNumber;
+    unsigned int _gateHeaderBoardID;
 
     bool _lgHit[SFGD_FEB_NCHANNELS];
     bool _hgHit[SFGD_FEB_NCHANNELS];

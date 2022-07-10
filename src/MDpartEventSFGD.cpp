@@ -25,7 +25,7 @@
 using namespace std;
 
 MDpartEventSFGD::MDpartEventSFGD(void *d, unsigned int time, unsigned int tag): MDdataContainer(d),
-                                                                              _triggerTag(-1), _nDataWords(0), _trigEvents(0) { _previousTrTime = time;  _previousTrTag = tag;}
+                                                                                _gtsTag(-1), _nDataWords(0), _trigEvents(0) { _previousTrTime = time; _previousTrTag = tag;}
 
 void MDpartEventSFGD::SetDataPtr( void *d, uint32_t aSize ) {
   MDdataContainer::SetDataPtr(d);
@@ -52,8 +52,8 @@ void MDpartEventSFGD::Init() {
   }
 
   _nDataWords = 1;
-  _triggerTag = -1;
-  _spillHeaderTag = -1;
+    _gtsTag = -1;
+    _gateHeaderNumber = -1;
   _size = 4;
 
   unsigned int * ptr = Get32bWordPtr(0);
@@ -67,12 +67,12 @@ void MDpartEventSFGD::Init() {
         cout << dw<<endl;
       throw MDexception("ERROR in MDpartEventSFGD::Init() : 1st word is not a trigger header");
     } else {
-      
-      _triggerTag = dw.GetGtsTag();
-      _triggerTagId = dw.GetTriggerTagShort();
+
+        _gtsTag = dw.GetGtsTag();
+        _gtsTagId = dw.GetTriggerTagShort();
       if (dw.GetGtsTag() != _previousTrTag +1 && _previousTrTag!=0)
-          cout<<"ERROR in MDpartEventSFGD::Init() : Trigger Tag is NOT consistent with previous Trigger Tag: "<<
-          _triggerTag <<" != " <<_previousTrTag<< "+ 1"<<endl;
+          cout << "ERROR in MDpartEventSFGD::Init() : Trigger Tag is NOT consistent with previous Trigger Tag: " <<
+               _gtsTag << " != " << _previousTrTag << "+ 1" << endl;
       
       bool done(false);
       bool done2(false);
@@ -86,7 +86,7 @@ void MDpartEventSFGD::Init() {
         switch (dataType) {
             
           case MDdataWordSFGD::TimeMeas :
-            if (dw.GetTagId() == _triggerTagId) {
+            if (dw.GetTagId() == _gtsTagId) {
               this->AddTimeHit(dw);
               ++_nDataWords;
             } else {
@@ -105,7 +105,7 @@ void MDpartEventSFGD::Init() {
 
           case MDdataWordSFGD::ChargeMeas :
             if (dw.GetAmplitudeId() == 2 || dw.GetAmplitudeId() == 3) {
-                if (dw.GetTagId() == _triggerTagId) {
+                if (dw.GetTagId() == _gtsTagId) {
                     this->AddAmplitudeHit(dw);
                     ++_nDataWords;
                 } else {
@@ -120,36 +120,7 @@ void MDpartEventSFGD::Init() {
                         }
                     }
                 }
-            } else if (dw.GetAmplitudeId() == 6) {
-                if (dw.GetChannelId() == 0){
-                    _asicTemperature[0] = dw.GetAmplitude();
-//                     cout << dw.GetChannelId() << " " << dw.GetAmplitude()<<endl;
-                }
-                if (dw.GetChannelId() == 3) {
-                    _asicTemperature[1] = dw.GetAmplitude();
-//                     cout << dw.GetChannelId() << " " << dw.GetAmplitude()<<endl;
-                }
-                if (dw.GetChannelId() == 1){
-                    _asicTemperature[2] = dw.GetAmplitude();
-//                     cout << dw.GetChannelId() << " " << dw.GetAmplitude()<<endl;
-                }
-                if (dw.GetChannelId() == 4) {
-                    _FPGATemperature = dw.GetAmplitude();
-//                     cout << dw.GetChannelId() << " " << dw.GetAmplitude()<<endl;
-                }
-                if (dw.GetChannelId() == 5) {
-                    _globalHV = dw.GetAmplitude();
-//                     cout << dw.GetChannelId() << " " << dw.GetAmplitude()<<endl;
-                }
-                if (dw.GetChannelId() == 6) {
-                    _boardTemperature = dw.GetAmplitude();
-//                     cout << dw.GetChannelId() << " " << dw.GetAmplitude()<<endl;
-                }
-                if (dw.GetChannelId() == 7) {
-                    _boardHumidity = dw.GetAmplitude();
-//                     cout << dw.GetChannelId() << " " << dw.GetAmplitude()<<endl;
-                }
-            }
+            } 
             break;
 
           case MDdataWordSFGD::GTSTrailer1 :
@@ -159,10 +130,10 @@ void MDpartEventSFGD::Init() {
             
           case MDdataWordSFGD::GateHeader :
             if (dw.GetGateHeaderID() == 0) {
-                _spillHeaderTag = dw.GetGateNumber();
+                _gateHeaderNumber = dw.GetGateNumber();
                 _spillHeaderA = true;
-                _spillHeaderTagBoardID = dw.GetBoardId();
-                cout<<"2: SFGD spill Header \"A\" Board ID "<< _spillHeaderTagBoardID <<" SpillTag: " << dw.GetGateNumber()<<endl;
+                _gateHeaderBoardID = dw.GetBoardId();
+                cout << "2: SFGD spill Header \"A\" Board ID " << _gateHeaderBoardID << " SpillTag: " << dw.GetGateNumber() << endl;
             }
             ++_nDataWords;
             break;
@@ -185,10 +156,10 @@ void MDpartEventSFGD::Init() {
       }
       
       if (!done2){
-        if (dw.GetGtsTag() != _triggerTag) {
+        if (dw.GetGtsTag() != _gtsTag) {
             stringstream ss;
             ss << "ERROR in MDpartEventSFGD::Init() : The trigger trailer is not consistent \n(Trigger tag: "
-            << dw.GetGtsTag() << "!=" << _triggerTag << ")";
+               << dw.GetGtsTag() << "!=" << _gtsTag << ")";
             throw MDexception(ss.str());
         }
         dw.SetDataPtr(++ptr);
@@ -205,13 +176,13 @@ void MDpartEventSFGD::Init() {
             if ( dw.GetGtsTime() != _previousTrTime +1 && dw.GetGtsTime() !=0 && dw.GetGtsTime() !=1 && dw.GetGtsTime() !=2)
                 cout << "ERROR in MDpartEventSFGD::Init() : Trigger Time is not consistent: "
                 << dw.GetGtsTime() << " != " << _previousTrTime <<" +1"<<endl;
-            _triggerTime = dw.GetGtsTime();
-        //cout <<"1:"<< _triggerTime<<endl;
+            _gtsTime = dw.GetGtsTime();
+        //cout <<"1:"<< _gtsTime<<endl;
         }
       }
         else{
-            _triggerTime = _previousTrTime +1;
-            //cout<<"2:" << _triggerTime <<endl;
+          _gtsTime = _previousTrTime + 1;
+            //cout<<"2:" << _gtsTime <<endl;
         }
     }
   }
