@@ -26,53 +26,68 @@ uint32_t MDdataWordBM::GetDataType() {
   return 0;
 }
 
-uint32_t MDdataWordBM::GetSid() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & SidMask ) >> SidShift );
-  return 0;
-}
-
-uint32_t MDdataWordBM::GetHeadTrailId() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & HeadTrailIdMask ) >> HeadTrailIdShift );
-  return 0;
-}
-
 uint32_t MDdataWordBM::GetBoardId() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & BoardIdMask ) >> BoardIdShift );
   return 0;
 }
 
-uint32_t MDdataWordBM::GetSpillTag() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & SpillTagMask ) >> SpillTagShift );
+uint32_t MDdataWordBM::GetGateHeaderID(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & GateHeaderIDMask ) >> GateHeaderIDShift );
+}
+
+uint32_t MDdataWordBM::GetGateType() {
+    if (IsValid())  return ( (*(uint32_t*)(_data) & GateTypeMask ) >> GateTypeShift );
+    return 0;
+}
+
+uint32_t MDdataWordBM::GetGateNumber() {
+  if (IsValid())  return ( (*(uint32_t*)(_data) & GateNumberMask ) >> GateNumberShift );
   return 0;
 }
 
-uint32_t MDdataWordBM::GetSpillTime() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & SpillTimeMask ) >> SpillTimeShift );
+uint32_t MDdataWordBM::GetGateTimeFrGts() {
+    if (IsValid())  return ( (*(uint32_t*)(_data) & GateTimeFrGtsMask ) >> GateTimeFrGtsShift );
+    return 0;
+}
+
+uint32_t MDdataWordBM::GetGateTime() {
+  if (IsValid())  return ( (*(uint32_t*)(_data) & GateTimeMask ) >> GateTimeShift );
   return 0;
 }
 
-//######################
-uint32_t MDdataWordBM::GetSpillTimeGTRIG() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & SpillTimeGTRIGMask ) >> SpillTimeGTRIGShift );
-  return 0;
+uint32_t MDdataWordBM::GetHoldTimeID(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & HoldTimeIDMask ) >> HoldTimeIDShift );
+    return 0;
 }
 
-uint32_t MDdataWordBM::GetSpillDAQType() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & SpillDAQTypeMask ) >> SpillDAQTypeShift );
-  return 0;
+uint32_t MDdataWordBM::GetHoldTimeStartFrGTS(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & HoldTimeGTSMask ) >> HoldTimeGTSShift );
+    return 0;
 }
 
-uint32_t MDdataWordBM::GetSpillHeadId() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & SpillHeadIdMask ) >> SpillHeadIdShift );
-  return 0;
+uint32_t MDdataWordBM::GetHoldTimeStopFrGTS(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & HoldTimeGTSMask ) >> HoldTimeGTSShift );
+    return 0;
 }
-
-
-//#######################
 
 uint32_t MDdataWordBM::GetChannelId() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & ChannelIdMask ) >> ChannelIdShift );
   return 0;
+}
+
+uint32_t MDdataWordBM::GetHitId() {
+    if (IsValid())  return ( (*(uint32_t*)(_data) & HitIdMask ) >> HitIdShift );
+    return 0;
+}
+
+uint32_t MDdataWordBM::GetTagId() {
+    if (IsValid())  return ( (*(uint32_t*)(_data) & TagIdMask ) >> TagIdShift );
+    return 0;
+}
+
+uint32_t MDdataWordBM::GetEdgeId() {
+    if (IsValid())  return ( (*(uint32_t*)(_data) & EdgeIdMask ) >> EdgeIdShift );
+    return 0;
 }
 
 uint32_t MDdataWordBM::GetHitTime() {
@@ -80,23 +95,10 @@ uint32_t MDdataWordBM::GetHitTime() {
   return 0;
 }
 
-uint32_t MDdataWordBM::GetHitId() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & HitIdMask ) >> HitIdShift );
-  return 0;
-}
-
-uint32_t MDdataWordBM::GetTagId() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & TagIdMask ) >> TagIdShift );
-  return 0;
-}
+//here
 
 uint32_t MDdataWordBM::GetHitCount() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & HitCountMask ) >> HitCountShift );
-  return 0;
-}
-
-uint32_t MDdataWordBM::GetEdgeId() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & EdgeIdMask ) >> EdgeIdShift );
   return 0;
 }
 
@@ -123,41 +125,6 @@ uint32_t MDdataWordBM::GetAmplitudeId() {
 uint32_t MDdataWordBM::GetAmplitude() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & AmplitudeMask ) >> AmplitudeShift );
   return 0;
-}
-
-uint32_t MDdataWordBM::GetHumidity() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & HumidityMask ) >> HumidityShift );
-  return 0;
-}
-
-uint32_t MDdataWordBM::GetTemperature() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & TemperatureMask ) >> TemperatureShift );
-  return 0;
-}
-
-uint32_t MDdataWordBM::GetTDMSlotID() {
-    if (IsValid())  return ( (*(uint32_t*)(_data) & TDMSlotIDMask ) >> TDMSlotIDShift );
-    return 0;
-}
-
-uint32_t MDdataWordBM::GetTDMID() {
-    if (IsValid())  return ( (*(uint32_t*)(_data) & TDMIDMask ) >> TDMIDShift );
-    return 0;
-}
-
-uint32_t MDdataWordBM::GetTDMTag() {
-    if (IsValid())  return ( (*(uint32_t*)(_data) & TDMTAGMask ) >> TDMTAGShift );
-    return 0;
-}
-
-uint32_t MDdataWordBM::GetTDMsumL() {
-    if (IsValid())  return ( (*(uint32_t*)(_data) & TDMsumLMask ) >> TDMsumLShift );
-    return 0;
-}
-
-uint32_t MDdataWordBM::GetTDMsumH() {
-    if (IsValid())  return ( (*(uint32_t*)(_data) & TDMsumHMask ) >> TDMsumHShift );
-    return 0;
 }
 
 uint32_t MDdataWordBM::GetSpecialWord() {
@@ -230,14 +197,6 @@ ostream & operator<<(ostream &s, MDdataWordBM &dw) {
 
   case MDdataWordBM::SpillTrailer2:
     s << "Spill TimeID Spill time: " << dw.GetSpillTime();
-    break;
-
-    
-  case MDdataWordBM::TDM:
-      if (dw.GetTDMID()==0)
-         s <<"TDM Start: " <<dw.GetTDMSlotID()<<" TDM Tag: "<<dw.GetTDMTag();
-      if (dw.GetTDMID()==1)
-         s <<"TDM Stop: " <<dw.GetTDMSlotID()<<" TDM sumL: "<<dw.GetTDMsumL()<<" TDM sumH: "<<dw.GetTDMsumH(); 
     break;
     
   case MDdataWordBM::SpecialWord:
