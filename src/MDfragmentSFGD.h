@@ -29,49 +29,40 @@
 #include "MDpartEventSFGD.h"
 
 class MDfragmentSFGD : public MDdataContainer {
+public:
 
- public:
+    MDfragmentSFGD(void *d = 0 ) : MDdataContainer(d) {}
+    virtual ~MDfragmentSFGD() { this->Clean(); }
 
-  MDfragmentSFGD(void *d = 0 ) : MDdataContainer(d) {}
-  virtual ~MDfragmentSFGD() { this->Clean(); }
+    void SetDataPtr( void *d, uint32_t aSize=0 );
+    void SetPreviousSpill(bool prSpillEx = false, unsigned int prSpill=0);
+    void Dump();
+    void Init();
+    void Clean();
 
-  void SetDataPtr( void *d, uint32_t aSize=0 );
-  void SetPreviousSpill(bool prSpillEx = false, unsigned int prSpill=0);
-  void Dump();
-  void Init();
-  void Clean();
-
-  unsigned int GetBoardId()             {return _boardId;}
-  unsigned int GetSpillTag()            {return _spillTag;}
-  unsigned int GetSpillTime()           {return _spillTime;}
-
-  unsigned int GetSpillTimeGTrig()      {return _spillTimeGTrig;}
+    unsigned int GetBoardId() const               {return _boardId;}
+    unsigned int GetGateNumber() const            {return _gateNumber;}
+    unsigned int GetGateTime() const              {return _gateTime;}
+    unsigned int GetGateTimeFrGTS() const         {return _gateTimeFrGts;}
   
-  unsigned int GetSpillTrailTad()       {return _spillTrailTag;}
-  unsigned int GetSpillTrailTime()      {return _spillTrailTime;}
+    unsigned int GetGateTrailNumber() const       {return _gateTrailNumber;}
+    unsigned int GetGateTrailTime() const         {return _gateTrailTime;}
   
-  unsigned int GetNumOfTriggers()       {return _trigEvents.size();}
-  MDpartEventSFGD*    GetTriggerEventPtr(unsigned int evId);
+    unsigned int GetNumOfTriggers()       {return _trigEvents.size();}
+    MDpartEventSFGD* GetTriggerEventPtr(unsigned int evId);
 
- private:
+private:
      
   unsigned int _boardId;
-  unsigned int _spillTag;
-  unsigned int _humidity;
-  unsigned int _temperature;
-  unsigned int _spillTime;
+  unsigned int _gateNumber;
+  unsigned int _gateTime;
+  unsigned int _gateTimeFrGts;
   
-
-  //unsigned int _spillDAQType;
-  unsigned int _spillTimeGTrig;
+  unsigned int _gateTrailNumber;
+  unsigned int _gateTrailTime;
   
-  unsigned int _spillTrailTag;
-  //unsigned int _spillHumidity;
-  //unsigned int _spillTemp;
-  unsigned int _spillTrailTime;
-  
-  unsigned int _previousTrTime = 0;
-  unsigned int _previousTrTag = 0;
+  unsigned int _previousGtsTime = 0;
+  unsigned int _previousGtsTag = 0;
   
   bool _previousSpillTagExist;
   unsigned int _previousSpillTag ;

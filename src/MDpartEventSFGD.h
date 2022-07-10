@@ -46,9 +46,9 @@ class MDpartEventSFGD : public MDdataContainer {
   void AddTimeHit(MDdataWordSFGD &dw);
   void AddAmplitudeHit(MDdataWordSFGD &dw);
 
-  unsigned int GetTriggerTime() { return _triggerTime; }
-  unsigned int GetNLeadingEdgeHits(unsigned int ich)  { return _nLeadingEdgeHits[ich]; }
-  unsigned int GetNTrailingEdgeHits(unsigned int ich) { return _nTrailingEdgeHits[ich]; }
+  unsigned int GetTriggerTime()                                     { return _triggerTime; }
+  unsigned int GetNLeadingEdgeHits(unsigned int ich)                { return _nLeadingEdgeHits[ich]; }
+  unsigned int GetNTrailingEdgeHits(unsigned int ich)               { return _nTrailingEdgeHits[ich]; }
   unsigned int GetHitTime(unsigned int ih, unsigned int ich, char t);
   unsigned int GetHitTimeId(unsigned int ih, unsigned int ich, char t);
 
@@ -59,72 +59,57 @@ class MDpartEventSFGD : public MDdataContainer {
 
   unsigned int GetHitAmplitude(unsigned int ich, char t);
   unsigned int GetHitAmplitudeId(unsigned int ich, char t);
-  bool         LGAmplitudeHitExists(unsigned int ich) {return _lgHit[ich];}
-  bool         HGAmplitudeHitExists(unsigned int ich) {return _hgHit[ich];}
+  bool         LGAmplitudeHitExists(unsigned int ich)               {return _lgHit[ich];}
+  bool         HGAmplitudeHitExists(unsigned int ich)               {return _hgHit[ich];}
 
-  bool spillHeaderAExists() {return _spillHeaderA;}
+  bool spillHeaderAExists()                                         {return _spillHeaderA;}
 
-  unsigned int GetTriggerTag()   {return _triggerTag;}
-  unsigned int GetTriggerTagId() {return _triggerTagId;}
+  unsigned int GetTriggerTag()                                      {return _triggerTag;}
+  unsigned int GetTriggerTagId()                                    {return _triggerTagId;}
   
-  unsigned int GetSpillHeaderA() {return _spillHeaderTag;}
-  unsigned int GetSpillHeaderABoardID() {return _spillHeaderTagBoardID;}
+  unsigned int GetSpillHeaderA()                                    {return _spillHeaderTag;}
+  unsigned int GetSpillHeaderABoardID()                             {return _spillHeaderTagBoardID;}
   
-  int GetAsicTemperature(int ch) {
-      if (ch < 32) return _asicTemperature[0];
-        else if (ch < 64) return _asicTemperature[1];
-            else return _asicTemperature[2];}
-  int GetFPGATemperature()              {return _FPGATemperature;}
-  int GetGlobalHV()                     {return _globalHV;}
-  int GetBoardTemperature()             {return _boardTemperature;}
-  int GetBardHumidity()                 {return _boardHumidity;}
-  
-  std::vector<unsigned int> GetLeadingTimes(unsigned int ich)   { return _leadingEdgeHitTime[ich]; }
-  std::vector<unsigned int> GetTrailingTimes(unsigned int ich)  { return _trailingEdgeHitTime[ich]; }
+  std::vector<unsigned int> GetLeadingTimes(unsigned int ich)       {return _leadingEdgeHitTime[ich]; }
+  std::vector<unsigned int> GetTrailingTimes(unsigned int ich)      {return _trailingEdgeHitTime[ich]; }
 
   unsigned int getNumDataWords() {return _nDataWords;}
 
-  void SetTriggerEvents(std::vector <MDpartEventSFGD*> *te) {_trigEvents = te;}
+  void SetTriggerEvents(std::vector <MDpartEventSFGD*> *te)         {_trigEvents = te;}
 
- private:
-  unsigned int _triggerTime;
-  unsigned int _triggerTag;
-  unsigned int _triggerTagId;
-  unsigned int _spillHeaderTag;
-  unsigned int _spillHeaderTagBoardID;
+private:
 
-  bool _lgHit[SFGD_FEB_NCHANNELS];
-  bool _hgHit[SFGD_FEB_NCHANNELS];
+    unsigned int _triggerTime;
+    unsigned int _triggerTag;
+    unsigned int _triggerTagId;
+    unsigned int _spillHeaderTag;
+    unsigned int _spillHeaderTagBoardID;
+
+    bool _lgHit[SFGD_FEB_NCHANNELS];
+    bool _hgHit[SFGD_FEB_NCHANNELS];
   
-  bool _spillHeaderA;
+    bool _spillHeaderA;
 
-  unsigned int _lgHitAmplitude[SFGD_FEB_NCHANNELS];
-  unsigned int _hgHitAmplitude[SFGD_FEB_NCHANNELS];
-  unsigned int _lgHitAmplitudeId[SFGD_FEB_NCHANNELS];
-  unsigned int _hgHitAmplitudeId[SFGD_FEB_NCHANNELS];
+    unsigned int _lgHitAmplitude[SFGD_FEB_NCHANNELS];
+    unsigned int _hgHitAmplitude[SFGD_FEB_NCHANNELS];
+    unsigned int _lgHitAmplitudeId[SFGD_FEB_NCHANNELS];
+    unsigned int _hgHitAmplitudeId[SFGD_FEB_NCHANNELS];
 
-  unsigned int _nLeadingEdgeHits[SFGD_FEB_NCHANNELS];  /** Number of leading edge hits per channel. */
-  unsigned int _nTrailingEdgeHits[SFGD_FEB_NCHANNELS]; /** Number of trailing edge hits per channell.*/
+    unsigned int _nLeadingEdgeHits[SFGD_FEB_NCHANNELS];  /** Number of leading edge hits per channel. */
+    unsigned int _nTrailingEdgeHits[SFGD_FEB_NCHANNELS]; /** Number of trailing edge hits per channell.*/
 
-  std::vector<unsigned int>  _leadingEdgeHitTime[SFGD_FEB_NCHANNELS];      /// A vector of leading edge hit timess per channel
-  std::vector<unsigned int>  _trailingEdgeHitTime[SFGD_FEB_NCHANNELS];     /// A vector of trailing edge hit times per channel
-  std::vector<unsigned int>  _leadingEdgeHitId[SFGD_FEB_NCHANNELS];        /// A vector of leading edge hit ids per channel
-  std::vector<unsigned int>  _trailingEdgeHitId[SFGD_FEB_NCHANNELS];       /// A vector of trailing edge hit ids per channel
+    std::vector<unsigned int>  _leadingEdgeHitTime[SFGD_FEB_NCHANNELS];      /// A vector of leading edge hit timess per channel
+    std::vector<unsigned int>  _trailingEdgeHitTime[SFGD_FEB_NCHANNELS];     /// A vector of trailing edge hit times per channel
+    std::vector<unsigned int>  _leadingEdgeHitId[SFGD_FEB_NCHANNELS];        /// A vector of leading edge hit ids per channel
+    std::vector<unsigned int>  _trailingEdgeHitId[SFGD_FEB_NCHANNELS];       /// A vector of trailing edge hit ids per channel
 
-  unsigned int _nDataWords;
+    unsigned int _nDataWords;
 
-  std::vector <MDpartEventSFGD*> *_trigEvents;
-  unsigned int _previousTrTime;
-  unsigned int _previousTrTag;
-  
-  int _asicTemperature[3] = {1,1,1};
-  int _FPGATemperature = 1;
-  int _globalHV = 1;
-  int _boardTemperature = 1;
-  int _boardHumidity = 1;
-  
+    std::vector <MDpartEventSFGD*> *_trigEvents;
+    unsigned int _previousTrTime;
+    unsigned int _previousTrTag;
 
-  friend ostream &operator<<(std::ostream &s, MDpartEventSFGD &df);
+    friend ostream &operator<<(std::ostream &s, MDpartEventSFGD &df);
 };
 
 #endif

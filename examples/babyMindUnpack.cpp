@@ -177,7 +177,7 @@ int main( int argc, char **argv ) {
         for (int i=0; i<nTr; ++i) {
           event = spill.GetTriggerEventPtr(i);
           //event->Dump();
-          // if (spill.GetSpillTag()!=156){
+          // if (spill.GetGateNumber()!=156){
           for (int ich=0; ich<SFGD_FEB_NCHANNELS; ++ich) {
               int nlHits = 0;
               int ntHits = 0;
@@ -186,11 +186,11 @@ int main( int argc, char **argv ) {
                   bool TrailTimeExist = false;
                   int IDevent = event->GetHitTimeId(ih, ich, 'l');
                   FEB[spill.GetBoardId()].FEBSN.push_back(spill.GetBoardId());
-                  FEB[spill.GetBoardId()].SpillNum.push_back(spill.GetSpillTag());
+                  FEB[spill.GetBoardId()].SpillNum.push_back(spill.GetGateNumber());
                     _previousSpillTagExist = true;
-                    _previousSpillTag = spill.GetSpillTag();
-                  FEB[spill.GetBoardId()].SpillTimeGTrig.push_back(spill.GetSpillTimeGTrig());
-                  FEB[spill.GetBoardId()].SpillTime.push_back(spill.GetSpillTime());
+                    _previousSpillTag = spill.GetGateNumber();
+                  FEB[spill.GetBoardId()].SpillTimeGTrig.push_back(spill.GetGateTimeFrGTS());
+                  FEB[spill.GetBoardId()].SpillTime.push_back(spill.GetGateTime());
                   FEB[spill.GetBoardId()].GTrigTag.push_back(event->GetTriggerTag());
                   FEB[spill.GetBoardId()].GTrigTime.push_back(event->GetTriggerTime());
                   FEB[spill.GetBoardId()].hitsChannel.push_back(ich);
@@ -201,7 +201,7 @@ int main( int argc, char **argv ) {
                    else {
                         FEB[spill.GetBoardId()].hitTimefromSpill.push_back(-4 * FEB[spill.GetBoardId()].SpillTimeGTrig.back() + 4000* ( FEB[spill.GetBoardId()].GTrigTime.back()) + event->GetLeadingTime(ih, ich));
                    }
-                  FEB[spill.GetBoardId()].SpillTrailTime.push_back(spill.GetSpillTrailTime() );
+                  FEB[spill.GetBoardId()].SpillTrailTime.push_back(spill.GetGateTrailTime() );
                   //FEB[spill.GetBoardId()].SpillTemperature.push_back(spill.GetSpillTrailTemp());
                   
                   ntHits = event->GetNTrailingEdgeHits(ich);

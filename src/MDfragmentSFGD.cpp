@@ -54,9 +54,9 @@ void MDfragmentSFGD::Init() {
     if (dw.GetDataType() != MDdataWordSFGD::GateHeader && dw.GetGateHeaderID() != 1) {
         throw MDexception("ERROR in MDfragmentSFGD::Init() : 1st word is not a spill header.");
     } else {
-        _spillTimeGTrig = dw.GetGateTimeFrGts();
+        _gateTimeFrGts = dw.GetGateTimeFrGts();
         _boardId = dw.GetBoardId();
-        cout <<"SFGD spill Header \"B\" Spill Time from GTRIG (10ns res.): " << _spillTimeGTrig<<endl;
+        cout << "SFGD spill Header \"B\" Spill Time from GTRIG (10ns res.): " << _gateTimeFrGts << endl;
         _size += 4;
         ++ptr;
         dw.SetDataPtr(ptr);
@@ -64,12 +64,12 @@ void MDfragmentSFGD::Init() {
         if (dw.GetDataType() != MDdataWordSFGD::GateTime) {
              throw MDexception("ERROR in MDfragmentSFGD::Init() : 2nd word is not a spill spill time.");
         } else {
-            _spillTime = dw.GetGateTime();
+            _gateTime = dw.GetGateTime();
             ++ptr;
             dw.SetDataPtr(ptr);
             _size += 4;
             bool done(false);
-            _previousTrTime =0;
+            _previousGtsTime =0;
             while (!done) {
                 
                 //cout   <<_size/4 <<" "<<dw<<endl;
@@ -77,7 +77,7 @@ void MDfragmentSFGD::Init() {
                 //cout   <<_size/4<<endl;
                 if (dw.GetDataType() == MDdataWordSFGD::GTSHeader) {
                     //cout   <<_size/4 <<" " << dw.GetDataType()<<endl;
-                    MDpartEventSFGD *xPe = new MDpartEventSFGD(ptr,_previousTrTime,_previousTrTag);
+                    MDpartEventSFGD *xPe = new MDpartEventSFGD(ptr, _previousGtsTime, _previousGtsTag);
                     xPe->SetTriggerEvents(&_trigEvents);
                     xPe->Init();
                     unsigned int pe_size = xPe->GetSize();
@@ -85,9 +85,9 @@ void MDfragmentSFGD::Init() {
                     ptr += pe_size/4;
                     if (xPe->getNumDataWords() > 2) {
                         _trigEvents.push_back( xPe );
-                        //cout<< dw.GetSpillTag()<< " " <<GetBoardId()<<endl;
+                        //cout<< dw.GetGateNumber()<< " " <<GetBoardId()<<endl;
                         if(xPe->spillHeaderAExists()) {
-                            _spillTag = xPe->GetSpillHeaderA();
+                            _gateNumber = xPe->GetSpillHeaderA();
                             if (_boardId == xPe->GetSpillHeaderABoardID())
                                 _boardId=xPe->GetSpillHeaderABoardID();
                             else 
@@ -96,11 +96,11 @@ void MDfragmentSFGD::Init() {
                     } else {
                         delete xPe;
                         }
-                        _previousTrTime = xPe->GetTriggerTime();
-                        _previousTrTag  = xPe->GetTriggerTag();
-                        //cout <<"1: "<< _previousTrTag<<endl;
+                    _previousGtsTime = xPe->GetTriggerTime();
+                    _previousGtsTag  = xPe->GetTriggerTag();
+                        //cout <<"1: "<< _previousGtsTag<<endl;
                 } else if (dw.GetDataType() == MDdataWordSFGD::GateHeader && dw.GetGateHeaderID() == 0){
-                     _spillTag = dw.GetGateNumber();
+                    _gateNumber = dw.GetGateNumber();
                      _boardId = dw.GetBoardId();
                      cout   <<"1: SFGD spill Header \"A\" Board ID "<< _boardId <<" SpillTag: "<< dw.GetGateNumber()<<endl;
                       ++ptr;
@@ -109,12 +109,12 @@ void MDfragmentSFGD::Init() {
                 } else if (dw.GetDataType() == MDdataWordSFGD::GateTrailer ) {
                     
                     if (!_previousSpillTagExist){
-                        _previousSpillTag = _spillTag ;
+                        _previousSpillTag = _gateNumber ;
                     } else{
-                        if (_spillTag != _previousSpillTag +1){
+                        if (_gateNumber != _previousSpillTag + 1){
                             cout << "ERROR in MDfragmentSFGD::Init() : No events for Spill Tag : " <<_previousSpillTag + 1<<endl;
-                            if (_spillTag > _previousSpillTag){
-                                _previousSpillTag = _spillTag;
+                            if (_gateNumber > _previousSpillTag){
+                                _previousSpillTag = _gateNumber;
                             } else {
                                 throw MDexception("ERROR in MDfragmentSFGD::Init() :  The Spill Tag  less than previous Spill Tag.");
                             }
@@ -125,11 +125,11 @@ void MDfragmentSFGD::Init() {
                     
                     dw.SetDataPtr(--ptr);
                     if (dw.GetDataType() == MDdataWordSFGD::GateTrailer) {
-                        if (_spillTag == dw.GetGateNumber()){
+                        if (_gateNumber == dw.GetGateNumber()){
                             //cout<< "a: "<<dw<<endl;
                             done = true;
                         } else {
-                            cout << dw.GetGateNumber() << "!=" << _spillTag<<endl;
+                            cout << dw.GetGateNumber() << "!=" << _gateNumber << endl;
                             throw MDexception("ERROR in MDfragmentSFGD::Init() :  The Spill trailer is not consistent.");
                         }
                     }
@@ -139,7 +139,7 @@ void MDfragmentSFGD::Init() {
                     
                     dw.SetDataPtr(++ptr);
                     if (dw.GetDataType() == MDdataWordSFGD::GateTime ){
-                        _spillTrailTime = dw.GetGateTime();
+                        _gateTrailTime = dw.GetGateTime();
                         _size += 4;
                     }
                     else {
