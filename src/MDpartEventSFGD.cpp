@@ -35,10 +35,10 @@ void MDpartEventSFGD::SetDataPtr( void *d, uint32_t aSize ) {
 
 
 void MDpartEventSFGD::Init() {
-  //   cout << " Calling MDpartEventBM::Init() " << endl;
+  //   cout << " Calling MDpartEventSFGD::Init() " << endl;
   this->UnValidate();
 
-  for (int ich=0 ; ich < BM_FEB_NCHANNELS ; ich++) {
+  for (int ich=0 ; ich < SFGD_FEB_NCHANNELS ; ich++) {
     _nLeadingEdgeHits[ich]=0;
     _nTrailingEdgeHits[ich]=0;
     _lgHit[ich]=false;
@@ -65,13 +65,13 @@ void MDpartEventSFGD::Init() {
     // Check the reliability of the header and decode the header information.
     if (dw.GetDataType() != MDdataWordSFGD::GTSHeader ) { // The data doesn't start with a header
         cout << dw<<endl;
-      throw MDexception("ERROR in MDpartEventBM::Init() : 1st word is not a trigger header");
+      throw MDexception("ERROR in MDpartEventSFGD::Init() : 1st word is not a trigger header");
     } else {
       
       _triggerTag = dw.GetGtsTag();
       _triggerTagId = dw.GetTriggerTagShort();
       if (dw.GetGtsTag() != _previousTrTag +1 && _previousTrTag!=0)
-          cout<<"ERROR in MDpartEventBM::Init() : Trigger Tag is NOT consistent with previous Trigger Tag: "<<
+          cout<<"ERROR in MDpartEventSFGD::Init() : Trigger Tag is NOT consistent with previous Trigger Tag: "<<
           _triggerTag <<" != " <<_previousTrTag<< "+ 1"<<endl;
       
       bool done(false);
@@ -162,7 +162,7 @@ void MDpartEventSFGD::Init() {
                 _spillHeaderTag = dw.GetGateNumber();
                 _spillHeaderA = true;
                 _spillHeaderTagBoardID = dw.GetBoardId();
-                cout<<"2: BM spill Header \"A\" Board ID "<< _spillHeaderTagBoardID <<" SpillTag: " << dw.GetGateNumber()<<endl;
+                cout<<"2: SFGD spill Header \"A\" Board ID "<< _spillHeaderTagBoardID <<" SpillTag: " << dw.GetGateNumber()<<endl;
             }
             ++_nDataWords;
             break;
@@ -175,7 +175,7 @@ void MDpartEventSFGD::Init() {
 
           default :
             stringstream ss;
-            ss << "ERROR in MDpartEventBM::Init() : Unexpected data word (id: "
+            ss << "ERROR in MDpartEventSFGD::Init() : Unexpected data word (id: "
                << dw.GetDataType() << ")";
             cout << dw << endl;
             throw MDexception(ss.str());
@@ -187,7 +187,7 @@ void MDpartEventSFGD::Init() {
       if (!done2){
         if (dw.GetGtsTag() != _triggerTag) {
             stringstream ss;
-            ss << "ERROR in MDpartEventBM::Init() : The trigger trailer is not consistent \n(Trigger tag: "
+            ss << "ERROR in MDpartEventSFGD::Init() : The trigger trailer is not consistent \n(Trigger tag: "
             << dw.GetGtsTag() << "!=" << _triggerTag << ")";
             throw MDexception(ss.str());
         }
@@ -195,7 +195,7 @@ void MDpartEventSFGD::Init() {
         dw.GetDataType();
         if (dw.GetDataType() != MDdataWordSFGD::GTSTrailer2){
             stringstream ss;
-            ss << "ERROR in MDpartEventBM::Init() : Unexpected data word (id: "
+            ss << "ERROR in MDpartEventSFGD::Init() : Unexpected data word (id: "
                << dw.GetDataType() << ")";
             cout << dw << endl;
             throw MDexception(ss.str());
@@ -203,7 +203,7 @@ void MDpartEventSFGD::Init() {
             ++_nDataWords;
             _size +=4;
             if ( dw.GetGtsTime() != _previousTrTime +1 && dw.GetGtsTime() !=0 && dw.GetGtsTime() !=1 && dw.GetGtsTime() !=2)
-                cout << "ERROR in MDpartEventBM::Init() : Trigger Time is not consistent: "
+                cout << "ERROR in MDpartEventSFGD::Init() : Trigger Time is not consistent: "
                 << dw.GetGtsTime() << " != " << _previousTrTime <<" +1"<<endl;
             _triggerTime = dw.GetGtsTime();
         //cout <<"1:"<< _triggerTime<<endl;
@@ -249,7 +249,7 @@ void MDpartEventSFGD::AddAmplitudeHit(MDdataWordSFGD &dw) {
 
     default :
       stringstream ss;
-      ss << "ERROR in MDpartEventBM::Init() : Unknown  Amplitide Id ( "
+      ss << "ERROR in MDpartEventSFGD::Init() : Unknown  Amplitide Id ( "
       << dw.GetAmplitudeId() << ")";
 //       cout << ss.str() << endl;
       throw MDexception(ss.str());
@@ -258,9 +258,9 @@ void MDpartEventSFGD::AddAmplitudeHit(MDdataWordSFGD &dw) {
 
 unsigned int  MDpartEventSFGD::GetHitTime(unsigned int ih, unsigned int ich, char t) {
   int rv = 0xFFFFFFFF ;
-  if ( ich > BM_FEB_NCHANNELS-1 ) {
+  if ( ich > SFGD_FEB_NCHANNELS-1 ) {
     stringstream ss;
-    ss << "ERROR in MDpartEventBM::GetHitTime() : ";
+    ss << "ERROR in MDpartEventSFGD::GetHitTime() : ";
     ss << "Wrong argument: ch = " << ich;
     throw MDexception( ss.str() );
   }
@@ -270,7 +270,7 @@ unsigned int  MDpartEventSFGD::GetHitTime(unsigned int ih, unsigned int ich, cha
       if (ih<_nLeadingEdgeHits[ich]) { rv = _leadingEdgeHitTime[ich][ih]; }
       else {
         stringstream ss;
-        ss << "ERROR in MDpartEventBM::GetHitTime() case l : ";
+        ss << "ERROR in MDpartEventSFGD::GetHitTime() case l : ";
         ss << "Wrong argument: ih = " << ih;
         throw MDexception( ss.str() );
       }
@@ -281,7 +281,7 @@ unsigned int  MDpartEventSFGD::GetHitTime(unsigned int ih, unsigned int ich, cha
       if (ih<_nTrailingEdgeHits[ich]) { rv = _trailingEdgeHitTime[ich][ih]; }
       else {
         stringstream ss;
-        ss << "ERROR in MDpartEventBM::GetHitTime() case t : ";
+        ss << "ERROR in MDpartEventSFGD::GetHitTime() case t : ";
         ss << "Wrong argument: ih = " << ih;
         throw MDexception( ss.str() );
       }
@@ -290,7 +290,7 @@ unsigned int  MDpartEventSFGD::GetHitTime(unsigned int ih, unsigned int ich, cha
     default:
     {
       stringstream ss;
-      ss << "ERROR in MDpartEventBM::GetHitTime() : ";
+      ss << "ERROR in MDpartEventSFGD::GetHitTime() : ";
       ss << "Wrong argument: t = " << t;
       throw MDexception( ss.str() );
     }
@@ -301,9 +301,9 @@ unsigned int  MDpartEventSFGD::GetHitTime(unsigned int ih, unsigned int ich, cha
 
 unsigned int  MDpartEventSFGD::GetHitTimeId(unsigned int ih, unsigned int ich, char t) {
   int rv = 0xFFFFFFFF ;
-  if ( ich > BM_FEB_NCHANNELS-1 ) {
+  if ( ich > SFGD_FEB_NCHANNELS-1 ) {
     stringstream ss;
-    ss << "ERROR in MDpartEventBM::GetHitId() : ";
+    ss << "ERROR in MDpartEventSFGD::GetHitId() : ";
     ss << "Wrong argument: ch = " << ich;
     throw MDexception( ss.str() );
   }
@@ -313,7 +313,7 @@ unsigned int  MDpartEventSFGD::GetHitTimeId(unsigned int ih, unsigned int ich, c
       if (ih<_nLeadingEdgeHits[ich]) { rv = _leadingEdgeHitId[ich][ih]; }
       else {
         stringstream ss;
-        ss << "ERROR in MDpartEventBM::GetHitId() case l : ";
+        ss << "ERROR in MDpartEventSFGD::GetHitId() case l : ";
         ss << "Wrong argument: ih = " << ih;
         throw MDexception( ss.str() );
       }
@@ -324,7 +324,7 @@ unsigned int  MDpartEventSFGD::GetHitTimeId(unsigned int ih, unsigned int ich, c
       if (ih<_nTrailingEdgeHits[ich]) {rv = _trailingEdgeHitId[ich][ih];}
       else {
         stringstream ss;
-        ss << "ERROR in MDpartEventBM::GetHitId() case t : ";
+        ss << "ERROR in MDpartEventSFGD::GetHitId() case t : ";
         ss << "Wrong argument: ih = " << ih;
         throw MDexception( ss.str() );
       }
@@ -333,7 +333,7 @@ unsigned int  MDpartEventSFGD::GetHitTimeId(unsigned int ih, unsigned int ich, c
     default:
     {
       stringstream ss;
-      ss << "ERROR in MDpartEventBM::GetHitId() : ";
+      ss << "ERROR in MDpartEventSFGD::GetHitId() : ";
       ss << "Wrong argument: t = " << t;
       throw MDexception( ss.str() );
     }
@@ -345,9 +345,9 @@ unsigned int  MDpartEventSFGD::GetHitTimeId(unsigned int ih, unsigned int ich, c
 
 unsigned int  MDpartEventSFGD::GetHitAmplitude(unsigned int ich, char t) {
   int rv = 0xFFFFFFFF ;
-  if ( ich > BM_FEB_NCHANNELS-1 ) {
+  if ( ich > SFGD_FEB_NCHANNELS-1 ) {
     stringstream ss;
-    ss << "ERROR in MDpartEventBM::GetHitAmplitude(): ";
+    ss << "ERROR in MDpartEventSFGD::GetHitAmplitude(): ";
     ss << "Wrong argument: ch = " << ich;
     throw MDexception( ss.str() );
   }
@@ -363,7 +363,7 @@ unsigned int  MDpartEventSFGD::GetHitAmplitude(unsigned int ich, char t) {
 
     default:
       stringstream ss;
-      ss << "ERROR in MDpartEventBM::GetHitAmplitude(): ";
+      ss << "ERROR in MDpartEventSFGD::GetHitAmplitude(): ";
       ss << "Wrong argument: " << t;
       throw MDexception( ss.str() );
 
@@ -374,9 +374,9 @@ unsigned int  MDpartEventSFGD::GetHitAmplitude(unsigned int ich, char t) {
 
 unsigned int  MDpartEventSFGD::GetHitAmplitudeId(unsigned int ich, char t) {
   int rv = 0xFFFFFFFF ;
-  if ( ich > BM_FEB_NCHANNELS-1 ) {
+  if ( ich > SFGD_FEB_NCHANNELS-1 ) {
     stringstream ss;
-    ss << "ERROR in MDpartEventBM::GetHitAmplitudeId(): ";
+    ss << "ERROR in MDpartEventSFGD::GetHitAmplitudeId(): ";
     ss << "Wrong argument: ch = " << ich;
     throw MDexception( ss.str() );
   }
@@ -392,7 +392,7 @@ unsigned int  MDpartEventSFGD::GetHitAmplitudeId(unsigned int ich, char t) {
 
     default:
       stringstream ss;
-      ss << "ERROR in MDpartEventBM::GetHitAmplitudeId(): ";
+      ss << "ERROR in MDpartEventSFGD::GetHitAmplitudeId(): ";
       ss << "Wrong argument: " << t;
       throw MDexception( ss.str() );
 
@@ -409,10 +409,10 @@ void MDpartEventSFGD::Dump() {
 
 ostream &operator<<(std::ostream &s, MDpartEventSFGD &pe) {
 
-  s << " ++++++++++ BM Part Even ++++++++++ \n";
+  s << " ++++++++++ SFGD Part Even ++++++++++ \n";
   s << " Tr. tag : " << pe.GetTriggerTag() << "(" << pe.GetTriggerTagId() << ")\n";
   s << " Tr. time : " << pe.GetTriggerTime() << "\n";
-  for (int ich=0 ; ich < BM_FEB_NCHANNELS ; ich++) {
+  for (int ich=0 ; ich < SFGD_FEB_NCHANNELS ; ich++) {
     if (pe._lgHit[ich]) {
       s << " Ch: " << ich
         << "  Amplitude LG: " << pe.GetHitAmplitude(ich, 'l') << "  (hit Id: " << pe.GetHitAmplitudeId(ich, 'l') <<  ")\n";

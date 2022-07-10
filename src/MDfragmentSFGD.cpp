@@ -56,7 +56,7 @@ void MDfragmentSFGD::Init() {
     } else {
         _spillTimeGTrig = dw.GetGateTimeFrGts();
         _boardId = dw.GetBoardId();
-        cout <<"BM spill Header \"B\" Spill Time from GTRIG (10ns res.): " << _spillTimeGTrig<<endl;
+        cout <<"SFGD spill Header \"B\" Spill Time from GTRIG (10ns res.): " << _spillTimeGTrig<<endl;
         _size += 4;
         ++ptr;
         dw.SetDataPtr(ptr);
@@ -102,7 +102,7 @@ void MDfragmentSFGD::Init() {
                 } else if (dw.GetDataType() == MDdataWordSFGD::GateHeader && dw.GetGateHeaderID() == 0){
                      _spillTag = dw.GetGateNumber();
                      _boardId = dw.GetBoardId();
-                     cout   <<"1: BM spill Header \"A\" Board ID "<< _boardId <<" SpillTag: "<< dw.GetGateNumber()<<endl;
+                     cout   <<"1: SFGD spill Header \"A\" Board ID "<< _boardId <<" SpillTag: "<< dw.GetGateNumber()<<endl;
                       ++ptr;
                      dw.SetDataPtr(ptr);
                      _size += 4;

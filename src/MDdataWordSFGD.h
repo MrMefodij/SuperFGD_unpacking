@@ -65,7 +65,7 @@ public:
 
     uint32_t GetSpecialWord();
 
-    enum DWBMDataType {
+    enum DWSFGDDataType {
         GateHeader      = 0x0,
         GTSHeader       = 0x1,
         TimeMeas        = 0x2,
@@ -79,14 +79,14 @@ public:
         SpecialWord     = 0xF
     };
 
-    enum DWBMAmplitudeId {
+    enum DWSFGDAmplitudeId {
         Amplitude_HG = 2,
         Amplitude_LG = 3
     };
 
 private:
 
-    enum DWBMMask {
+    enum DWSFGDMask {
         DataTypeMask        = 0xF0000000,
         BoardIdMask         = 0x0FF00000,
         GateHeaderIDMask    = 0x00080000,
@@ -116,7 +116,7 @@ private:
         SpecialIDParamMask  = 0x000FFFFF
     };
 
-    enum DWBMShift {
+    enum DWSFGDShift {
         DataTypeShift       = 28,
         BoardIdShift        = 20,
         GateHeaderIDShift   = 19,

@@ -6,7 +6,7 @@
 #include "TMacro.h"
 #include <TTree.h>
 #include "MDfragmentSFGD.h"
-#include "MDpartEventSFGD.h.h"
+#include "MDpartEventSFGD.h"
 #include "MDargumentHandler.h"
 #include "MDdataFile.h"
 
@@ -178,7 +178,7 @@ int main( int argc, char **argv ) {
           event = spill.GetTriggerEventPtr(i);
           //event->Dump();
           // if (spill.GetSpillTag()!=156){
-          for (int ich=0; ich<BM_FEB_NCHANNELS; ++ich) {
+          for (int ich=0; ich<SFGD_FEB_NCHANNELS; ++ich) {
               int nlHits = 0;
               int ntHits = 0;
               nlHits = event->GetNLeadingEdgeHits(ich);

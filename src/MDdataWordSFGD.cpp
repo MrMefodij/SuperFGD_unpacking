@@ -136,7 +136,7 @@ void MDdataWordSFGD::Dump() {
 
 ostream & operator<<(ostream &s, MDdataWordSFGD &dw) {
     uint32_t dt= dw.GetDataType();
-    s << " BM FEB ";
+    s << " SFGD FEB ";
     switch (dt) {
         case MDdataWordSFGD:: GateHeader:
             s << "Spill Header  BoardId: " << dw.GetBoardId();

@@ -29,7 +29,7 @@
 #include "MDdataContainer.h"
 #include "MDdataWordSFGD.h"
 
-#define BM_FEB_NCHANNELS 96
+#define SFGD_FEB_NCHANNELS 255
 
 class MDpartEventSFGD : public MDdataContainer {
 
@@ -93,23 +93,23 @@ class MDpartEventSFGD : public MDdataContainer {
   unsigned int _spillHeaderTag;
   unsigned int _spillHeaderTagBoardID;
 
-  bool _lgHit[BM_FEB_NCHANNELS];
-  bool _hgHit[BM_FEB_NCHANNELS];
+  bool _lgHit[SFGD_FEB_NCHANNELS];
+  bool _hgHit[SFGD_FEB_NCHANNELS];
   
   bool _spillHeaderA;
 
-  unsigned int _lgHitAmplitude[BM_FEB_NCHANNELS];
-  unsigned int _hgHitAmplitude[BM_FEB_NCHANNELS];
-  unsigned int _lgHitAmplitudeId[BM_FEB_NCHANNELS];
-  unsigned int _hgHitAmplitudeId[BM_FEB_NCHANNELS];
+  unsigned int _lgHitAmplitude[SFGD_FEB_NCHANNELS];
+  unsigned int _hgHitAmplitude[SFGD_FEB_NCHANNELS];
+  unsigned int _lgHitAmplitudeId[SFGD_FEB_NCHANNELS];
+  unsigned int _hgHitAmplitudeId[SFGD_FEB_NCHANNELS];
 
-  unsigned int _nLeadingEdgeHits[BM_FEB_NCHANNELS];  /** Number of leading edge hits per channel. */
-  unsigned int _nTrailingEdgeHits[BM_FEB_NCHANNELS]; /** Number of trailing edge hits per channell.*/
+  unsigned int _nLeadingEdgeHits[SFGD_FEB_NCHANNELS];  /** Number of leading edge hits per channel. */
+  unsigned int _nTrailingEdgeHits[SFGD_FEB_NCHANNELS]; /** Number of trailing edge hits per channell.*/
 
-  std::vector<unsigned int>  _leadingEdgeHitTime[BM_FEB_NCHANNELS];      /// A vector of leading edge hit timess per channel
-  std::vector<unsigned int>  _trailingEdgeHitTime[BM_FEB_NCHANNELS];     /// A vector of trailing edge hit times per channel
-  std::vector<unsigned int>  _leadingEdgeHitId[BM_FEB_NCHANNELS];        /// A vector of leading edge hit ids per channel
-  std::vector<unsigned int>  _trailingEdgeHitId[BM_FEB_NCHANNELS];       /// A vector of trailing edge hit ids per channel
+  std::vector<unsigned int>  _leadingEdgeHitTime[SFGD_FEB_NCHANNELS];      /// A vector of leading edge hit timess per channel
+  std::vector<unsigned int>  _trailingEdgeHitTime[SFGD_FEB_NCHANNELS];     /// A vector of trailing edge hit times per channel
+  std::vector<unsigned int>  _leadingEdgeHitId[SFGD_FEB_NCHANNELS];        /// A vector of leading edge hit ids per channel
+  std::vector<unsigned int>  _trailingEdgeHitId[SFGD_FEB_NCHANNELS];       /// A vector of trailing edge hit ids per channel
 
   unsigned int _nDataWords;
 

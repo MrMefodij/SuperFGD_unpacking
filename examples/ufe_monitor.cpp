@@ -67,15 +67,15 @@ int main( int argc, char **argv ) {
 
       uint32_t* buf_ptr = buffer_32;
       for (int i=0; i<BUF_SIZE/4; ++i) {
-        MDdataWordBM dw(buf_ptr++);
-        if ( dw.GetDataType() == MDdataWordBM::SpillHeader ||
-             dw.GetDataType() == MDdataWordBM::SpillTrailer1 ||
-             dw.GetDataType() == MDdataWordBM::TrigHeader ||
-             dw.GetDataType() == MDdataWordBM::TrigTrailer1 ) {
+        MDdataWordSFGD dw(buf_ptr++);
+        if ( dw.GetDataType() == MDdataWordSFGD::GateHeader ||
+             dw.GetDataType() == MDdataWordSFGD::GateTrailer ||
+             dw.GetDataType() == MDdataWordSFGD::GTSHeader ||
+             dw.GetDataType() == MDdataWordSFGD::GTSTrailer1 ) {
           cout << dw << endl;
         }
 
-        if ( dw.GetDataType() == MDdataWordBM::ChargeMeas ) {
+        if ( dw.GetDataType() == MDdataWordSFGD::ChargeMeas ) {
           if (dw.GetAmplitudeId() == 3) {
             h_hga.Fill(dw.GetAmplitude());
             h_hgah.Fill(dw.GetChannelId());
