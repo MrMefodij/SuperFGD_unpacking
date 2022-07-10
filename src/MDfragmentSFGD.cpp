@@ -17,22 +17,22 @@
  *
  */
 
-#include "MDfragmentBM.h"
-#include "MDdataWordBM.h"
+#include "MDfragmentSFGD.h"
+#include "MDdataWordSFGD.h"
 
 using namespace std;
 
-void MDfragmentBM::SetDataPtr( void *d, uint32_t aSize ) {
+void MDfragmentSFGD::SetDataPtr(void *d, uint32_t aSize ) {
   MDdataContainer::SetDataPtr(d);
   this->Init();
 }
 
-void MDfragmentBM::SetPreviousSpill(bool prSpillEx, unsigned int prSpill) {
+void MDfragmentSFGD::SetPreviousSpill(bool prSpillEx, unsigned int prSpill) {
     _previousSpillTagExist = prSpillEx;
     _previousSpillTag = prSpill;
 }
 
-void MDfragmentBM::Clean() {
+void MDfragmentSFGD::Clean() {
   this->UnValidate();
 
   int nTr = _trigEvents.size();
@@ -42,17 +42,17 @@ void MDfragmentBM::Clean() {
   _trigEvents.resize(0);
 }
 
-void MDfragmentBM::Init() {
-   //  cout << " Calling MDfragmentBM::Init() " << endl;
+void MDfragmentSFGD::Init() {
+   //  cout << " Calling MDfragmentSFGD::Init() " << endl;
   this->Clean();
   _size = 4;
 
   unsigned int * ptr = this->Get32bWordPtr(0);
-  MDdataWordBM dw(ptr);
+  MDdataWordSFGD dw(ptr);
   if ( dw.IsValid() ) {
        
-    if (dw.GetDataType() != MDdataWordBM::GateHeader && dw.GetGateHeaderID() !=1) {
-        throw MDexception("ERROR in MDfragmentBM::Init() : 1st word is not a spill header.");
+    if (dw.GetDataType() != MDdataWordSFGD::GateHeader && dw.GetGateHeaderID() != 1) {
+        throw MDexception("ERROR in MDfragmentSFGD::Init() : 1st word is not a spill header.");
     } else {
         _spillTimeGTrig = dw.GetGateTimeFrGts();
         _boardId = dw.GetBoardId();
@@ -61,8 +61,8 @@ void MDfragmentBM::Init() {
         ++ptr;
         dw.SetDataPtr(ptr);
       
-        if (dw.GetDataType() != MDdataWordBM::GateTime) {
-             throw MDexception("ERROR in MDfragmentBM::Init() : 2nd word is not a spill spill time.");
+        if (dw.GetDataType() != MDdataWordSFGD::GateTime) {
+             throw MDexception("ERROR in MDfragmentSFGD::Init() : 2nd word is not a spill spill time.");
         } else {
             _spillTime = dw.GetGateTime();
             ++ptr;
@@ -75,9 +75,9 @@ void MDfragmentBM::Init() {
                 //cout   <<_size/4 <<" "<<dw<<endl;
                 dw.SetDataPtr(ptr);
                 //cout   <<_size/4<<endl;
-                if (dw.GetDataType() == MDdataWordBM::GTSHeader) {
+                if (dw.GetDataType() == MDdataWordSFGD::GTSHeader) {
                     //cout   <<_size/4 <<" " << dw.GetDataType()<<endl;
-                    MDpartEventBM *xPe = new MDpartEventBM(ptr,_previousTrTime,_previousTrTag);
+                    MDpartEventSFGD *xPe = new MDpartEventSFGD(ptr,_previousTrTime,_previousTrTag);
                     xPe->SetTriggerEvents(&_trigEvents);
                     xPe->Init();
                     unsigned int pe_size = xPe->GetSize();
@@ -91,7 +91,7 @@ void MDfragmentBM::Init() {
                             if (_boardId == xPe->GetSpillHeaderABoardID())
                                 _boardId=xPe->GetSpillHeaderABoardID();
                             else 
-                                throw MDexception("ERROR in MDfragmentBM::Init() :  The Spill trailer Board ID is not consistent.");
+                                throw MDexception("ERROR in MDfragmentSFGD::Init() :  The Spill trailer Board ID is not consistent.");
                         }
                     } else {
                         delete xPe;
@@ -99,24 +99,24 @@ void MDfragmentBM::Init() {
                         _previousTrTime = xPe->GetTriggerTime();
                         _previousTrTag  = xPe->GetTriggerTag();
                         //cout <<"1: "<< _previousTrTag<<endl;
-                } else if (dw.GetDataType() == MDdataWordBM::GateHeader && dw.GetGateHeaderID() == 0){
+                } else if (dw.GetDataType() == MDdataWordSFGD::GateHeader && dw.GetGateHeaderID() == 0){
                      _spillTag = dw.GetGateNumber();
                      _boardId = dw.GetBoardId();
                      cout   <<"1: BM spill Header \"A\" Board ID "<< _boardId <<" SpillTag: "<< dw.GetGateNumber()<<endl;
                       ++ptr;
                      dw.SetDataPtr(ptr);
                      _size += 4;
-                } else if (dw.GetDataType() == MDdataWordBM::GateTrailer ) {
+                } else if (dw.GetDataType() == MDdataWordSFGD::GateTrailer ) {
                     
                     if (!_previousSpillTagExist){
                         _previousSpillTag = _spillTag ;
                     } else{
                         if (_spillTag != _previousSpillTag +1){
-                            cout << "ERROR in MDfragmentBM::Init() : No events for Spill Tag : " <<_previousSpillTag + 1<<endl;
+                            cout << "ERROR in MDfragmentSFGD::Init() : No events for Spill Tag : " <<_previousSpillTag + 1<<endl;
                             if (_spillTag > _previousSpillTag){
                                 _previousSpillTag = _spillTag;
                             } else {
-                                throw MDexception("ERROR in MDfragmentBM::Init() :  The Spill Tag  less than previous Spill Tag.");
+                                throw MDexception("ERROR in MDfragmentSFGD::Init() :  The Spill Tag  less than previous Spill Tag.");
                             }
                         } else {
                             _previousSpillTag++;
@@ -124,26 +124,26 @@ void MDfragmentBM::Init() {
                     }
                     
                     dw.SetDataPtr(--ptr);
-                    if (dw.GetDataType() == MDdataWordBM::GateTrailer) {
+                    if (dw.GetDataType() == MDdataWordSFGD::GateTrailer) {
                         if (_spillTag == dw.GetGateNumber()){
                             //cout<< "a: "<<dw<<endl;
                             done = true;
                         } else {
                             cout << dw.GetGateNumber() << "!=" << _spillTag<<endl;
-                            throw MDexception("ERROR in MDfragmentBM::Init() :  The Spill trailer is not consistent.");
+                            throw MDexception("ERROR in MDfragmentSFGD::Init() :  The Spill trailer is not consistent.");
                         }
                     }
                     else {
-                        throw MDexception("ERROR in MDfragmentBM::Init() : Wrong data type.");
+                        throw MDexception("ERROR in MDfragmentSFGD::Init() : Wrong data type.");
                     }
                     
                     dw.SetDataPtr(++ptr);
-                    if (dw.GetDataType() == MDdataWordBM::GateTime ){
+                    if (dw.GetDataType() == MDdataWordSFGD::GateTime ){
                         _spillTrailTime = dw.GetGateTime();
                         _size += 4;
                     }
                     else {
-                        throw MDexception("ERROR in MDfragmentBM::Init() : Wrong data type.");
+                        throw MDexception("ERROR in MDfragmentSFGD::Init() : Wrong data type.");
                     }
                     
                 } else {
@@ -151,7 +151,7 @@ void MDfragmentBM::Init() {
                     ++ptr;
                     _size += 4;
                     dw.SetDataPtr(ptr);
-                    //throw MDexception("ERROR in MDfragmentBM::Init() : Wrong data type.");
+                    //throw MDexception("ERROR in MDfragmentSFGD::Init() : Wrong data type.");
                 }
             }
             
@@ -161,10 +161,10 @@ void MDfragmentBM::Init() {
   }
 }
 
-MDpartEventBM* MDfragmentBM::GetTriggerEventPtr(unsigned int evId) {
+MDpartEventSFGD* MDfragmentSFGD::GetTriggerEventPtr(unsigned int evId) {
   if ( evId >= _trigEvents.size() ) {
     stringstream ss;
-    ss << "ERROR in MDfragmentBM::GetTriggerEventPtr() : ";
+    ss << "ERROR in MDfragmentSFGD::GetTriggerEventPtr() : ";
     ss << "Wrong Event Id: " << evId << ". Exceeds the total number of triggers." ;
     throw MDexception( ss.str() );
   }
@@ -172,6 +172,6 @@ MDpartEventBM* MDfragmentBM::GetTriggerEventPtr(unsigned int evId) {
   return _trigEvents[evId];
 }
 
-void MDfragmentBM::Dump() {
+void MDfragmentSFGD::Dump() {
 
 }

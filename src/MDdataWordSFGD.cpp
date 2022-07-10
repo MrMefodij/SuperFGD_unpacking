@@ -17,128 +17,128 @@
  *
  */
 
-#include "MDdataWordBM.h"
+#include "MDdataWordSFGD.h"
 
 using namespace std;
 
-uint32_t MDdataWordBM::GetDataType() {
+uint32_t MDdataWordSFGD::GetDataType() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & DataTypeMask ) >> DataTypeShift );
   return 0;
 }
 
-uint32_t MDdataWordBM::GetBoardId() {
+uint32_t MDdataWordSFGD::GetBoardId() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & BoardIdMask ) >> BoardIdShift );
   return 0;
 }
 
-uint32_t MDdataWordBM::GetGateHeaderID(){
+uint32_t MDdataWordSFGD::GetGateHeaderID(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & GateHeaderIDMask ) >> GateHeaderIDShift );
 }
 
-uint32_t MDdataWordBM::GetGateType() {
+uint32_t MDdataWordSFGD::GetGateType() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & GateTypeMask ) >> GateTypeShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetGateNumber() {
+uint32_t MDdataWordSFGD::GetGateNumber() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & GateNumberMask ) >> GateNumberShift );
   return 0;
 }
 
-uint32_t MDdataWordBM::GetGateTimeFrGts() {
+uint32_t MDdataWordSFGD::GetGateTimeFrGts() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & GateTimeFrGtsMask ) >> GateTimeFrGtsShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetGateTime() {
+uint32_t MDdataWordSFGD::GetGateTime() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & GateTimeMask ) >> GateTimeShift );
   return 0;
 }
 
-uint32_t MDdataWordBM::GetHoldTimeID(){
+uint32_t MDdataWordSFGD::GetHoldTimeID(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & HoldTimeIDMask ) >> HoldTimeIDShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetHoldTimeStartFrGTS(){
+uint32_t MDdataWordSFGD::GetHoldTimeStartFrGTS(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & HoldTimeGTSMask ) >> HoldTimeGTSShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetHoldTimeStopFrGTS(){
+uint32_t MDdataWordSFGD::GetHoldTimeStopFrGTS(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & HoldTimeGTSMask ) >> HoldTimeGTSShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetGtsTag(){
+uint32_t MDdataWordSFGD::GetGtsTag(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & GtsTagMask ) >> GtsTagShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetChannelId() {
+uint32_t MDdataWordSFGD::GetChannelId() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & ChannelIdMask ) >> ChannelIdShift );
   return 0;
 }
 
-uint32_t MDdataWordBM::GetHitId() {
+uint32_t MDdataWordSFGD::GetHitId() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & HitIdMask ) >> HitIdShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetTagId() {
+uint32_t MDdataWordSFGD::GetTagId() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & TagIdMask ) >> TagIdShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetEdgeId() {
+uint32_t MDdataWordSFGD::GetEdgeId() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & EdgeIdMask ) >> EdgeIdShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetHitTime() {
+uint32_t MDdataWordSFGD::GetHitTime() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & HitTimeMask ) >> HitTimeShift );
   return 0;
 }
 
-uint32_t MDdataWordBM::GetAmplitudeId() {
+uint32_t MDdataWordSFGD::GetAmplitudeId() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & AmplitudeIdMask ) >> AmplitudeIdShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetAmplitude() {
+uint32_t MDdataWordSFGD::GetAmplitude() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & AmplitudeMask ) >> AmplitudeShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetGtsDataFlag() {
+uint32_t MDdataWordSFGD::GetGtsDataFlag() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & GtsDataFlagMask ) >> GtsDataFlagShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetGtsTime() {
+uint32_t MDdataWordSFGD::GetGtsTime() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & GtsTimeMask ) >> GtsTimeShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetSpecialWord() {
+uint32_t MDdataWordSFGD::GetSpecialWord() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & SpecialIDParamMask ) >> SpecialIDParamShift );
     return 0;
 }
 
-uint32_t MDdataWordBM::GetTriggerTagShort(){
+uint32_t MDdataWordSFGD::GetTriggerTagShort(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & GtsTagShortMask ) >> GtsTagShift );
     return 0;
 }
 
-void MDdataWordBM::Dump() {
+void MDdataWordSFGD::Dump() {
   cout << *this;
 }
 
-ostream & operator<<(ostream &s, MDdataWordBM &dw) {
+ostream & operator<<(ostream &s, MDdataWordSFGD &dw) {
     uint32_t dt= dw.GetDataType();
     s << " BM FEB ";
     switch (dt) {
-        case MDdataWordBM:: GateHeader:
+        case MDdataWordSFGD:: GateHeader:
             s << "Spill Header  BoardId: " << dw.GetBoardId();
             if (dw.GetGateHeaderID()==0){
             s << " Gate type: " << dw.GetGateType() <<
@@ -148,12 +148,12 @@ ostream & operator<<(ostream &s, MDdataWordBM &dw) {
             }
             break;
 
-        case MDdataWordBM::GTSHeader:
+        case MDdataWordSFGD::GTSHeader:
             s << "GTS Tag: " << dw.GetGtsTag()
             << " (" << dw.GetTriggerTagShort() << ")";
             break;
 
-        case MDdataWordBM::TimeMeas:
+        case MDdataWordSFGD::TimeMeas:
             s << "Channel: " << dw.GetChannelId()
             << "  HitId: " << dw.GetHitId()
             << "  TagId: " << dw.GetTagId();
@@ -165,7 +165,7 @@ ostream & operator<<(ostream &s, MDdataWordBM &dw) {
             s << dw.GetHitTime();
             break;
 
-        case MDdataWordBM::ChargeMeas:
+        case MDdataWordSFGD::ChargeMeas:
             s << "Channel: " << dw.GetChannelId()
             << "  HitId: " << dw.GetHitId()
             << "  TagId: " << dw.GetTagId()
@@ -173,26 +173,26 @@ ostream & operator<<(ostream &s, MDdataWordBM &dw) {
             << "  Charge: " << dw.GetAmplitude();
             break;
 
-        case MDdataWordBM::GTSTrailer1:
+        case MDdataWordSFGD::GTSTrailer1:
             s << "GTS Trailer (1)  Gl. GTS Tag: " << dw.GetGtsTag();
             break;
 
-        case MDdataWordBM::GTSTrailer2:
+        case MDdataWordSFGD::GTSTrailer2:
             s << "GTS Trailer (2)  Data flag: " << dw.GetGtsDataFlag()
             << "  Trigger Time: " << dw.GetGtsTime();
             break;
 
-        case MDdataWordBM::GateTrailer:
+        case MDdataWordSFGD::GateTrailer:
             s << "Gate Trailer (1)  BoardId: " << dw.GetBoardId()
             << "Gate type: " << dw.GetGateType() <<
               " Gate Number: " << dw.GetGateNumber();
             break;
 
-        case MDdataWordBM::GateTime:
+        case MDdataWordSFGD::GateTime:
             s << "Spill TimeID Spill time: " << dw.GetGateTime();
             break;
 
-        case MDdataWordBM::HoldTime:
+        case MDdataWordSFGD::HoldTime:
             s << "Hold Time  BoardId: " << dw.GetBoardId();
             if (dw.GetHoldTimeID() == 0){
                 s << " Hold time Start: "  << dw.GetHoldTimeStartFrGTS();
@@ -201,7 +201,7 @@ ostream & operator<<(ostream &s, MDdataWordBM &dw) {
             }
             break;
     
-        case MDdataWordBM::SpecialWord:
+        case MDdataWordSFGD::SpecialWord:
             s << "SpecialWord: ";
             if (dw.GetSpecialWord()==65536)
                 s << "BoardId: " << dw.GetBoardId() << " Readout End";

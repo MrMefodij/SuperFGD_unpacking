@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef __MDFRAGMENT_BM_H
-#define __MDFRAGMENT_BM_H
+#ifndef __MDFRAGMENT_SFGD_H
+#define __MDFRAGMENT_SFGD_H
 
 #include <stdlib.h>
 #include <vector>
@@ -26,14 +26,14 @@
 #include <iostream>
 
 #include "MDdataContainer.h"
-#include "MDpartEventBM.h"
+#include "MDpartEventSFGD.h"
 
-class MDfragmentBM : public MDdataContainer {
+class MDfragmentSFGD : public MDdataContainer {
 
  public:
 
-  MDfragmentBM( void *d = 0 ) : MDdataContainer(d) {}
-  virtual ~MDfragmentBM() { this->Clean(); }
+  MDfragmentSFGD(void *d = 0 ) : MDdataContainer(d) {}
+  virtual ~MDfragmentSFGD() { this->Clean(); }
 
   void SetDataPtr( void *d, uint32_t aSize=0 );
   void SetPreviousSpill(bool prSpillEx = false, unsigned int prSpill=0);
@@ -51,7 +51,7 @@ class MDfragmentBM : public MDdataContainer {
   unsigned int GetSpillTrailTime()      {return _spillTrailTime;}
   
   unsigned int GetNumOfTriggers()       {return _trigEvents.size();}
-  MDpartEventBM*    GetTriggerEventPtr(unsigned int evId);
+  MDpartEventSFGD*    GetTriggerEventPtr(unsigned int evId);
 
  private:
      
@@ -76,9 +76,9 @@ class MDfragmentBM : public MDdataContainer {
   bool _previousSpillTagExist;
   unsigned int _previousSpillTag ;
   
-  std::vector <MDpartEventBM*> _trigEvents;
+  std::vector <MDpartEventSFGD*> _trigEvents;
 };
 
-// ostream &operator<<(std::ostream &s, MDfragmentBM &df);
+// ostream &operator<<(std::ostream &s, MDfragmentSFGD &df);
 
 #endif

@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef __MDPARTEVENT_BM_H
-#define __MDPARTEVENT_BM_H
+#ifndef __MDPARTEVENT_SFGD_H
+#define __MDPARTEVENT_SFGD_H
 
 
 #include <stdlib.h>
@@ -27,24 +27,24 @@
 #include <iostream>
 
 #include "MDdataContainer.h"
-#include "MDdataWordBM.h"
+#include "MDdataWordSFGD.h"
 
 #define BM_FEB_NCHANNELS 96
 
-class MDpartEventBM : public MDdataContainer {
+class MDpartEventSFGD : public MDdataContainer {
 
  public:
 
-  MDpartEventBM(void *d = 0 , unsigned int time = 0, unsigned int tag = 0);
-  virtual ~MDpartEventBM() {}
+  MDpartEventSFGD(void *d = 0 , unsigned int time = 0, unsigned int tag = 0);
+  virtual ~MDpartEventSFGD() {}
 
 
   void SetDataPtr(void *d, uint32_t aSize=0);
   void Dump();
   void Init();
 
-  void AddTimeHit(MDdataWordBM &dw);
-  void AddAmplitudeHit(MDdataWordBM &dw);
+  void AddTimeHit(MDdataWordSFGD &dw);
+  void AddAmplitudeHit(MDdataWordSFGD &dw);
 
   unsigned int GetTriggerTime() { return _triggerTime; }
   unsigned int GetNLeadingEdgeHits(unsigned int ich)  { return _nLeadingEdgeHits[ich]; }
@@ -84,7 +84,7 @@ class MDpartEventBM : public MDdataContainer {
 
   unsigned int getNumDataWords() {return _nDataWords;}
 
-  void SetTriggerEvents(std::vector <MDpartEventBM*> *te) {_trigEvents = te;}
+  void SetTriggerEvents(std::vector <MDpartEventSFGD*> *te) {_trigEvents = te;}
 
  private:
   unsigned int _triggerTime;
@@ -113,7 +113,7 @@ class MDpartEventBM : public MDdataContainer {
 
   unsigned int _nDataWords;
 
-  std::vector <MDpartEventBM*> *_trigEvents;
+  std::vector <MDpartEventSFGD*> *_trigEvents;
   unsigned int _previousTrTime;
   unsigned int _previousTrTag;
   
@@ -124,7 +124,7 @@ class MDpartEventBM : public MDdataContainer {
   int _boardHumidity = 1;
   
 
-  friend ostream &operator<<(std::ostream &s, MDpartEventBM &df);
+  friend ostream &operator<<(std::ostream &s, MDpartEventSFGD &df);
 };
 
 #endif

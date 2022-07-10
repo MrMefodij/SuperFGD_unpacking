@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef __MDDATWORD_BM_H
-#define __MDDATWORD_BM_H
+#ifndef __MDDATWORD_SFGD_H
+#define __MDDATWORD_SFGD_H
 
 #include "MDdataWord.h"
 // #include "MDTypes.h"
@@ -27,11 +27,11 @@
 #include <iostream>
 #include <fstream>
 
-class MDdataWordBM : public MDdataWord {
+class MDdataWordSFGD : public MDdataWord {
 
 public:
-    MDdataWordBM(void *d=0) : MDdataWord(d) {}
-    virtual ~MDdataWordBM() {}
+    MDdataWordSFGD(void *d=0) : MDdataWord(d) {}
+    virtual ~MDdataWordSFGD() {}
 
     void Dump();
 
@@ -147,7 +147,7 @@ private:
   };
 };
 
-ostream &operator<<(ostream &s, MDdataWordBM &dw);
+ostream &operator<<(ostream &s, MDdataWordSFGD &dw);
 
 #endif
 

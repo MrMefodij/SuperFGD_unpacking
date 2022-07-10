@@ -25,7 +25,7 @@
 // #include "TFile.h"
 // #include "TH1D.h"
 
-#include "MDdataWordBM.h"
+#include "MDdataWordSFGD.h"
 #include "MDargumentHandler.h"
 
 using namespace std;
@@ -73,7 +73,7 @@ int main( int argc, char **argv ) {
   int dwCount(0);
   while (!ifs.eof()) {
     ifs.read((char*)dataPtr, 4 );
-    MDdataWordBM dw(dataPtr);
+    MDdataWordSFGD dw(dataPtr);
     cout <<dwCount<<" "<< dw << endl;
 //cout << dw;
     ++dwCount;

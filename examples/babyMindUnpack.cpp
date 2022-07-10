@@ -5,8 +5,8 @@
 #include "TSystem.h"
 #include "TMacro.h"
 #include <TTree.h>
-#include "MDfragmentBM.h"
-#include "MDpartEventBM.h"
+#include "MDfragmentSFGD.h"
+#include "MDpartEventSFGD.h.h"
 #include "MDargumentHandler.h"
 #include "MDdataFile.h"
 
@@ -165,12 +165,12 @@ int main( int argc, char **argv ) {
     do { // Loop over all spills
       eventBuffer =  dfile.GetNextEvent();
       try {
-        MDfragmentBM   spill;
+        MDfragmentSFGD   spill;
        
         spill.SetPreviousSpill(_previousSpillTagExist,_previousSpillTag);
         spill.SetDataPtr(eventBuffer);
         
-        MDpartEventBM *event;
+        MDpartEventSFGD *event;
         int nTr = spill.GetNumOfTriggers();
         BordID = (Int_t)spill.GetBoardId();
         

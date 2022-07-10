@@ -16,7 +16,7 @@
  */
 
 #include "MDdataFile.h"
-#include "MDdataWordBM.h"
+#include "MDdataWordSFGD.h"
 #include "MDexception.h"
 
 using namespace std;
@@ -73,9 +73,9 @@ void MDdateFile::init() {
   while (!_ifs.eof()) {
 //     _ifs.read( _eventBuffer, sizeof( _eventBuffer ) );
     _ifs.read( _eventBuffer, 4 );
-    MDdataWordBM dw(_eventBuffer);
+    MDdataWordSFGD dw(_eventBuffer);
 //    cout << dw << endl;
-    if (dw.GetDataType() == MDdataWordBM::GateHeader && dw.GetGateHeaderID() ==1) {
+    if (dw.GetDataType() == MDdataWordSFGD::GateHeader && dw.GetGateHeaderID() == 1) {
       _curPos = _ifs.tellg();
 //        cout << dw << endl;
 //        cout << "pos: " << _curPos << endl;

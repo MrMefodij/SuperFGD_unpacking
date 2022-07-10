@@ -17,24 +17,24 @@
  *
  */
 
-#include "MDpartEventBM.h"
+#include "MDpartEventSFGD.h"
 //#include <vector>
 #include <math.h> 
 #include <cmath>
 
 using namespace std;
 
-MDpartEventBM::MDpartEventBM(void *d, unsigned int time, unsigned int tag):MDdataContainer(d),
-  _triggerTag(-1),_nDataWords(0), _trigEvents(0) { _previousTrTime = time;  _previousTrTag = tag;}
+MDpartEventSFGD::MDpartEventSFGD(void *d, unsigned int time, unsigned int tag): MDdataContainer(d),
+                                                                              _triggerTag(-1), _nDataWords(0), _trigEvents(0) { _previousTrTime = time;  _previousTrTag = tag;}
 
-void MDpartEventBM::SetDataPtr( void *d, uint32_t aSize ) {
+void MDpartEventSFGD::SetDataPtr( void *d, uint32_t aSize ) {
   MDdataContainer::SetDataPtr(d);
   this->Init();
 }
 
 
 
-void MDpartEventBM::Init() {
+void MDpartEventSFGD::Init() {
   //   cout << " Calling MDpartEventBM::Init() " << endl;
   this->UnValidate();
 
@@ -58,12 +58,12 @@ void MDpartEventBM::Init() {
 
   unsigned int * ptr = Get32bWordPtr(0);
   
-  MDdataWordBM dw(ptr);
+  MDdataWordSFGD dw(ptr);
   dw.SetDataPtr(ptr);
 //   cout << dw << endl;
   if ( dw.IsValid() ) {
     // Check the reliability of the header and decode the header information.
-    if (dw.GetDataType() != MDdataWordBM::GTSHeader ) { // The data doesn't start with a header
+    if (dw.GetDataType() != MDdataWordSFGD::GTSHeader ) { // The data doesn't start with a header
         cout << dw<<endl;
       throw MDexception("ERROR in MDpartEventBM::Init() : 1st word is not a trigger header");
     } else {
@@ -85,7 +85,7 @@ void MDpartEventBM::Init() {
         int dataType = dw.GetDataType();
         switch (dataType) {
             
-          case MDdataWordBM::TimeMeas :
+          case MDdataWordSFGD::TimeMeas :
             if (dw.GetTagId() == _triggerTagId) {
               this->AddTimeHit(dw);
               ++_nDataWords;
@@ -103,7 +103,7 @@ void MDpartEventBM::Init() {
             }
             break;
 
-          case MDdataWordBM::ChargeMeas :
+          case MDdataWordSFGD::ChargeMeas :
             if (dw.GetAmplitudeId() == 2 || dw.GetAmplitudeId() == 3) {
                 if (dw.GetTagId() == _triggerTagId) {
                     this->AddAmplitudeHit(dw);
@@ -152,12 +152,12 @@ void MDpartEventBM::Init() {
             }
             break;
 
-          case MDdataWordBM::GTSTrailer1 :
+          case MDdataWordSFGD::GTSTrailer1 :
             done = true;
             ++_nDataWords;
             break;
             
-          case MDdataWordBM::GateHeader :
+          case MDdataWordSFGD::GateHeader :
             if (dw.GetGateHeaderID() == 0) {
                 _spillHeaderTag = dw.GetGateNumber();
                 _spillHeaderA = true;
@@ -167,7 +167,7 @@ void MDpartEventBM::Init() {
             ++_nDataWords;
             break;
             
-          case MDdataWordBM::GateTrailer :
+          case MDdataWordSFGD::GateTrailer :
             done = true;
             done2 = true;
             ++_nDataWords;
@@ -193,7 +193,7 @@ void MDpartEventBM::Init() {
         }
         dw.SetDataPtr(++ptr);
         dw.GetDataType();
-        if (dw.GetDataType()!=MDdataWordBM::GTSTrailer2){
+        if (dw.GetDataType() != MDdataWordSFGD::GTSTrailer2){
             stringstream ss;
             ss << "ERROR in MDpartEventBM::Init() : Unexpected data word (id: "
                << dw.GetDataType() << ")";
@@ -219,7 +219,7 @@ void MDpartEventBM::Init() {
   this->Validate();
 }
 
-void MDpartEventBM::AddTimeHit(MDdataWordBM &dw) {
+void MDpartEventSFGD::AddTimeHit(MDdataWordSFGD &dw) {
   unsigned int xChan = dw.GetChannelId();
   if (dw.GetEdgeId()==0) {
     ++this->_nLeadingEdgeHits[xChan];
@@ -232,16 +232,16 @@ void MDpartEventBM::AddTimeHit(MDdataWordBM &dw) {
   }
 }
 
-void MDpartEventBM::AddAmplitudeHit(MDdataWordBM &dw) {
+void MDpartEventSFGD::AddAmplitudeHit(MDdataWordSFGD &dw) {
   unsigned int xChan = dw.GetChannelId();
   switch (dw.GetAmplitudeId()) {
-    case MDdataWordBM::Amplitude_LG :
+    case MDdataWordSFGD::Amplitude_LG :
       _lgHitAmplitude[xChan] = dw.GetAmplitude();
       _lgHitAmplitudeId[xChan] = dw.GetHitId();
       _lgHit[xChan] = true;
       break;
 
-    case MDdataWordBM::Amplitude_HG :
+    case MDdataWordSFGD::Amplitude_HG :
       _hgHitAmplitude[xChan] = dw.GetAmplitude();
       _hgHitAmplitudeId[xChan] = dw.GetHitId();
       _hgHit[xChan] = true;
@@ -256,7 +256,7 @@ void MDpartEventBM::AddAmplitudeHit(MDdataWordBM &dw) {
   }
 }
 
-unsigned int  MDpartEventBM::GetHitTime(unsigned int ih, unsigned int ich, char t) {
+unsigned int  MDpartEventSFGD::GetHitTime(unsigned int ih, unsigned int ich, char t) {
   int rv = 0xFFFFFFFF ;
   if ( ich > BM_FEB_NCHANNELS-1 ) {
     stringstream ss;
@@ -299,7 +299,7 @@ unsigned int  MDpartEventBM::GetHitTime(unsigned int ih, unsigned int ich, char 
   return rv;
 }
 
-unsigned int  MDpartEventBM::GetHitTimeId(unsigned int ih, unsigned int ich, char t) {
+unsigned int  MDpartEventSFGD::GetHitTimeId(unsigned int ih, unsigned int ich, char t) {
   int rv = 0xFFFFFFFF ;
   if ( ich > BM_FEB_NCHANNELS-1 ) {
     stringstream ss;
@@ -343,7 +343,7 @@ unsigned int  MDpartEventBM::GetHitTimeId(unsigned int ih, unsigned int ich, cha
 }
 
 
-unsigned int  MDpartEventBM::GetHitAmplitude(unsigned int ich, char t) {
+unsigned int  MDpartEventSFGD::GetHitAmplitude(unsigned int ich, char t) {
   int rv = 0xFFFFFFFF ;
   if ( ich > BM_FEB_NCHANNELS-1 ) {
     stringstream ss;
@@ -372,7 +372,7 @@ unsigned int  MDpartEventBM::GetHitAmplitude(unsigned int ich, char t) {
   return rv;
 }
 
-unsigned int  MDpartEventBM::GetHitAmplitudeId(unsigned int ich, char t) {
+unsigned int  MDpartEventSFGD::GetHitAmplitudeId(unsigned int ich, char t) {
   int rv = 0xFFFFFFFF ;
   if ( ich > BM_FEB_NCHANNELS-1 ) {
     stringstream ss;
@@ -401,13 +401,13 @@ unsigned int  MDpartEventBM::GetHitAmplitudeId(unsigned int ich, char t) {
   return rv;
 }
 
-void MDpartEventBM::Dump() {
+void MDpartEventSFGD::Dump() {
   cout << *this;
 }
 
 
 
-ostream &operator<<(std::ostream &s, MDpartEventBM &pe) {
+ostream &operator<<(std::ostream &s, MDpartEventSFGD &pe) {
 
   s << " ++++++++++ BM Part Even ++++++++++ \n";
   s << " Tr. tag : " << pe.GetTriggerTag() << "(" << pe.GetTriggerTagId() << ")\n";
