@@ -52,9 +52,6 @@ int main( int argc, char **argv ) {
   // Treat arguments, obtain values to be used later
   if ( argh.GetValue("help") ) {argh.Usage(); return 0;}
 
-  if ( argh.GetValue("directory", stringBuf) != MDARGUMENT_STATUS_OK ) return -1;
-  string filepath = stringBuf;
-
   if ( argh.GetValue("file", stringBuf) != MDARGUMENT_STATUS_OK ) return -1;
   string filename = stringBuf;
 
@@ -64,9 +61,9 @@ int main( int argc, char **argv ) {
   if ( argh.GetValue("nwords", intBuf) != MDARGUMENT_STATUS_OK ) return -1;
   int nWords = intBuf;
 
-  std::ifstream ifs((filepath + "/" + filename).c_str());
+  std::ifstream ifs((filename).c_str());
   if ( ifs.fail() ) {
-    cerr << "Can not open file " << filepath << filename << endl;
+    cerr << "Can not open file " << filename << endl;
     return 1;
   }
 

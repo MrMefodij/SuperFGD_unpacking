@@ -32,7 +32,6 @@ class MDdateFile {
   char*                  _eventBuffer;
 
  public:
-  std::string            _filePath;
   std::string            _fileName;
   uint32_t               _curPos;            // current stream position in file
   uint32_t               _fileSize;
@@ -40,14 +39,11 @@ class MDdateFile {
 
   int                    _lastSpill;
 
-  MDdateFile(std::string fn, std::string fp="");
+  MDdateFile(std::string fn);
   ~MDdateFile();
 
   void SetFileName(std::string fn) { _fileName = fn ;}
   std::string GetFileName()        { return _fileName;}
-
-  void SetFilePath(std::string fp) { _filePath = fp ;}
-  std::string GetFilePath()        { return _filePath;}
 
 
   bool  open();

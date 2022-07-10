@@ -21,9 +21,10 @@
 
 using namespace std;
 
-MDdateFile::MDdateFile(string fn, string fp)
-:_eventBuffer(NULL),_filePath(fp), _fileName(fn),_curPos(0)
-,_fileSize(0),_nBytesRead(0), _lastSpill(-1) {}
+MDdateFile::MDdateFile(string fn)
+:_eventBuffer(NULL), _fileName(fn),_curPos(0)
+,_fileSize(0),_nBytesRead(0), _lastSpill(-1) {
+}
 
 MDdateFile::~MDdateFile() {
   if (_eventBuffer)
@@ -31,8 +32,7 @@ MDdateFile::~MDdateFile() {
 }
 
 bool MDdateFile::open() {
-
-  string fullName = _filePath + "/" + _fileName;
+  string fullName = _fileName;
 
   _ifs.open( fullName.c_str() );
   if ( _ifs.fail() ) {
