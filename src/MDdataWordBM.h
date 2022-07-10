@@ -58,7 +58,7 @@ public:
     uint32_t GetAmplitudeId();
     uint32_t GetAmplitude();
 
-    uint32_t GetGtsData();
+    uint32_t GetGtsDataFlag();
     uint32_t GetGtsTime();
 
     uint32_t GetTriggerTagShort();
@@ -66,17 +66,17 @@ public:
     uint32_t GetSpecialWord();
 
     enum DWBMDataType {
-        GateHeader   = 0x0,
-        GTSHeader    = 0x1,
-        TimeMeas      = 0x2,
-        ChargeMeas    = 0x3,
-        GTSTrailer1  = 0x4,
-        GTSTrailer2  = 0x5,
-        GateTrailer = 0x6,
-        GateTime = 0x7,
-        HoldTime = 0xB,
+        GateHeader      = 0x0,
+        GTSHeader       = 0x1,
+        TimeMeas        = 0x2,
+        ChargeMeas      = 0x3,
+        GTSTrailer1     = 0x4,
+        GTSTrailer2     = 0x5,
+        GateTrailer     = 0x6,
+        GateTime        = 0x7,
+        HoldTime        = 0xB,
    
-        SpecialWord   = 0xF
+        SpecialWord     = 0xF
     };
 
     enum DWBMAmplitudeId {
@@ -99,7 +99,8 @@ private:
         HoldTimeGTSMask        = 0x000007FF,
 
         GtsTagMask          = 0x0FFFFFFF,
-   
+        GtsTagShortMask     = 0x00000003,
+
         ChannelIdMask       = 0x0FF00000,
         HitIdMask           = 0x000E0000,
         TagIdMask           = 0x00018000,
@@ -109,7 +110,7 @@ private:
         AmplitudeIdMask     = 0x00007000,
         AmplitudeMask       = 0x00000FFF,
 
-        GtsDataMask         = 0x08000000,
+        GtsDataFlagMask     = 0x08000000,
         GtsTimeMask         = 0x000FFFFF,
    
         SpecialIDParamMask  = 0x000FFFFF
@@ -125,9 +126,10 @@ private:
         GateTimeShift       = 0,
 
         HoldTimeIDShift     = 19,
-        HoldTimeGTSShift       = 0,
+        HoldTimeGTSShift    = 0,
 
         GtsTagShift         = 0,
+        GtsTagShortShift    = 0,
 
         ChannelIdShift      = 20,
         HitIdShift          = 17,
@@ -138,7 +140,7 @@ private:
         AmplitudeIdShift    = 12,
         AmplitudeShift      = 0,
 
-        GtsDataShift        = 27,
+        GtsDataFlagShift        = 27,
         GtsTimeShift        = 0,
 
         SpecialIDParamShift  = 0,

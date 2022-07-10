@@ -43,16 +43,11 @@ class MDfragmentBM : public MDdataContainer {
 
   unsigned int GetBoardId()             {return _boardId;}
   unsigned int GetSpillTag()            {return _spillTag;}
-  unsigned int GetHumidity()            {return _humidity;}
-  unsigned int GetTemperature()         {return _temperature;}
   unsigned int GetSpillTime()           {return _spillTime;}
-  
-  unsigned int GetSpillDAQType()        {return _spillDAQType;}
+
   unsigned int GetSpillTimeGTrig()      {return _spillTimeGTrig;}
   
   unsigned int GetSpillTrailTad()       {return _spillTrailTag;}
- // unsigned int GetSpillTrailHumidity()  {return _spillHumidity;}
- // unsigned int GetSpillTrailTemp()      {return _spillTemp;}
   unsigned int GetSpillTrailTime()      {return _spillTrailTime;}
   
   unsigned int GetNumOfTriggers()       {return _trigEvents.size();}
@@ -67,7 +62,7 @@ class MDfragmentBM : public MDdataContainer {
   unsigned int _spillTime;
   
 
-  unsigned int _spillDAQType;
+  //unsigned int _spillDAQType;
   unsigned int _spillTimeGTrig;
   
   unsigned int _spillTrailTag;

@@ -47,7 +47,6 @@ class MDpartEventBM : public MDdataContainer {
   void AddAmplitudeHit(MDdataWordBM &dw);
 
   unsigned int GetTriggerTime() { return _triggerTime; }
-  unsigned int GetHitCount()    { return _hitCount; }
   unsigned int GetNLeadingEdgeHits(unsigned int ich)  { return _nLeadingEdgeHits[ich]; }
   unsigned int GetNTrailingEdgeHits(unsigned int ich) { return _nTrailingEdgeHits[ich]; }
   unsigned int GetHitTime(unsigned int ih, unsigned int ich, char t);
@@ -89,7 +88,6 @@ class MDpartEventBM : public MDdataContainer {
 
  private:
   unsigned int _triggerTime;
-  unsigned int _hitCount;
   unsigned int _triggerTag;
   unsigned int _triggerTagId;
   unsigned int _spillHeaderTag;

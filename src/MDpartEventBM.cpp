@@ -63,14 +63,14 @@ void MDpartEventBM::Init() {
 //   cout << dw << endl;
   if ( dw.IsValid() ) {
     // Check the reliability of the header and decode the header information.
-    if (dw.GetDataType() != MDdataWordBM::TrigHeader ) { // The data doesn't start with a header
+    if (dw.GetDataType() != MDdataWordBM::GTSHeader ) { // The data doesn't start with a header
         cout << dw<<endl;
       throw MDexception("ERROR in MDpartEventBM::Init() : 1st word is not a trigger header");
     } else {
       
-      _triggerTag = dw.GetTriggerTag();
+      _triggerTag = dw.GetGtsTag();
       _triggerTagId = dw.GetTriggerTagShort();
-      if (dw.GetTriggerTag() != _previousTrTag +1 && _previousTrTag!=0)
+      if (dw.GetGtsTag() != _previousTrTag +1 && _previousTrTag!=0)
           cout<<"ERROR in MDpartEventBM::Init() : Trigger Tag is NOT consistent with previous Trigger Tag: "<<
           _triggerTag <<" != " <<_previousTrTag<< "+ 1"<<endl;
       
@@ -152,22 +152,22 @@ void MDpartEventBM::Init() {
             }
             break;
 
-          case MDdataWordBM::TrigTrailer1 :
+          case MDdataWordBM::GTSTrailer1 :
             done = true;
             ++_nDataWords;
             break;
             
-          case MDdataWordBM::SpillHeader :
-            if (dw.GetSpillHeadId() == 0) {
-                _spillHeaderTag = dw.GetSpillTag();
+          case MDdataWordBM::GateHeader :
+            if (dw.GetGateHeaderID() == 0) {
+                _spillHeaderTag = dw.GetGateNumber();
                 _spillHeaderA = true;
                 _spillHeaderTagBoardID = dw.GetBoardId();
-                cout<<"2: BM spill Header \"A\" Board ID "<< _spillHeaderTagBoardID <<" SpillTag: " << dw.GetSpillTag()<<endl;
+                cout<<"2: BM spill Header \"A\" Board ID "<< _spillHeaderTagBoardID <<" SpillTag: " << dw.GetGateNumber()<<endl;
             }
             ++_nDataWords;
             break;
             
-          case MDdataWordBM::SpillTrailer1 :
+          case MDdataWordBM::GateTrailer :
             done = true;
             done2 = true;
             ++_nDataWords;
@@ -185,15 +185,15 @@ void MDpartEventBM::Init() {
       }
       
       if (!done2){
-        if (dw.GetTriggerTag() != _triggerTag) {
+        if (dw.GetGtsTag() != _triggerTag) {
             stringstream ss;
             ss << "ERROR in MDpartEventBM::Init() : The trigger trailer is not consistent \n(Trigger tag: "
-            << dw.GetTriggerTag() << "!=" << _triggerTag << ")";
+            << dw.GetGtsTag() << "!=" << _triggerTag << ")";
             throw MDexception(ss.str());
         }
         dw.SetDataPtr(++ptr);
         dw.GetDataType();
-        if (dw.GetDataType()!=MDdataWordBM::TrigTrailer2){
+        if (dw.GetDataType()!=MDdataWordBM::GTSTrailer2){
             stringstream ss;
             ss << "ERROR in MDpartEventBM::Init() : Unexpected data word (id: "
                << dw.GetDataType() << ")";
@@ -202,17 +202,15 @@ void MDpartEventBM::Init() {
         } else {
             ++_nDataWords;
             _size +=4;
-            if ( dw.GetTriggerTime() != _previousTrTime +1 && dw.GetTriggerTime() !=0 && dw.GetTriggerTime() !=1 && dw.GetTriggerTime() !=2) 
+            if ( dw.GetGtsTime() != _previousTrTime +1 && dw.GetGtsTime() !=0 && dw.GetGtsTime() !=1 && dw.GetGtsTime() !=2)
                 cout << "ERROR in MDpartEventBM::Init() : Trigger Time is not consistent: "
-                << dw.GetTriggerTime() << " != " << _previousTrTime <<" +1"<<endl;
-            _triggerTime = dw.GetTriggerTime();
-            _hitCount = dw.GetHitCount();
+                << dw.GetGtsTime() << " != " << _previousTrTime <<" +1"<<endl;
+            _triggerTime = dw.GetGtsTime();
         //cout <<"1:"<< _triggerTime<<endl;
         }
       }
         else{
             _triggerTime = _previousTrTime +1;
-            _hitCount = 0;
             //cout<<"2:" << _triggerTime <<endl;
         }
     }
@@ -237,20 +235,16 @@ void MDpartEventBM::AddTimeHit(MDdataWordBM &dw) {
 void MDpartEventBM::AddAmplitudeHit(MDdataWordBM &dw) {
   unsigned int xChan = dw.GetChannelId();
   switch (dw.GetAmplitudeId()) {
-    case MDdataWordBM::Amplitide_LG :
+    case MDdataWordBM::Amplitude_LG :
       _lgHitAmplitude[xChan] = dw.GetAmplitude();
       _lgHitAmplitudeId[xChan] = dw.GetHitId();
       _lgHit[xChan] = true;
       break;
 
-    case MDdataWordBM::Amplitide_HG :
+    case MDdataWordBM::Amplitude_HG :
       _hgHitAmplitude[xChan] = dw.GetAmplitude();
       _hgHitAmplitudeId[xChan] = dw.GetHitId();
       _hgHit[xChan] = true;
-      break;
-
-    case MDdataWordBM::Baseline :
-//       _amplitudeHits[xChan][2] = dw.GetAmplitude();
       break;
 
     default :
@@ -418,7 +412,6 @@ ostream &operator<<(std::ostream &s, MDpartEventBM &pe) {
   s << " ++++++++++ BM Part Even ++++++++++ \n";
   s << " Tr. tag : " << pe.GetTriggerTag() << "(" << pe.GetTriggerTagId() << ")\n";
   s << " Tr. time : " << pe.GetTriggerTime() << "\n";
-  s << " N hits: " << pe.GetHitCount()  << "\n";
   for (int ich=0 ; ich < BM_FEB_NCHANNELS ; ich++) {
     if (pe._lgHit[ich]) {
       s << " Ch: " << ich

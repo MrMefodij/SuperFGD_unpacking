@@ -36,12 +36,7 @@ struct vectorsTree
   vector<double> hitTimeDif;
   vector<double> hitTimefromSpill;
   vector<double> SpillTrailTime;
- // vector<double> SpillTemperature;
-  vector<double> AsicTemperature;
-  vector<double> FPGATemperature;
-  vector<double> GlobalHV;
-  vector<double> BoardTemperature;
-  vector<double> BoardHumidity;
+
 };
 
 
@@ -99,11 +94,6 @@ int main( int argc, char **argv ) {
         FEBtree[ih]->Branch((sFEB+"_hitTimefromSpill").c_str(),"vector<double>",&FEB[ih].hitTimefromSpill);
         FEBtree[ih]->Branch((sFEB+"_SpillTrailTime").c_str(),"vector<double>",&FEB[ih].SpillTrailTime);
         //FEBtree[ih]->Branch((sFEB+"_SpillTemperature").c_str(), "vector<double>",&FEB[ih].SpillTemperature);
-        FEBtree[ih]->Branch((sFEB+"_AsicTemperature").c_str(),"vector<double>",&FEB[ih].AsicTemperature);
-        FEBtree[ih]->Branch((sFEB+"_FPGATemperature").c_str(),"vector<double>",&FEB[ih].FPGATemperature);
-        FEBtree[ih]->Branch((sFEB+"_GlobalHV").c_str(),"vector<double>",&FEB[ih].GlobalHV);
-        FEBtree[ih]->Branch((sFEB+"_BoardTemperature").c_str(),"vector<double>",&FEB[ih].BoardTemperature);
-        FEBtree[ih]->Branch((sFEB+"_BoardHumidity").c_str(),"vector<double>",&FEB[ih].BoardHumidity);
   }
   
   for (vector<string>::iterator itFileName=vFileNames.begin(); itFileName != vFileNames.end(); itFileName++) {
@@ -160,14 +150,9 @@ int main( int argc, char **argv ) {
     FEB[i].hitTimefromSpill.clear();
     FEB[i].SpillTrailTime.clear();
     //FEB[i].SpillTemperature.clear();
-    FEB[i].AsicTemperature.clear();
-    FEB[i].FPGATemperature.clear();
-    FEB[i].GlobalHV.clear();
-    FEB[i].BoardTemperature.clear();
-    FEB[i].BoardHumidity.clear();
     }
   
-  MDdateFile dfile(filename, filepath);
+  MDdateFile dfile(filename);
 // Open the file and loop over events.
   Int_t BordID=0;
   char *eventBuffer;
@@ -297,31 +282,6 @@ int main( int argc, char **argv ) {
                   if ( LGAmplExist == false){
                         FEB[spill.GetBoardId()].hitLGAmpl.push_back(0);
                   }
-                  
-              if (event->GetAsicTemperature(ich)!=1)
-                    FEB[spill.GetBoardId()].AsicTemperature.push_back(-((event->GetAsicTemperature(ich) -340) *(0.000822) / 0.006) + 34 );
-                else 
-                    FEB[spill.GetBoardId()].AsicTemperature.push_back(-1);
-                
-              if (event->GetFPGATemperature()!=1)
-                    FEB[spill.GetBoardId()].FPGATemperature.push_back(event->GetFPGATemperature() - 128);
-                else
-                    FEB[spill.GetBoardId()].FPGATemperature.push_back(-1);
-                
-              if (event->GetGlobalHV()!=1)
-                    FEB[spill.GetBoardId()].GlobalHV.push_back(event->GetGlobalHV()*(0.000822)*(1+1000/41.2));
-                else 
-                    FEB[spill.GetBoardId()].GlobalHV.push_back(-1);
-                
-              if (event->GetBoardTemperature()!=1)
-                    FEB[spill.GetBoardId()].BoardTemperature.push_back(-(event->GetBoardTemperature()*(0.000822) - 2.633)*1000/13.3);
-                else
-                    FEB[spill.GetBoardId()].BoardTemperature.push_back(-1);
-                
-              if (event->GetBardHumidity()!=1)
-                    FEB[spill.GetBoardId()].BoardHumidity.push_back((event->GetBardHumidity()*(0.000822)/3.3 - 0.1515)/0.00636);
-                else 
-                    FEB[spill.GetBoardId()].BoardHumidity.push_back(-1);
                 
               if (FEB[spill.GetBoardId()].FEBSN.size() !=  FEB[spill.GetBoardId()].SpillNum.size()          ||
                   FEB[spill.GetBoardId()].FEBSN.size() !=  FEB[spill.GetBoardId()].hitsChannel.size()       || 
@@ -364,12 +324,6 @@ int main( int argc, char **argv ) {
         FEB[BordID].hitTimeDif.push_back(-1);
         FEB[BordID].hitTimefromSpill.push_back(-1);
         FEB[BordID].SpillTrailTime.push_back(-1);
-        //FEB[BordID].SpillTemperature.push_back(-1);
-        FEB[BordID].AsicTemperature.push_back(-1);
-        FEB[BordID].FPGATemperature.push_back(-1);
-        FEB[BordID].GlobalHV.push_back(-1);
-        FEB[BordID].BoardTemperature.push_back(-1);
-        FEB[BordID].BoardHumidity.push_back(-1);
         
         FEBtree[BordID]->Fill();
         cout<<"Number of events on FEB "<< BordID <<" is "<< FEB[BordID].FEBSN.size()<<endl;
@@ -388,12 +342,7 @@ int main( int argc, char **argv ) {
         FEB[BordID].hitLGAmpl.clear();
         FEB[BordID].hitTimefromSpill.clear();
         FEB[BordID].SpillTrailTime.clear();
-        //FEB[BordID].SpillTemperature.clear();
-        FEB[BordID].AsicTemperature.clear();
-        FEB[BordID].FPGATemperature.clear();
-        FEB[BordID].GlobalHV.clear();
-        FEB[BordID].BoardTemperature.clear();
-        FEB[BordID].BoardHumidity.clear();
+
       } catch(std::exception & lExc) {
         std::cerr << lExc.what() << std::endl
                   << "Standard exception\n"
@@ -422,17 +371,12 @@ int main( int argc, char **argv ) {
         FEB[BordID].hitLGAmpl.clear();
         FEB[BordID].hitTimefromSpill.clear();
         FEB[BordID].SpillTrailTime.clear();
-        //FEB[BordID].SpillTemperature.clear();
-        FEB[BordID].AsicTemperature.clear();
-        FEB[BordID].FPGATemperature.clear();
-        FEB[BordID].GlobalHV.clear();
-        FEB[BordID].BoardTemperature.clear();
-        FEB[BordID].BoardHumidity.clear();
+
       }
 
       ++xEv;
- //      } while (xEv < 5);
-    } while ( eventBuffer );
+       } while (xEv < 500);
+    //} while ( eventBuffer );
   }
   
   FEBtree[BordID]-> Write("",TObject::kOverwrite);

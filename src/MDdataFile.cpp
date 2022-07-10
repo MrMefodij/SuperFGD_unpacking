@@ -75,7 +75,7 @@ void MDdateFile::init() {
     _ifs.read( _eventBuffer, 4 );
     MDdataWordBM dw(_eventBuffer);
 //    cout << dw << endl;
-    if (dw.GetDataType() == MDdataWordBM::SpillHeader && dw.GetSpillHeadId() ==1) {
+    if (dw.GetDataType() == MDdataWordBM::GateHeader && dw.GetGateHeaderID() ==1) {
       _curPos = _ifs.tellg();
 //        cout << dw << endl;
 //        cout << "pos: " << _curPos << endl;

@@ -70,6 +70,11 @@ uint32_t MDdataWordBM::GetHoldTimeStopFrGTS(){
     return 0;
 }
 
+uint32_t MDdataWordBM::GetGtsTag(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & GtsTagMask ) >> GtsTagShift );
+    return 0;
+}
+
 uint32_t MDdataWordBM::GetChannelId() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & ChannelIdMask ) >> ChannelIdShift );
   return 0;
@@ -95,36 +100,24 @@ uint32_t MDdataWordBM::GetHitTime() {
   return 0;
 }
 
-//here
-
-uint32_t MDdataWordBM::GetHitCount() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & HitCountMask ) >> HitCountShift );
-  return 0;
-}
-
-uint32_t MDdataWordBM::GetTriggerTime() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & TriggerTimeMask ) >> TriggerTimeShift );
-  return 0;
-}
-
-uint32_t MDdataWordBM::GetTriggerTag() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & TriggerTagMask ) >> TriggerTagShift );
-  return 0;
-}
-
-uint32_t MDdataWordBM::GetTriggerTagShort() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & TrTagShortMask ) >> TriggerTagShift );
-  return 0;
-}
-
 uint32_t MDdataWordBM::GetAmplitudeId() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & AmplitudeIdMask ) >> AmplitudeIdShift );
-  return 0;
+    if (IsValid())  return ( (*(uint32_t*)(_data) & AmplitudeIdMask ) >> AmplitudeIdShift );
+    return 0;
 }
 
 uint32_t MDdataWordBM::GetAmplitude() {
-  if (IsValid())  return ( (*(uint32_t*)(_data) & AmplitudeMask ) >> AmplitudeShift );
-  return 0;
+    if (IsValid())  return ( (*(uint32_t*)(_data) & AmplitudeMask ) >> AmplitudeShift );
+    return 0;
+}
+
+uint32_t MDdataWordBM::GetGtsDataFlag() {
+    if (IsValid())  return ( (*(uint32_t*)(_data) & GtsDataFlagMask ) >> GtsDataFlagShift );
+    return 0;
+}
+
+uint32_t MDdataWordBM::GetGtsTime() {
+    if (IsValid())  return ( (*(uint32_t*)(_data) & GtsTimeMask ) >> GtsTimeShift );
+    return 0;
 }
 
 uint32_t MDdataWordBM::GetSpecialWord() {
@@ -132,89 +125,98 @@ uint32_t MDdataWordBM::GetSpecialWord() {
     return 0;
 }
 
+uint32_t MDdataWordBM::GetTriggerTagShort(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & GtsTagShortMask ) >> GtsTagShift );
+    return 0;
+}
 
 void MDdataWordBM::Dump() {
   cout << *this;
 }
 
 ostream & operator<<(ostream &s, MDdataWordBM &dw) {
-  uint32_t dt= dw.GetDataType();
-  s << " BM FEB ";
-  switch (dt) {
-  case MDdataWordBM::SpillHeader:
-    s << "Spill Header  BoardId: " << dw.GetBoardId();
-    if (dw.GetSpillHeadId()==0){
-      s << "  Sid: " << dw.GetSid()
-      << "  Spill Tag: " << dw.GetSpillTag();}
-    else{
-      s << "  Sid: " << dw.GetSid() <<
-      "  DAQ Type: "<< dw.GetSpillDAQType() <<
-      "  Spill time from GTrig: " << dw.GetSpillTimeGTRIG();
-    }
-    break;
+    uint32_t dt= dw.GetDataType();
+    s << " BM FEB ";
+    switch (dt) {
+        case MDdataWordBM:: GateHeader:
+            s << "Spill Header  BoardId: " << dw.GetBoardId();
+            if (dw.GetGateHeaderID()==0){
+            s << " Gate type: " << dw.GetGateType() <<
+            " Gate Number: " << dw.GetGateNumber();
+            } else {
+                s << " Gate time from GTS: " << dw.GetGateTimeFrGts();
+            }
+            break;
 
-  case MDdataWordBM::TrigHeader:
-    s << "Trigger Header  Gl. Trigger Tag: " << dw.GetTriggerTag()
-      << " (" << dw.GetTriggerTagShort() << ")";
-    break;
+        case MDdataWordBM::GTSHeader:
+            s << "GTS Tag: " << dw.GetGtsTag()
+            << " (" << dw.GetTriggerTagShort() << ")";
+            break;
 
-  case MDdataWordBM::TimeMeas:
-    s << "Channel: " << dw.GetChannelId()
-      << "  HitId: " << dw.GetHitId()
-      << "  TagId: " << dw.GetTagId();
-    if ( dw.GetEdgeId()==0 ) s << "  Time (0, RE): ";
-    else s << "  Time (1, FE): ";
+        case MDdataWordBM::TimeMeas:
+            s << "Channel: " << dw.GetChannelId()
+            << "  HitId: " << dw.GetHitId()
+            << "  TagId: " << dw.GetTagId();
+            if ( dw.GetEdgeId()==0 ) {
+                s << "  Time (0, RE): ";
+            } else {
+                s << "  Time (1, FE): ";
+            }
+            s << dw.GetHitTime();
+            break;
 
-    s << dw.GetHitTime();
-    break;
+        case MDdataWordBM::ChargeMeas:
+            s << "Channel: " << dw.GetChannelId()
+            << "  HitId: " << dw.GetHitId()
+            << "  TagId: " << dw.GetTagId()
+            << "  Amplitude Id: " << dw.GetAmplitudeId()
+            << "  Charge: " << dw.GetAmplitude();
+            break;
 
-  case MDdataWordBM::ChargeMeas:
-    s << "Channel: " << dw.GetChannelId()
-      << "  HitId: " << dw.GetHitId()
-      << "  TagId: " << dw.GetTagId()
-      << "  Amplitude Id: " << dw.GetAmplitudeId()
-      << "  Charge: " << dw.GetAmplitude();
-    break;
+        case MDdataWordBM::GTSTrailer1:
+            s << "GTS Trailer (1)  Gl. GTS Tag: " << dw.GetGtsTag();
+            break;
 
-  case MDdataWordBM::TrigTrailer1:
-    s << "Trigger Trailer (1)  Gl. Trigger Tag: " << dw.GetTriggerTag();
-    break;
+        case MDdataWordBM::GTSTrailer2:
+            s << "GTS Trailer (2)  Data flag: " << dw.GetGtsDataFlag()
+            << "  Trigger Time: " << dw.GetGtsTime();
+            break;
 
-  case MDdataWordBM::TrigTrailer2:
-    s << "Trigger Trailer (2)  Hit count: " << dw.GetHitCount()
-      << "  Trigger Time: " << dw.GetTriggerTime();
-    break;
+        case MDdataWordBM::GateTrailer:
+            s << "Gate Trailer (1)  BoardId: " << dw.GetBoardId()
+            << "Gate type: " << dw.GetGateType() <<
+              " Gate Number: " << dw.GetGateNumber();
+            break;
 
-  case MDdataWordBM::SpillTrailer1:
-    s << "Spill Trailer (1)  BoardId: " << dw.GetBoardId()
-      << "  Sid: " << dw.GetSid();
-    if (dw.GetHeadTrailId()==0)
-      s << "  Spill Tag: " << dw.GetSpillTag();
-    else
-      s << "  Temperature: " << dw.GetTemperature() << "  Humidity: " << dw.GetHumidity();
+        case MDdataWordBM::GateTime:
+            s << "Spill TimeID Spill time: " << dw.GetGateTime();
+            break;
 
-    break;
-
-  case MDdataWordBM::SpillTrailer2:
-    s << "Spill TimeID Spill time: " << dw.GetSpillTime();
-    break;
+        case MDdataWordBM::HoldTime:
+            s << "Hold Time  BoardId: " << dw.GetBoardId();
+            if (dw.GetHoldTimeID() == 0){
+                s << " Hold time Start: "  << dw.GetHoldTimeStartFrGTS();
+            } else {
+                s << " Hold time Stop: "  << dw.GetHoldTimeStopFrGTS();
+            }
+            break;
     
-  case MDdataWordBM::SpecialWord:
-    s << "SpecialWord: ";
-    if (dw.GetSpecialWord()==65536)
-        s << "BoardId: " << dw.GetBoardId() << " Readout End";
-    if (dw.GetSpecialWord()==1)
-        s << "BoardId: " << dw.GetBoardId() << " GTrig Reset";
-    if (dw.GetSpecialWord()==2)
-        s << "BoardId: " << dw.GetBoardId() << " Spill Reset";
-    if (dw.GetSpecialWord()==3)
-        s << "BoardId: " << dw.GetBoardId() << " GTrig & Spill Reset";
-    if (dw.GetSpecialWord()==16)
-         s <<"BoardId: " << dw.GetBoardId() << " FIFO Full";
-    if (dw.GetSpecialWord()==983295)
-        s << "BoardId: " << dw.GetBoardId() << " Spill Reset";
-    if (dw.GetSpecialWord()==1048575)
-    {s<< "strange "<<dw.GetSpecialWord();}
+        case MDdataWordBM::SpecialWord:
+            s << "SpecialWord: ";
+            if (dw.GetSpecialWord()==65536)
+                s << "BoardId: " << dw.GetBoardId() << " Readout End";
+            if (dw.GetSpecialWord()==1)
+                s << "BoardId: " << dw.GetBoardId() << " GTrig Reset";
+            if (dw.GetSpecialWord()==2)
+                s << "BoardId: " << dw.GetBoardId() << " Spill Reset";
+            if (dw.GetSpecialWord()==3)
+                s << "BoardId: " << dw.GetBoardId() << " GTrig & Spill Reset";
+            if (dw.GetSpecialWord()==16)
+                s <<"BoardId: " << dw.GetBoardId() << " FIFO Full";
+            if (dw.GetSpecialWord()==983295)
+                    s << "BoardId: " << dw.GetBoardId() << " Spill Reset";
+            if (dw.GetSpecialWord()==1048575)
+            {s<< "strange "<<dw.GetSpecialWord();}
     //s<<endl;
     break;
     

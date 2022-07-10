@@ -51,21 +51,20 @@ void MDfragmentBM::Init() {
   MDdataWordBM dw(ptr);
   if ( dw.IsValid() ) {
        
-    if (dw.GetDataType() != MDdataWordBM::SpillHeader && dw.GetSpillHeadId() !=1) { 
+    if (dw.GetDataType() != MDdataWordBM::GateHeader && dw.GetGateHeaderID() !=1) {
         throw MDexception("ERROR in MDfragmentBM::Init() : 1st word is not a spill header.");
     } else {
-        _spillDAQType = dw.GetSpillDAQType(); 
-        _spillTimeGTrig = dw.GetSpillTimeGTRIG();
+        _spillTimeGTrig = dw.GetGateTimeFrGts();
         _boardId = dw.GetBoardId();
-        cout <<"BM spill Header \"B\" DAQ Type: "<< _spillDAQType<< " Spill Time from GTRIG (10ns res.): " << _spillTimeGTrig<<endl;
+        cout <<"BM spill Header \"B\" Spill Time from GTRIG (10ns res.): " << _spillTimeGTrig<<endl;
         _size += 4;
         ++ptr;
         dw.SetDataPtr(ptr);
       
-        if (dw.GetDataType() != MDdataWordBM::SpillTrailer2) {
+        if (dw.GetDataType() != MDdataWordBM::GateTime) {
              throw MDexception("ERROR in MDfragmentBM::Init() : 2nd word is not a spill spill time.");
         } else {
-            _spillTime = dw.GetSpillTime();
+            _spillTime = dw.GetGateTime();
             ++ptr;
             dw.SetDataPtr(ptr);
             _size += 4;
@@ -76,7 +75,7 @@ void MDfragmentBM::Init() {
                 //cout   <<_size/4 <<" "<<dw<<endl;
                 dw.SetDataPtr(ptr);
                 //cout   <<_size/4<<endl;
-                if (dw.GetDataType() == MDdataWordBM::TrigHeader) {
+                if (dw.GetDataType() == MDdataWordBM::GTSHeader) {
                     //cout   <<_size/4 <<" " << dw.GetDataType()<<endl;
                     MDpartEventBM *xPe = new MDpartEventBM(ptr,_previousTrTime,_previousTrTag);
                     xPe->SetTriggerEvents(&_trigEvents);
@@ -100,14 +99,14 @@ void MDfragmentBM::Init() {
                         _previousTrTime = xPe->GetTriggerTime();
                         _previousTrTag  = xPe->GetTriggerTag();
                         //cout <<"1: "<< _previousTrTag<<endl;
-                } else if (dw.GetDataType() == MDdataWordBM::SpillHeader && dw.GetSpillHeadId() == 0){
-                     _spillTag = dw.GetSpillTag();
+                } else if (dw.GetDataType() == MDdataWordBM::GateHeader && dw.GetGateHeaderID() == 0){
+                     _spillTag = dw.GetGateNumber();
                      _boardId = dw.GetBoardId();
-                     cout   <<"1: BM spill Header \"A\" Board ID "<< _boardId <<" SpillTag: "<< dw.GetSpillTag()<<endl;
+                     cout   <<"1: BM spill Header \"A\" Board ID "<< _boardId <<" SpillTag: "<< dw.GetGateNumber()<<endl;
                       ++ptr;
                      dw.SetDataPtr(ptr);
                      _size += 4;
-                } else if (dw.GetDataType() == MDdataWordBM::SpillTrailer1 ) {
+                } else if (dw.GetDataType() == MDdataWordBM::GateTrailer ) {
                     
                     if (!_previousSpillTagExist){
                         _previousSpillTag = _spillTag ;
@@ -125,12 +124,12 @@ void MDfragmentBM::Init() {
                     }
                     
                     dw.SetDataPtr(--ptr);
-                    if (dw.GetDataType() == MDdataWordBM::SpillTrailer1 && dw.GetSpillHeadId() == 0) {
-                        if (_spillTag == dw.GetSpillTag()){
+                    if (dw.GetDataType() == MDdataWordBM::GateTrailer) {
+                        if (_spillTag == dw.GetGateNumber()){
                             //cout<< "a: "<<dw<<endl;
                             done = true;
                         } else {
-                            cout << dw.GetSpillTag() << "!=" << _spillTag<<endl;
+                            cout << dw.GetGateNumber() << "!=" << _spillTag<<endl;
                             throw MDexception("ERROR in MDfragmentBM::Init() :  The Spill trailer is not consistent.");
                         }
                     }
@@ -139,21 +138,9 @@ void MDfragmentBM::Init() {
                     }
                     
                     dw.SetDataPtr(++ptr);
-                    if (dw.GetDataType() == MDdataWordBM::SpillTrailer1 && dw.GetSpillHeadId() == 1) {
-                       // _spillHumidity = dw.GetHumidity();
-                       // _spillTemp = dw.GetTemperature();
+                    if (dw.GetDataType() == MDdataWordBM::GateTime ){
+                        _spillTrailTime = dw.GetGateTime();
                         _size += 4;
-                        //cout<< "b: "<<dw<<endl<<" Humidity: "<<_spillHumidity<< " Temperature " <<_spillTemp<<endl;
-                    }
-                    else {
-                        throw MDexception("ERROR in MDfragmentBM::Init() : Wrong data type.");
-                    }
-                    
-                    dw.SetDataPtr(++ptr);
-                    if (dw.GetDataType() == MDdataWordBM::SpillTrailer2 ){
-                        _spillTrailTime = dw.GetSpillTime();
-                        _size += 4;
-                        //cout<< "c: "<<dw<<endl;
                     }
                     else {
                         throw MDexception("ERROR in MDfragmentBM::Init() : Wrong data type.");
