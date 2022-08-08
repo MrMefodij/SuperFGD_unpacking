@@ -62,7 +62,7 @@ class MDdateFile {
   void reset();
 
  private:
-  std::vector<uint32_t> _spill_pos;
+  std::vector<uint32_t> _spill_header_pos;
   std::vector<uint32_t> _spill_size;
 };
 

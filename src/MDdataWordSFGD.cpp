@@ -33,6 +33,7 @@ uint32_t MDdataWordSFGD::GetBoardId() {
 
 uint32_t MDdataWordSFGD::GetGateHeaderID(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & GateHeaderIDMask ) >> GateHeaderIDShift );
+    return 0;
 }
 
 uint32_t MDdataWordSFGD::GetGateType() {

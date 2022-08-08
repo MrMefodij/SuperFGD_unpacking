@@ -96,7 +96,7 @@ private:
         GateTimeMask        = 0x0FFFFFFF,
 
         HoldTimeIDMask      = 0x00080000,
-        HoldTimeGTSMask        = 0x000007FF,
+        HoldTimeGTSMask     = 0x000007FF,
 
         GtsTagMask          = 0x0FFFFFFF,
         GtsTagShortMask     = 0x00000003,
