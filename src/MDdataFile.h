@@ -25,45 +25,60 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "MDexception.h"
 
 class MDdateFile {
- protected:
-  std::ifstream          _ifs;               // Input File Stream
-  char*                  _eventBuffer;
+protected:
+    std::ifstream          _ifs;               // Input File Stream
+    char*                  _eventBuffer;
 
- public:
-  std::string            _fileName;
-  uint32_t               _curPos;            // current stream position in file
-  uint32_t               _fileSize;
-  uint32_t               _nBytesRead;
+public:
+    std::string            _fileName;
+    uint32_t               _curPos;            // current stream position in file
+    uint32_t               _fileSize;
+    uint32_t               _nBytesRead;
 
-  int                    _lastSpill;
+    int                    _lastSpill;
 
-  MDdateFile(std::string fn);
-  ~MDdateFile();
+    MDdateFile(std::string fn);
+    ~MDdateFile();
 
-  void SetFileName(std::string fn) { _fileName = fn ;}
-  std::string GetFileName()        { return _fileName;}
+    void SetFileName(std::string fn) { _fileName = fn ;}
+    std::string GetFileName()        { return _fileName;}
 
+    bool  open();
+    void  close();
 
-  bool  open();
-  void  close();
+    void  init();
+    char* GetNextEvent(uint32_t & gtsTag);
 
-  void  init();
-  char* GetNextEvent();
+    uint32_t GetStreamPos() {
+        _curPos = _ifs.tellg();
+        return _curPos;
+    }
+    void GoTo(uint32_t pos);
+    char* GetSpill(uint32_t pos, uint32_t size);
 
-  uint32_t GetStreamPos() {
-    _curPos = _ifs.tellg();
-    return _curPos;
-  }
-  void GoTo(uint32_t pos);
-  char* GetSpill(uint32_t pos, uint32_t size);
+    void reset();
 
-  void reset();
-
- private:
-  std::vector<uint32_t> _spill_header_pos;
-  std::vector<uint32_t> _spill_size;
+private:
+    struct GateHeadersPositions{
+        uint32_t headerA;
+        uint32_t headerB;
+        bool headerAEx;
+        bool headerBEx;
+    };
+    uint32_t GetGateHeaderPosition(GateHeadersPositions position){
+        if (!position.headerAEx || !position.headerBEx){
+            throw MDexception("Gate header A or B doesn't exist");
+        }
+        return std::min(position.headerA, position.headerB);
+    }
+    std::vector<uint32_t> _gts_tag_spill;
+    std::vector<GateHeadersPositions> _spill_header_pos;
+    std::vector<uint32_t> _spill_size;
+    bool insideSpill = false;
+    unsigned int _gtsTagBeforeSpillGate = 0;
 };
 
 #endif

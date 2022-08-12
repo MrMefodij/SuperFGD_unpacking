@@ -64,38 +64,60 @@ void MDdateFile::init() {
         delete _eventBuffer;
     }
     _eventBuffer = new char[4];
-
+    _spill_header_pos.push_back({0,0, false, false});
     while (!_ifs.eof()) {
         _ifs.read( _eventBuffer, 4 );
         MDdataWordSFGD dw(_eventBuffer);
-//      cout << dw << endl;
-        if (dw.GetDataType() == MDdataWordSFGD::GateHeader) {
-            _curPos = _ifs.tellg();
-//          cout << dw << endl;
-//          cout << "pos: " << _curPos << endl;
-            if (_spill_header_pos.size()) {
-//              uint32_t size = _curPos - _spill_header_pos.back() - 4;
-//              cout << "size: " << size << endl;
-                _spill_size.push_back(_curPos - _spill_header_pos.back() - 4);
-            }
-            _spill_header_pos.push_back(_curPos - 4);
+//        cout << dw << endl;
+        switch (dw.GetDataType()) {
+            case MDdataWordSFGD::GTSHeader:
+                if (!insideSpill) {
+                    _gtsTagBeforeSpillGate = dw.GetGtsTag();
+                }
+                break;
+            case MDdataWordSFGD::GateHeader:
+                insideSpill = true;
+                if (dw.GetGateHeaderID() == 0){
+                    _curPos = _ifs.tellg();
+                    _spill_header_pos.back().headerA = _curPos - 4;
+                    _spill_header_pos.back().headerAEx = true;
+                } else if (dw.GetGateHeaderID() == 1){
+                    _curPos = _ifs.tellg();
+                    _spill_header_pos.back().headerB = _curPos - 4;
+                    _spill_header_pos.back().headerBEx = true;
+                }
+                break;
+
+            case MDdataWordSFGD::GateTrailer:
+                _curPos = _ifs.tellg();
+                _spill_size.push_back(_curPos - GetGateHeaderPosition(_spill_header_pos.back()) + 4);
+                _ifs.read( _eventBuffer, 4 );
+                _spill_header_pos.push_back({0,0, false, false});
+                _gts_tag_spill.push_back(_gtsTagBeforeSpillGate);
+                insideSpill = false;
+                break;
+            default:
+                break;
         }
         if (_ifs.eof()){
             _curPos = _fileSize;
-            _spill_size.push_back(_curPos - _spill_header_pos.back());
-            _spill_header_pos.push_back(_curPos);
+            _spill_size.push_back(_curPos - GetGateHeaderPosition(_spill_header_pos.back()));
+            _spill_header_pos.push_back({_curPos,_curPos});
+            _gts_tag_spill.push_back(_gtsTagBeforeSpillGate);
+            insideSpill = false;
         }
     }
     this->reset();
 }
 
-char* MDdateFile::GetNextEvent() {
+char* MDdateFile::GetNextEvent(uint32_t & gtsTag) {
 
   if ( (unsigned int)(++_lastSpill) >= _spill_size.size() )
    return NULL;
 
   uint32_t spillSize = _spill_size[_lastSpill];
-  uint32_t spillPos  = _spill_header_pos[_lastSpill];
+  uint32_t spillPos  = std::min(_spill_header_pos[_lastSpill].headerA, _spill_header_pos[_lastSpill].headerB);
+  gtsTag = _gts_tag_spill[_lastSpill];
   cout << "GetNextEvent  pos: " << spillPos/4 << "  size: " << spillSize/4 
        << " in DW units (4 bytes)" << endl;
   return GetSpill(spillPos, spillSize);
