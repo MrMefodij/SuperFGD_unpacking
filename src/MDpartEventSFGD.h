@@ -105,7 +105,7 @@ private:
 
     unsigned int _nDataWords;
 
-    std::vector <MDpartEventSFGD*> *_trigEvents;
+    std::vector <MDpartEventSFGD*> * _trigEvents;
     unsigned int _previousTrTime;
     unsigned int _previousTrTag;
 

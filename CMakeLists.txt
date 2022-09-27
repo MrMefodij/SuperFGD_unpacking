@@ -17,7 +17,7 @@ LINK_DIRECTORIES(     ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 if (APPLE)
     set(CMAKE_MACOSX_RPATH ON)
-cmake_policy(SET CMP0042 NEW)
+    cmake_policy(SET CMP0042 NEW)
 endif(APPLE)
 
 if    (ROOT_FOUND)

@@ -34,7 +34,7 @@ public:
     MDfragmentSFGD(void *d = 0 ) : MDdataContainer(d) {}
     virtual ~MDfragmentSFGD() { this->Clean(); }
 
-    void SetDataPtr( void *d, uint32_t aSize=0 );
+    void SetDataPtr( void *d, uint32_t aSize=0, uint32_t gtsTagBeforeSpill =0);
     void SetPreviousSpill(bool prSpillEx = false, unsigned int prSpill=0);
     void Dump();
     void Init();
@@ -57,21 +57,21 @@ public:
 
 private:
      
-    unsigned int _boardId;
-    unsigned int _gateNumber;
-    unsigned int _gateTime;
-    unsigned int _gateTimeFrGts;
+    unsigned int _boardId = 0;
+    unsigned int _gateNumber = 0;
+    unsigned int _gateTime = 0;
+    unsigned int _gateTimeFrGts = 0;
   
-    unsigned int _gateTrailNumber;
-    unsigned int _gateTrailTime;
+    unsigned int _gateTrailNumber = 0;
+    unsigned int _gateTrailTime = 0;
   
     unsigned int _previousGtsTime = 0;
     unsigned int _previousGtsTag = 0;
   
     bool         _previousSpillTagExist = false;
-    unsigned int _previousSpillTag ;
+    unsigned int _previousSpillTag  = 0;
   
-    std::vector <MDpartEventSFGD*> _trigEvents;
+    std::vector <MDpartEventSFGD*> _trigEvents = {};
 };
 
 // ostream &operator<<(std::ostream &s, MDfragmentSFGD &df);

@@ -32,8 +32,8 @@ void MDpartEventSFGD::Init() {
   }
 
   _nDataWords = 1;
-    _gtsTag = -1;
-    _gateHeaderNumber = -1;
+  _gtsTag = 0;
+  _gateHeaderNumber = 0;
   _size = 4;
 
   unsigned int * ptr = Get32bWordPtr(0);
@@ -49,11 +49,11 @@ void MDpartEventSFGD::Init() {
     } else {
 
         _gtsTag = dw.GetGtsTag();
-        _gtsTagId = dw.GetTriggerTagShort();
+        _gtsTagId = dw.GetGtsTagShort();
       if (dw.GetGtsTag() != _previousTrTag +1 && _previousTrTag!=0)
           cout << "ERROR in MDpartEventSFGD::Init() : Trigger Tag is NOT consistent with previous Trigger Tag: " <<
                _gtsTag << " != " << _previousTrTag << "+ 1" << endl;
-      
+
       bool done(false);
       bool done2(false);
       _spillHeaderA = false;
