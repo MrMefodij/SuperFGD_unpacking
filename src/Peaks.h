@@ -9,7 +9,7 @@
 #define Peaks_h
 #include <stdio.h>
 
-using namespace std;
+
 
 class Peaks{
 public:
