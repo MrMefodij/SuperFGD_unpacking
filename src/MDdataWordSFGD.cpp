@@ -33,6 +33,7 @@ uint32_t MDdataWordSFGD::GetBoardId() {
 
 uint32_t MDdataWordSFGD::GetGateHeaderID(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & GateHeaderIDMask ) >> GateHeaderIDShift );
+    return 0;
 }
 
 uint32_t MDdataWordSFGD::GetGateType() {
@@ -72,6 +73,11 @@ uint32_t MDdataWordSFGD::GetHoldTimeStopFrGTS(){
 
 uint32_t MDdataWordSFGD::GetGtsTag(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & GtsTagMask ) >> GtsTagShift );
+    return 0;
+}
+
+uint32_t MDdataWordSFGD::GetGtsTagShort(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & GtsTagShortMask ) >> GtsTagShortShift );
     return 0;
 }
 
@@ -125,11 +131,6 @@ uint32_t MDdataWordSFGD::GetSpecialWord() {
     return 0;
 }
 
-uint32_t MDdataWordSFGD::GetTriggerTagShort(){
-    if (IsValid())  return ( (*(uint32_t*)(_data) & GtsTagShortMask ) >> GtsTagShift );
-    return 0;
-}
-
 void MDdataWordSFGD::Dump() {
   cout << *this;
 }
@@ -150,7 +151,7 @@ ostream & operator<<(ostream &s, MDdataWordSFGD &dw) {
 
         case MDdataWordSFGD::GTSHeader:
             s << "GTS Tag: " << dw.GetGtsTag()
-            << " (" << dw.GetTriggerTagShort() << ")";
+            << " (" << dw.GetGtsTagShort() << ")";
             break;
 
         case MDdataWordSFGD::TimeMeas:

@@ -47,8 +47,8 @@ public:
     uint32_t GetHoldTimeStartFrGTS();
     uint32_t GetHoldTimeStopFrGTS();
 
-
     uint32_t GetGtsTag();
+    uint32_t GetGtsTagShort();
 
     uint32_t GetChannelId();
     uint32_t GetHitId();
@@ -60,8 +60,6 @@ public:
 
     uint32_t GetGtsDataFlag();
     uint32_t GetGtsTime();
-
-    uint32_t GetTriggerTagShort();
 
     uint32_t GetSpecialWord();
 
@@ -96,7 +94,7 @@ private:
         GateTimeMask        = 0x0FFFFFFF,
 
         HoldTimeIDMask      = 0x00080000,
-        HoldTimeGTSMask        = 0x000007FF,
+        HoldTimeGTSMask     = 0x000007FF,
 
         GtsTagMask          = 0x0FFFFFFF,
         GtsTagShortMask     = 0x00000003,
@@ -140,7 +138,7 @@ private:
         AmplitudeIdShift    = 12,
         AmplitudeShift      = 0,
 
-        GtsDataFlagShift        = 27,
+        GtsDataFlagShift    = 27,
         GtsTimeShift        = 0,
 
         SpecialIDParamShift  = 0,

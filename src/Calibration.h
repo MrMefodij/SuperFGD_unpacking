@@ -8,14 +8,14 @@
 #ifndef Calibration_h
 #define Calibration_h
 #include "Peaks.h"
-
 #include <vector>
+
 class Calibration /*: public Peaks*/ {
 public:
     Calibration(){}
     void AddPeaks(Peaks new_peak);
 private:
-    vector<Peaks> vPeaks;
+    std::vector<Peaks> vPeaks;
 };
 
 #endif /* Calibration_h */

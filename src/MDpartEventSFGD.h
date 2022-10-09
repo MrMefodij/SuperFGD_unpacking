@@ -66,7 +66,7 @@ class MDpartEventSFGD : public MDdataContainer {
 
   unsigned int GetTriggerTag()                                      {return _gtsTag;}
   unsigned int GetTriggerTagId()                                    {return _gtsTagId;}
-  
+
   unsigned int GetSpillHeaderA()                                    {return _gateHeaderNumber;}
   unsigned int GetSpillHeaderABoardID()                             {return _gateHeaderBoardID;}
   
@@ -105,7 +105,7 @@ private:
 
     unsigned int _nDataWords;
 
-    std::vector <MDpartEventSFGD*> *_trigEvents;
+    std::vector <MDpartEventSFGD*> * _trigEvents;
     unsigned int _previousTrTime;
     unsigned int _previousTrTag;
 
