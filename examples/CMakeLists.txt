@@ -9,3 +9,5 @@ TARGET_LINK_LIBRARIES(ufe-monitor                 BabyMINDUnpack ${ROOT_LIBRARIE
 ADD_EXECUTABLE(unpack                             babyMindUnpack.cpp)
 TARGET_LINK_LIBRARIES(unpack                      BabyMINDUnpack ${ROOT_LIBRARIES})
 
+ADD_EXECUTABLE(calibration                             SFGDCalibration.cpp)
+TARGET_LINK_LIBRARIES(calibration                      BabyMINDUnpack ${ROOT_LIBRARIES} -lSpectrum)
