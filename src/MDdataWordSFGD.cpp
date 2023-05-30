@@ -126,6 +126,47 @@ uint32_t MDdataWordSFGD::GetGtsTime() {
     return 0;
 }
 
+uint32_t MDdataWordSFGD::GetOcbGateType(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & OcbGateType ) >> OcbGateTypeShift );
+    return 0;
+}
+
+uint32_t MDdataWordSFGD::GetOcbGateTag(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & OcbGateTag ) >> OcbGateTagShift );
+    return 0;
+}
+uint32_t MDdataWordSFGD::GetOcbEventNumber(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & OcbEventNumber ) >> OcbEventNumberShift );
+    return 0;
+}
+uint32_t MDdataWordSFGD::GetOcbGateOpenTimeout(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & OcbGateOpenTimeout ) >> OcbGateOpenTimeoutShift );
+    return 0;
+}
+uint32_t MDdataWordSFGD::GetOcbGateCloseError(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & OcbGateCloseError ) >> OcbGateCloseErrorShift );
+    return 0;
+}
+uint32_t MDdataWordSFGD::GetOcbFebDataErrNum(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & OcbFebDataErrNum ) >> OcbFebDataErrNumShift );
+    return 0;
+}
+
+uint32_t MDdataWordSFGD::GetFebGateFifo0Full(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & OcbFebGateFifo0Full ) >> OcbFebGateFifo0Shift );
+    return 0;
+}
+
+uint32_t MDdataWordSFGD::GetFebGateFifo1Full(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & OcbFebGateFifo1Full ) >> OcbFebGateFifo1Shift );
+    return 0;
+}
+
+uint32_t MDdataWordSFGD::GetFebGateErrNum(){
+    if (IsValid())  return ( (*(uint32_t*)(_data) & OcbFebGateErrNum ) >> OcbFebGateErrNumShift );
+    return 0;
+}
+
 uint32_t MDdataWordSFGD::GetSpecialWord() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & SpecialIDParamMask ) >> SpecialIDParamShift );
     return 0;
@@ -185,7 +226,7 @@ ostream & operator<<(ostream &s, MDdataWordSFGD &dw) {
 
         case MDdataWordSFGD::GateTrailer:
             s << "Gate Trailer (1)  BoardId: " << dw.GetBoardId()
-            << "Gate type: " << dw.GetGateType() <<
+            << " Gate type: " << dw.GetGateType() <<
               " Gate Number: " << dw.GetGateNumber();
             break;
 
@@ -201,7 +242,24 @@ ostream & operator<<(ostream &s, MDdataWordSFGD &dw) {
                 s << " Hold time Stop: "  << dw.GetHoldTimeStopFrGTS();
             }
             break;
-    
+
+        case MDdataWordSFGD::OcbGateHeader:
+            s << "Ocb Header Gate type: " << dw.GetOcbGateType();
+            s << " Gate Tag: " << dw.GetOcbGateTag() << " Event Number: " << dw.GetOcbEventNumber();
+            break;
+
+        case MDdataWordSFGD::OcbGateTrailer:
+            s << "Ocb Trailer Gate time open timeout: " << dw.GetOcbGateOpenTimeout();
+            s << " Gate Close error: " << dw.GetOcbGateCloseError();
+            s << " FEB data packet error: " << dw.GetOcbFebDataErrNum();
+            break;
+
+        case MDdataWordSFGD::FebDataTrailer:
+            s << "Feb Data Trailer Fifo 0 Full: " << dw.GetFebGateFifo0Full();
+            s << " Feb Data Trailer Fifo 1 Full: " << dw.GetFebGateFifo1Full();
+            s << "\nNumber of recorded errors: " << dw.GetFebGateErrNum();
+            break;
+
         case MDdataWordSFGD::SpecialWord:
             s << "SpecialWord: ";
             if (dw.GetSpecialWord()==65536)

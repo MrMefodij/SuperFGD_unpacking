@@ -61,6 +61,17 @@ public:
     uint32_t GetGtsDataFlag();
     uint32_t GetGtsTime();
 
+    uint32_t GetOcbGateType();
+    uint32_t GetOcbGateTag();
+    uint32_t GetOcbEventNumber();
+    uint32_t GetOcbGateOpenTimeout();
+    uint32_t GetOcbGateCloseError();
+    uint32_t GetOcbFebDataErrNum();
+
+    uint32_t GetFebGateFifo0Full();
+    uint32_t GetFebGateFifo1Full();
+    uint32_t GetFebGateErrNum();
+
     uint32_t GetSpecialWord();
 
     enum DWSFGDDataType {
@@ -72,8 +83,12 @@ public:
         GTSTrailer2     = 0x5,
         GateTrailer     = 0x6,
         GateTime        = 0x7,
+        OcbGateHeader   = 0x8,
+        OcbGateTrailer  = 0x9,
         HoldTime        = 0xB,
-   
+
+        FebDataTrailer  = 0xD,
+
         SpecialWord     = 0xF
     };
 
@@ -111,37 +126,61 @@ private:
         GtsDataFlagMask     = 0x08000000,
         GtsTimeMask         = 0x000FFFFF,
    
-        SpecialIDParamMask  = 0x000FFFFF
+        SpecialIDParamMask  = 0x000FFFFF,
+
+        OcbGateType         = 0x0E000000,
+        OcbGateTag          = 0x01800000,
+        OcbEventNumber      = 0x007FFFFF,
+
+        OcbGateOpenTimeout  = 0x00008000,
+        OcbGateCloseError   = 0x00004000,
+        OcbFebDataErrNum    = 0x00003FFF,
+
+        OcbFebGateFifo0Full = 0x00010000,
+        OcbFebGateFifo1Full = 0x00020000,
+        OcbFebGateErrNum    = 0x0000FFFF
     };
 
     enum DWSFGDShift {
-        DataTypeShift       = 28,
-        BoardIdShift        = 20,
-        GateHeaderIDShift   = 19,
-        GateTypeShift       = 16,
-        GateNumberShift     = 0,
-        GateTimeFrGtsShift  = 0,
-        GateTimeShift       = 0,
+        DataTypeShift           = 28,
+        BoardIdShift            = 20,
+        GateHeaderIDShift       = 19,
+        GateTypeShift           = 16,
+        GateNumberShift         = 0,
+        GateTimeFrGtsShift      = 0,
+        GateTimeShift           = 0,
 
-        HoldTimeIDShift     = 19,
-        HoldTimeGTSShift    = 0,
+        HoldTimeIDShift         = 19,
+        HoldTimeGTSShift        = 0,
 
-        GtsTagShift         = 0,
-        GtsTagShortShift    = 0,
+        GtsTagShift             = 0,
+        GtsTagShortShift        = 0,
 
-        ChannelIdShift      = 20,
-        HitIdShift          = 17,
-        TagIdShift          = 15,
-        EdgeIdShift         = 14,
-        HitTimeShift        = 0,
+        ChannelIdShift          = 20,
+        HitIdShift              = 17,
+        TagIdShift              = 15,
+        EdgeIdShift             = 14,
+        HitTimeShift            = 0,
 
-        AmplitudeIdShift    = 12,
-        AmplitudeShift      = 0,
+        AmplitudeIdShift        = 12,
+        AmplitudeShift          = 0,
 
-        GtsDataFlagShift    = 27,
-        GtsTimeShift        = 0,
+        GtsDataFlagShift        = 27,
+        GtsTimeShift            = 0,
 
-        SpecialIDParamShift  = 0,
+        SpecialIDParamShift     = 0,
+
+        OcbGateTypeShift        = 25,
+        OcbGateTagShift         = 23,
+        OcbEventNumberShift     = 0,
+
+        OcbGateOpenTimeoutShift = 15,
+        OcbGateCloseErrorShift  = 14,
+        OcbFebDataErrNumShift   = 0,
+
+        OcbFebGateFifo0Shift    = 16,
+        OcbFebGateFifo1Shift    = 17,
+        OcbFebGateErrNumShift   = 0
   };
 };
 

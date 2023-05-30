@@ -29,13 +29,13 @@
 #include "MDdataContainer.h"
 #include "MDdataWordSFGD.h"
 
-#define SFGD_FEB_NCHANNELS 255
+#define SFGD_FEB_NCHANNELS 256
 
 class MDpartEventSFGD : public MDdataContainer {
 
  public:
 
-  MDpartEventSFGD(void *d = 0 , unsigned int time = 0, unsigned int tag = 0);
+  MDpartEventSFGD(void *d = 0 , unsigned int* time = 0, unsigned int* tag = 0);
   virtual ~MDpartEventSFGD() {}
 
 
@@ -62,13 +62,8 @@ class MDpartEventSFGD : public MDdataContainer {
   bool         LGAmplitudeHitExists(unsigned int ich)               {return _lgHit[ich];}
   bool         HGAmplitudeHitExists(unsigned int ich)               {return _hgHit[ich];}
 
-  bool spillHeaderAExists()                                         {return _spillHeaderA;}
-
   unsigned int GetTriggerTag()                                      {return _gtsTag;}
   unsigned int GetTriggerTagId()                                    {return _gtsTagId;}
-
-  unsigned int GetSpillHeaderA()                                    {return _gateHeaderNumber;}
-  unsigned int GetSpillHeaderABoardID()                             {return _gateHeaderBoardID;}
   
   std::vector<unsigned int> GetLeadingTimes(unsigned int ich)       {return _leadingEdgeHitTime[ich]; }
   std::vector<unsigned int> GetTrailingTimes(unsigned int ich)      {return _trailingEdgeHitTime[ich]; }
@@ -77,18 +72,20 @@ class MDpartEventSFGD : public MDdataContainer {
 
   void SetTriggerEvents(std::vector <MDpartEventSFGD*> *te)         {_trigEvents = te;}
 
+  bool GateTrailerExist()                                         {return _gateTrailerExist;}
+
 private:
 
     unsigned int _gtsTime;
     unsigned int _gtsTag;
     unsigned int _gtsTagId;
-    unsigned int _gateHeaderNumber;
-    unsigned int _gateHeaderBoardID;
+//    unsigned int _gateHeaderNumber;
+//    unsigned int _gateHeaderBoardID;
 
     bool _lgHit[SFGD_FEB_NCHANNELS];
     bool _hgHit[SFGD_FEB_NCHANNELS];
-  
-    bool _spillHeaderA;
+
+//    bool _spillHeaderA;
 
     unsigned int _lgHitAmplitude[SFGD_FEB_NCHANNELS];
     unsigned int _hgHitAmplitude[SFGD_FEB_NCHANNELS];
@@ -106,8 +103,10 @@ private:
     unsigned int _nDataWords;
 
     std::vector <MDpartEventSFGD*> * _trigEvents;
-    unsigned int _previousTrTime;
-    unsigned int _previousTrTag;
+    unsigned int* _previousTrTime;
+    unsigned int* _previousTrTag;
+
+    bool _gateTrailerExist = false;
 
     friend ostream &operator<<(std::ostream &s, MDpartEventSFGD &df);
 };

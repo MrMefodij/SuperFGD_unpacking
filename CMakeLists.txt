@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
 project(unpacking)
-
 set(CMAKE_CXX_STANDARD 17)
 # Check if cmake has the required version
 cmake_minimum_required(VERSION 2.9.0 FATAL_ERROR)
@@ -31,4 +30,5 @@ message(STATUS "Linker flags : " ${CMAKE_EXE_LINKER_FLAGS}\n)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples)
+
 

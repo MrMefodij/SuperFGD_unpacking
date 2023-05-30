@@ -70,7 +70,9 @@ private:
     };
     uint32_t GetGateHeaderPosition(GateHeadersPositions position){
         if (!position.headerAEx || !position.headerBEx){
-            throw MDexception("Gate header A or B doesn't exist");
+            std::cout<< "Gate header A or B doesn't exist"<<std::endl;
+//            throw MDexception("Gate header A or B doesn't exist");
+            return std::min(position.headerA, position.headerB);
         }
         return std::min(position.headerA, position.headerB);
     }

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-MDpartEventSFGD::MDpartEventSFGD(void *d, unsigned int time, unsigned int tag): MDdataContainer(d),
+MDpartEventSFGD::MDpartEventSFGD(void *d, unsigned int* time, unsigned int* tag): MDdataContainer(d),
                                                                                 _gtsTag(-1), _nDataWords(0), _trigEvents(0) { _previousTrTime = time; _previousTrTag = tag;}
 
 void MDpartEventSFGD::SetDataPtr( void *d, uint32_t aSize ) {
@@ -33,7 +33,6 @@ void MDpartEventSFGD::Init() {
 
   _nDataWords = 1;
   _gtsTag = 0;
-  _gateHeaderNumber = 0;
   _size = 4;
 
   unsigned int * ptr = Get32bWordPtr(0);
@@ -47,19 +46,17 @@ void MDpartEventSFGD::Init() {
         cout << dw<<endl;
       throw MDexception("ERROR in MDpartEventSFGD::Init() : 1st word is not a trigger header");
     } else {
-
         _gtsTag = dw.GetGtsTag();
         _gtsTagId = dw.GetGtsTagShort();
-      if (dw.GetGtsTag() != _previousTrTag +1 && _previousTrTag!=0)
+      if (dw.GetGtsTag() != *_previousTrTag +1 && *_previousTrTag!=0)
           cout << "ERROR in MDpartEventSFGD::Init() : Trigger Tag is NOT consistent with previous Trigger Tag: " <<
-               _gtsTag << " != " << _previousTrTag << "+ 1" << endl;
+               _gtsTag << " != " << *_previousTrTag << "+ 1" << endl;
 
       bool done(false);
       bool done2(false);
-      _spillHeaderA = false;
       
       while (!done) {
-        ptr++;
+        ++ptr;
         dw.SetDataPtr(ptr);
         _size += 4;
         int dataType = dw.GetDataType();
@@ -76,6 +73,7 @@ void MDpartEventSFGD::Init() {
                 for (int i = nTr-1; i >= lastPending; --i) {
                   if (_trigEvents->at(i)->GetTriggerTagId() == dw.GetTagId()) {
                     _trigEvents->at(i)->AddTimeHit(dw);
+                    ++_nDataWords;
                     break;
                   }
                 }
@@ -95,6 +93,7 @@ void MDpartEventSFGD::Init() {
                         for (int i = nTr-1; i >= lastPending; --i) {
                             if (_trigEvents->at(i)->GetTriggerTagId() == dw.GetTagId()) {
                                 _trigEvents->at(i)->AddAmplitudeHit(dw);
+                                ++_nDataWords;
                                 break;
                             }
                         }
@@ -105,22 +104,14 @@ void MDpartEventSFGD::Init() {
 
           case MDdataWordSFGD::GTSTrailer1 :
             done = true;
-            ++_nDataWords;
-            break;
-            
-          case MDdataWordSFGD::GateHeader :
-            if (dw.GetGateHeaderID() == 0) {
-                _gateHeaderNumber = dw.GetGateNumber();
-                _spillHeaderA = true;
-                _gateHeaderBoardID = dw.GetBoardId();
-                cout << "2: SFGD spill Header \"A\" Board ID " << _gateHeaderBoardID << " SpillTag: " << dw.GetGateNumber() << endl;
-            }
+            * _previousTrTag = dw.GetGtsTag();
             ++_nDataWords;
             break;
             
           case MDdataWordSFGD::GateTrailer :
             done = true;
             done2 = true;
+            _gateTrailerExist = true;
             ++_nDataWords;
             break;
 
@@ -130,8 +121,6 @@ void MDpartEventSFGD::Init() {
                << dw.GetDataType() << ")";
             cout << dw << endl;
             throw MDexception(ss.str());
-            return;
-            break;
         }
       }
       
@@ -153,15 +142,16 @@ void MDpartEventSFGD::Init() {
         } else {
             ++_nDataWords;
             _size +=4;
-            if ( dw.GetGtsTime() != _previousTrTime +1 && dw.GetGtsTime() !=0 && dw.GetGtsTime() !=1 && dw.GetGtsTime() !=2)
+            if ( dw.GetGtsTime() != *_previousTrTime +1 && dw.GetGtsTime() !=0 && dw.GetGtsTime() !=1)
                 cout << "ERROR in MDpartEventSFGD::Init() : Trigger Time is not consistent: "
-                << dw.GetGtsTime() << " != " << _previousTrTime <<" +1"<<endl;
+                << dw.GetGtsTime() << " != " << *_previousTrTime <<" +1"<<endl;
             _gtsTime = dw.GetGtsTime();
+            *_previousTrTime = dw.GetGtsTime();
         //cout <<"1:"<< _gtsTime<<endl;
         }
       }
         else{
-          _gtsTime = _previousTrTime + 1;
+          _gtsTime = *_previousTrTime + 1;
             //cout<<"2:" << _gtsTime <<endl;
         }
     }

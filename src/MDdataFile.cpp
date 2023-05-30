@@ -77,6 +77,7 @@ void MDdateFile::init() {
                 break;
             case MDdataWordSFGD::GateHeader:
                 insideSpill = true;
+//                cout << dw << endl;
                 if (dw.GetGateHeaderID() == 0){
                     _curPos = _ifs.tellg();
                     _spill_header_pos.back().headerA = _curPos - 4;
@@ -91,6 +92,8 @@ void MDdateFile::init() {
             case MDdataWordSFGD::GateTrailer:
                 _curPos = _ifs.tellg();
                 _spill_size.push_back(_curPos - GetGateHeaderPosition(_spill_header_pos.back()) + 4);
+//                cout << dw << endl;
+//                cout <<_curPos/4 << " Spill size: " << _spill_size.back()/4 << endl;
                 _ifs.read( _eventBuffer, 4 );
                 _spill_header_pos.push_back({0,0, false, false});
                 _gts_tag_spill.push_back(_gtsTagBeforeSpillGate);
