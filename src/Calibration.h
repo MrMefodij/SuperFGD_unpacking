@@ -20,9 +20,6 @@
 #include "Peaks.h"
 #include <vector>
 
-Int_t nfound = 30;
-
-Double_t fpeaks(Double_t *x, Double_t *par);
 
 class Calibration{
 public:

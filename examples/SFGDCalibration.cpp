@@ -75,7 +75,6 @@ int main(int argc, char **argv){
             }
             c1->Update();
             c1->Write(channel.c_str()); 
-            //hFEBCH[iCh]->Write();
             delete hFEBCH[iCh];
         }
         ++j;
