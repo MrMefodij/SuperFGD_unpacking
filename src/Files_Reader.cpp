@@ -29,7 +29,7 @@ string GetDir(string str){
 
 string GetLocation(string str){
      
-    int i = str.rfind("_Slot_");
+    int i = str.rfind(".bin");
     string way = str.substr(0,i);
     return way;
 }

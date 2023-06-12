@@ -34,8 +34,9 @@ public:
     MDfragmentSFGD(void *d = 0 ) : MDdataContainer(d) {}
     virtual ~MDfragmentSFGD() { this->Clean(); }
 
-    void SetDataPtr( void *d, uint32_t aSize=0, uint32_t gtsTagBeforeSpill =0);
+    void SetDataPtr( void *d, uint32_t aSize=0);
     void SetPreviousSpill(bool prSpillEx = false, unsigned int prSpill=0);
+
     void Dump();
     void Init();
     void Clean();
@@ -64,7 +65,7 @@ private:
   
     unsigned int _gateTrailNumber = 0;
     unsigned int _gateTrailTime = 0;
-  
+
     unsigned int _previousGtsTime = 0;
     unsigned int _previousGtsTag = 0;
   

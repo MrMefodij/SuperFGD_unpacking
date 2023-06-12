@@ -3,9 +3,8 @@
 
 using namespace std;
 
-void MDfragmentSFGD::SetDataPtr(void *d, uint32_t aSize, uint32_t gtsTagBeforeSpill) {
+void MDfragmentSFGD::SetDataPtr(void *d, uint32_t aSize) {
     MDdataContainer::SetDataPtr(d);
-    _previousGtsTag = gtsTagBeforeSpill;
     this->Init();
 }
 
@@ -62,13 +61,14 @@ void MDfragmentSFGD::Init() {
                     dw.SetDataPtr(ptr);
 //                    cout<< dw << endl;
                     if (dw.GetDataType() == MDdataWordSFGD::GTSHeader) {
+//                        cout<< dw << endl;
                         MDpartEventSFGD *xPe = new MDpartEventSFGD(ptr, &_previousGtsTime, &_previousGtsTag);
                         xPe->SetTriggerEvents(&_trigEvents);
                         xPe->Init();
                         unsigned int pe_size = xPe->GetSize();
                         _size += pe_size;
                         ptr += pe_size/4;
-                        if (xPe->getNumDataWords() > 3){
+                        if (xPe->getNumDataWords() > 2){
                             _trigEvents.push_back( xPe );
                         } else {
                             delete xPe;

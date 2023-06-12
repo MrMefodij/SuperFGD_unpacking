@@ -17,31 +17,24 @@
  *
  */
 
-#include <stdio.h>
-#include <string.h>
 #include <exception>
 #include <fstream>
 #include <vector>
-#include "TFile.h"
-#include "TDirectory.h"
-#include "TH1D.h"
-#include "TSystem.h"
-#include "TMacro.h"
 #include <TTree.h>
+#include <TFile.h>
+#include <TSystem.h>
+#include <TMacro.h>
 #include "MDfragmentSFGD.h"
 #include "MDpartEventSFGD.h"
 #include "MDargumentHandler.h"
 #include "MDdataFile.h"
+#include "Files_Reader.h"
+#include "Connection_Map.h"
+#include "ToaEventDummy.h"
+
+#define SFGD_FEBS_NUM 280
 
 using namespace std;
-
-string GetLocation(string str)
-{
-
-    int i = str.rfind("_Slot_");
-    string way = str.substr(0,i);
-    return way;
-}
 
 char *dataBuff;
 uint32_t* dataPtr;
@@ -63,19 +56,24 @@ int main( int argc, char **argv ) {
     }
 
     string rootFileOutput=GetLocation(vFileNames[0].c_str());
-    rootFileOutput+="_all.root";
+    rootFileOutput+="_plots.root";
     cout << rootFileOutput<<endl;
 
     TFile rfile(rootFileOutput.c_str(), "recreate");
+    std::vector<ToaEventDummy> FEBs[SFGD_FEBS_NUM];
+    for (Int_t i=0;i<SFGD_FEBS_NUM;++i) {
+        FEBs[i].clear();
+    }
 
-    TTree* FEBtree[65];
+    string mapFile = "../connection_map/map.txt";
+    Connection_Map map(mapFile);
+    try {
+       map.Init();
+    } catch (const exception& e) {
+        cerr << "Unable to open file " << mapFile << endl;
+        exit(1);
+    }
 
-    ostringstream sFEBnum;
-    string sFEB;
-
-
-    bool firstSpillTagExist = false;
-    unsigned int firstSpillTag = 0;
 
     for (vector<string>::iterator itFileName=vFileNames.begin(); itFileName != vFileNames.end(); itFileName++) {
         sFileName = *itFileName;
@@ -109,54 +107,65 @@ int main( int argc, char **argv ) {
         filename = sFileName;
         string rootFilename = sFileName;
 
+        TH1I  h_lgah("h_lg_amp_hit_ch", "hit channels", SFGD_FEB_NCHANNELS, 0, SFGD_FEB_NCHANNELS);
+        TH1I  h_hgah("h_lh_amp_hit_ch", "hit channels", SFGD_FEB_NCHANNELS, 0, SFGD_FEB_NCHANNELS);
+        TH1I  h_lth("h_le_time_hit_ch", "hit channels", SFGD_FEB_NCHANNELS, 0, SFGD_FEB_NCHANNELS);
+        TH1I  h_tth("h_te_time_hit_ch", "hit channels", SFGD_FEB_NCHANNELS, 0, SFGD_FEB_NCHANNELS);
+        TH1I  h_lga("h_lg_ampl", "hit ampl.", 200, 0, 5000);
+        TH1I  h_hga("h_hg_ampl", "hit ampl.", 200, 0, 5000);
 
         MDdateFile dfile(filename);
 // Open the file and loop over events.
-        Int_t BordID=0;
+        unsigned int BordID=0;
         char *eventBuffer;
-        uint32_t gtsTagBeforeSpill;
         bool _previousSpillTagExist = false;
         unsigned int _previousSpillTag = 0;
         if ( dfile.open() ) { // There is a valid files to unpack
             dfile.init();
-
             int xEv(0);
             do { // Loop over all spills
-                eventBuffer =  dfile.GetNextEvent(gtsTagBeforeSpill);
+                eventBuffer =  dfile.GetNextEvent();
                 try {
                     MDfragmentSFGD  spill;
-
                     spill.SetPreviousSpill(_previousSpillTagExist,_previousSpillTag);
                     spill.SetDataPtr(eventBuffer);
-
-                    MDpartEventSFGD *event;
                     int nTr = spill.GetNumOfTriggers();
 //                    cout << "nTr : " << nTr << endl;
-                    BordID = (Int_t)spill.GetBoardId();
+                    BordID = spill.GetBoardId();
+                    ToaEventDummy temp(0, BordID, spill.GetGateNumber(),
+                    spill.GetGateTime(), spill.GetGateTimeFrGTS(), spill.GetGateTrailTime());
 
                     for (int i=0; i<nTr; ++i) {
-                        event = spill.GetTriggerEventPtr(i);
-                        //event->Dump();
+                        MDpartEventSFGD *trEv = spill.GetTriggerEventPtr(i);
+//                        event->Dump();
                         for (int ich=0; ich<SFGD_FEB_NCHANNELS; ++ich) {
-                            int nlHits = 0;
-                            int ntHits = 0;
-                            nlHits = event->GetNLeadingEdgeHits(ich);
-                            for (unsigned int ih=0; ih<nlHits; ++ih) {
-                                bool TrailTimeExist = false;
-                                int IDevent = event->GetHitTimeId(ih, ich, 'l');
-                                ntHits = event->GetNTrailingEdgeHits(ich);
+                            int nHits = trEv->GetNLeadingEdgeHits(ich);
+                            if (nHits)
+                                h_lth.Fill(ich, nHits);
 
+                            nHits = trEv->GetNTrailingEdgeHits(ich);
+                            if (nHits)
+                                h_tth.Fill(ich, nHits);
+
+                            if (trEv->LGAmplitudeHitExists(ich)) {
+                                int q = trEv->GetHitAmplitude(ich, 'l');
+                                h_lga.Fill(q);
+                                h_lgah.Fill(ich);
+                            }
+
+                            if (trEv->HGAmplitudeHitExists(ich)) {
+                                int q = trEv->GetHitAmplitude(ich, 'h');
+                                h_hga.Fill(q);
+                                h_hgah.Fill(ich);
                             }
                         }
                     }
+                    FEBs[BordID].push_back(std::move(temp));
                 } catch (MDexception & lExc)  {
                     std::cerr <<  lExc.GetDescription() << endl
                               << "Unpacking exception\n"
                               << "Spill skipped!\n\n"
                               << "Here it should fill with negative numbers. \n\n";
-                    if (_previousSpillTag==0){
-                        _previousSpillTag = firstSpillTag -1;
-                    }
                 } catch(std::exception & lExc) {
                     std::cerr << lExc.what() << std::endl
                               << "Standard exception\n"
@@ -168,13 +177,33 @@ int main( int argc, char **argv ) {
             } while ( eventBuffer );
         }
 
-        FEBtree[BordID]-> Write("",TObject::kOverwrite);
-        cout << "Number of spills on FEB "<< BordID<< ": "<< FEBtree[BordID]->GetEntries()<<endl;
-        FEBtree[BordID]->Delete();
+        TTree* FEBtree[SFGD_FEBS_NUM];
+        ostringstream sFEBnum;
+        string sFEB;
+//        gInterpreter->GenerateDictionary("vector<ToaEventDummy>", "../oaEventDummy/ToaEventDummy.h");
+//        gInterpreter->GenerateDictionary("ToaEventDummy", "../oaEventDummy/ToaEventDummy.h");
+//        gInterpreter->GenerateDictionary("vector<ToaEventDummy>", "vector");
+        for (Int_t ih=0; ih<SFGD_FEBS_NUM; ih++) {
+            if (!FEBs[ih].empty()) {
+                sFEBnum.str("");
+                sFEBnum << ih;
+                sFEB = "FEB_" + sFEBnum.str();
+                FEBtree[ih] = new TTree(sFEB.c_str(), sFEB.c_str());
+                FEBtree[ih]->Branch((sFEB).c_str(),"vector<ToaEventDummy>",&FEBs[ih]);
+                FEBtree[ih]->Write("", TObject::kOverwrite);
+            }
+        }
 
+        h_lgah.Write();
+        h_hgah.Write();
+        h_lth.Write();
+        h_tth.Write();
+        h_lga.Write();
+        h_hga.Write();
         dfile.close();
         delete dataBuff;
     }
+
     rfile.Close();
     fList.close();
     return 0;

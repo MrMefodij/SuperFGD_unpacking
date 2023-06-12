@@ -113,14 +113,13 @@ void MDdateFile::init() {
     this->reset();
 }
 
-char* MDdateFile::GetNextEvent(uint32_t & gtsTag) {
+char* MDdateFile::GetNextEvent() {
 
   if ( (unsigned int)(++_lastSpill) >= _spill_size.size() )
    return NULL;
 
   uint32_t spillSize = _spill_size[_lastSpill];
   uint32_t spillPos  = std::min(_spill_header_pos[_lastSpill].headerA, _spill_header_pos[_lastSpill].headerB);
-  gtsTag = _gts_tag_spill[_lastSpill];
   cout << "GetNextEvent  pos: " << spillPos/4 << "  size: " << spillSize/4 
        << " in DW units (4 bytes)" << endl;
   return GetSpill(spillPos, spillSize);

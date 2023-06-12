@@ -13,6 +13,7 @@
 //#include "Peaks.h"
 #include "Calibration.h"
 #include "Files_Reader.h"
+#include "MDpartEventSFGD.h"
 #include <map>
 using namespace std;
 
@@ -28,7 +29,7 @@ int main(int argc, char **argv){
     getline(fList,sFileName);
     string rootFileOutput=GetLocation(sFileName.c_str());
     rootFileOutput+="_channels_signal.root";
-    TFile wfile = TFile(rootFileOutput.c_str(), "RECREATE");
+    TFile *wfile = new TFile(rootFileOutput.c_str(), "RECREATE");
     TCanvas *c1 = new TCanvas("c1","",0,10,700,500);
     int j = 0;
     map<string,vector<Peaks>> data;
@@ -37,7 +38,7 @@ int main(int argc, char **argv){
     fList.seekg(0);
     while(getline(fList,sFileName)){
         cout <<sFileName<<endl;
-        Int_t channels_num = 256;
+        Int_t channels_num = SFGD_FEB_NCHANNELS;
         TH1F *hFEBCH[channels_num];
         File_Reader file_reader;
         string gainFileOutput = file_reader.Read_MDdataWordSFGD(sFileName);
@@ -74,13 +75,12 @@ int main(int argc, char **argv){
                 cout <<"Problem in channel: "<<iCh<< endl;
             }
             c1->Update();
-            c1->Write(channel.c_str()); 
+            c1->Write(channel.c_str());
             delete hFEBCH[iCh];
         }
         ++j;
     }   
     fList.close();
-
-
+    wfile->Write();
     return 0;
 }

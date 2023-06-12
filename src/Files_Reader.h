@@ -19,6 +19,7 @@
 #include <TH1.h>
 
 #include "MDdataWordSFGD.h"
+#include "MDpartEventSFGD.h"
 
 std::string GetMCRnumber(std::string str);
 std::string GetSlotNumber(std::string str);
@@ -39,7 +40,7 @@ public:
     Int_t Fill_FEB();
     void Fit_hFEBCH();
 private:
-    Int_t channels_num = 256;
+    Int_t channels_num = SFGD_FEB_NCHANNELS;
     
     std::string MCRnum;
     std::string Slotnum;
@@ -48,7 +49,7 @@ private:
     std::string sCh;
     uint32_t* dataPtr = new uint32_t;
     int dwCount = 0;
-    TH1F *hFEBCH[256];// = new TH1F[channels_num];
+    TH1F *hFEBCH[SFGD_FEB_NCHANNELS];// = new TH1F[channels_num];
     
 };
 #endif /* Files_Reader_h */

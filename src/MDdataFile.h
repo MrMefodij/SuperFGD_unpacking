@@ -50,7 +50,7 @@ public:
     void  close();
 
     void  init();
-    char* GetNextEvent(uint32_t & gtsTag);
+    char* GetNextEvent();
 
     uint32_t GetStreamPos() {
         _curPos = _ifs.tellg();
