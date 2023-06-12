@@ -3,14 +3,13 @@ message(STATUS "src ... oaEventDummy")
 AUX_SOURCE_DIRECTORY(.                 SOURCE_FILES)
 #message(STATUS "${SOURCE_FILES}")
 INCLUDE_DIRECTORIES(. )
-set (EVENT_DICT_HEADERFILES
-        ./*.h
-        )
 
-message(STATUS "${EVENT_DICT_HEADERFILES}")
+message(STATUS "Looking for ROOT")
+find_package(ROOT REQUIRED COMPONENTS RIO)
+message(STATUS "ROOT ${ROOT_VERSION} found at ${ROOT_BINDIR}")
 
-ROOT_GENERATE_DICTIONARY(SFGDoaEventDummyDict ToaEventDummy.h  LINKDEF LinkDef.h )
-#ROOT_GENERATE_DICTIONARY(oaEvents_dict twoints.hpp TChannelId.hxx MODULE readwrite_twoints LINKDEF LinkDef.h)
+ROOT_GENERATE_DICTIONARY(SFGDoaEventDummyDict ToaEventDummy.h TDigitDummy.h TSFGDigit.hxx  LINKDEF LinkDef.h )
 
-ADD_LIBRARY(SFGDoaEventDummy      SHARED            ${SOURCE_FILES})
+
+ADD_LIBRARY(SFGDoaEventDummy      SHARED            ${SOURCE_FILES} SFGDoaEventDummyDict.cxx)
 TARGET_LINK_LIBRARIES(SFGDoaEventDummy              ${ROOT_LIBRARIES})

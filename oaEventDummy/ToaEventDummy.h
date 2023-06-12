@@ -9,8 +9,9 @@
 
 class ToaEventDummy {
 public:
+    ToaEventDummy();
     ToaEventDummy(unsigned int eventNumber, unsigned int boardId, unsigned int gateNumber,
-                  unsigned int gateTime, unsigned int gateTimeFrGts, unsigned int _gateTrailTime);
+                  unsigned int gateTime, unsigned int gateTimeFrGts, unsigned int gateTrailTime);
     void SetOaEvent();
 
 private:

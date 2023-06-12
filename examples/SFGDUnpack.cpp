@@ -180,9 +180,7 @@ int main( int argc, char **argv ) {
         TTree* FEBtree[SFGD_FEBS_NUM];
         ostringstream sFEBnum;
         string sFEB;
-//        gInterpreter->GenerateDictionary("vector<ToaEventDummy>", "../oaEventDummy/ToaEventDummy.h");
-//        gInterpreter->GenerateDictionary("ToaEventDummy", "../oaEventDummy/ToaEventDummy.h");
-//        gInterpreter->GenerateDictionary("vector<ToaEventDummy>", "vector");
+
         for (Int_t ih=0; ih<SFGD_FEBS_NUM; ih++) {
             if (!FEBs[ih].empty()) {
                 sFEBnum.str("");
@@ -191,6 +189,7 @@ int main( int argc, char **argv ) {
                 FEBtree[ih] = new TTree(sFEB.c_str(), sFEB.c_str());
                 FEBtree[ih]->Branch((sFEB).c_str(),"vector<ToaEventDummy>",&FEBs[ih]);
                 FEBtree[ih]->Write("", TObject::kOverwrite);
+                cout<<"FEB_" + sFEBnum.str() << "size: " <<FEBs[ih].size()<<endl;
             }
         }
 
