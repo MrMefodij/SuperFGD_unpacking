@@ -34,3 +34,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/oaEvent)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/oaEventDummy)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples)
+
+install(FILES ${CMAKE_BINARY_DIR}/oaEventDummy/libSFGDoaEventDummyDict_rdict.pcm
+        ${CMAKE_BINARY_DIR}/oaEventDummy/libSFGDoaEventDummyDict.rootmap
+        ${CMAKE_BINARY_DIR}/oaEventDummy/SFGDoaEventDummyDict.cxx
+        DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib)
