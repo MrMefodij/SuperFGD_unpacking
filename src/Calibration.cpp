@@ -26,15 +26,19 @@ void Calibration::Gain_Calculation(const vector<Peaks> & peaks){
     hg = distance / (int)(peaks.size()-2);
     hg_error= sqrt(distance_error/(peaks.size()-1));
     }
-    if(peaks.size() == 2){
-        distance_error += pow(peaks[0].GetPositionError(),2);
-        distance_error += pow(peaks[1].GetPositionError(),2);
-        hg = peaks[1].GetPosition()-peaks[0].GetPosition();;
-        hg_error= sqrt(distance_error/2) ;
+    else{
+        hg = 0;
+        hg_error = 0;
     }
+    // if(peaks.size() == 2){
+    //     distance_error += pow(peaks[0].GetPositionError(),2);
+    //     distance_error += pow(peaks[1].GetPositionError(),2);
+    //     hg = peaks[1].GetPosition()-peaks[0].GetPosition();;
+    //     hg_error= sqrt(distance_error/2) ;
+    // }
 }
 
-TH1F* Calibration::SFGD_Calibration(TH1F * &h){
+TH1F* Calibration::SFGD_Calibration(TH1F * &h, std::string name){
     Int_t npeaks = 30;
     TH1F* hFEBCH = h;
     TSpectrum *s = new TSpectrum(2*npeaks);
@@ -66,12 +70,15 @@ TH1F* Calibration::SFGD_Calibration(TH1F * &h){
             if(p==0 || (p > 0 && (par[3*p+3] - par[3*(p-1)+3]) > 0)){
                 TF1 * fit_1 = new TF1("fit_1","gaus",par[3*p+3]-4*par[3*p+4],par[3*p+3]+4*par[3*p+4]);
                 hFEBCH->Fit("fit_1","qr+");
-                Peaks peak = {fit_1->GetParameter(1),fit_1->GetParError(1),(int)(par[3*p+2]),fit_1->GetParameter(0)};
+                Peaks peak = {fit_1->GetParameter(1),fit_1->GetParError(1),(int)(par[3*p+2]),fit_1->GetParameter(2)};
                 peaks.push_back(peak);
+
             }
         }
     }
     Gain_Calculation(peaks);
+    gain[name] = hg;
+    // std::cout << name<<": "<<hg<<"+/-"<<hg_error<<std::endl;
     hFEBCH->GetYaxis()->SetTitle("Number of events");
     hFEBCH->GetXaxis()->SetTitle("HG ADC channels");
     return hFEBCH;
@@ -93,4 +100,13 @@ TLegend* Calibration::Calibration_Legend(){
     legend->AddEntry((TObject*)0, gain.c_str(), "");
     return legend;
 }
+
+// TH1F* Gain_Distrubution(){
+//     TH1F* hGain = new TH1F("Gain_distrubution","Gain_distrubution",  701, 0, 700);
+//     for (auto it = gain.begin(); it != gain.end(); it++) {
+//        // cout << it->first<<endl;
+//        hGain->Fill(it->first);
+//     }
+//     return  hGain;
+// }
 
