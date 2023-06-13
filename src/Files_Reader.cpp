@@ -45,12 +45,13 @@ void File_Reader::ReadFile(const string& sFileName){
         MDdataWordSFGD dw(dataPtr);
         switch (dw.GetDataType()) {
             case MDdataWordSFGD::GateHeader:
-                std::cout << "Feb# " << dw.GetBoardId()<<endl;
+                // std::cout << "Feb# " << dw.GetBoardId()<<endl;
+                NFEB.insert(dw.GetBoardId());
+                FEB_number = dw.GetBoardId();
                 break;
             case MDdataWordSFGD::ChargeMeas:
                 if (dw.GetAmplitudeId()==2){
-                    NFEB.insert(dw.GetBoardId());
-                    hFEBCH[dw.GetBoardId()][dw.GetChannelId()]->Fill(dw.GetAmplitude());
+                    hFEBCH[FEB_number][dw.GetChannelId()]->Fill(dw.GetAmplitude());
                 }
             break;
         default:

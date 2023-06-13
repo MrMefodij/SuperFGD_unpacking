@@ -69,8 +69,8 @@ int main(int argc, char **argv){
                 delete hFEBCH;
             }
         } 
+       wfile->Close();
     }  
-    wfile->Close();
     fList.close();
     return 0;
 }

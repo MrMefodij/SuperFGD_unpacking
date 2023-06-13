@@ -1,3 +1,5 @@
+#ifndef FILES_READER_H
+#define FILES_READER_H
 #include <fstream>
 #include <iomanip>
 #include <sstream>
@@ -30,6 +32,7 @@ private:
     std::string sCh;
     uint32_t* dataPtr = new uint32_t;
     TH1F *hFEBCH[SFGD_NFEB][SFGD_FEB_NCHANNELS];
+    Int_t FEB_number = 0;
     
 };
 #endif /* Files_Reader_h */
