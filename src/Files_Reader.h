@@ -1,14 +1,3 @@
-//
-//  Files_Reader.h
-//  SFGD_collibration
-//
-//  Created by Maria on 08.10.2022.
-//
-
-#ifndef Files_Reader_h
-#define Files_Reader_h
-
-#include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
