@@ -1,7 +1,3 @@
-//
-//  Peaks.h
-//  SuperFGD
-//
 //  Created by Maria on 27.09.2022.
 //
 
@@ -13,19 +9,19 @@
 
 class Peaks{
 public:
-    double GetPosition() const {return position;}
-    double GetPositionError() const {return position_error;}
-    int GetHeight() const {return height;}
-    // double GetWidthRhs() const {return width_rhs;}
-    // double GetWidthLhs() const {return width_lhs;}
-    double GetStdDeviation() const {return std_deviation;}
-    Peaks(double new_position,double new_position_error,int new_height, /*double new_width_rhs,double new_width_lhs,*/ double new_std_deviation);
+    double GetPosition() const {return _position;}
+    double GetPositionError() const {return _position_error;}
+    int GetHeight() const {return _height;}
+    // double GetWidthRhs() const {return _width_rhs;}
+    // double GetWidthLhs() const {return _width_lhs;}
+    double GetStdDeviation() const {return _std_deviation;}
+    Peaks(double position,double position_error,int height, double std_deviation);
     Peaks(){}
 private:
-    double position;
-    double position_error;
-    int height; // Number of events
-    double std_deviation;
+    double _position;
+    double _position_error;
+    int _height; // Number of events
+    double _std_deviation;
 };
 
 

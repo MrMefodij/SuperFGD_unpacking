@@ -1,16 +1,8 @@
-//
-//  Peaks.cpp
-//  SuperFGD
-//
 //  Created by Maria on 27.09.2022.
 //
 
 #include "Peaks.h"
 // Конструктор Peaks
-Peaks::Peaks(double new_position,double new_position_error,int new_height, /*double new_width_rhs, double new_width_lhs,*/ double new_std_deviation){
-        position = new_position;
-        position_error = new_position_error;
-        height = new_height;
-        std_deviation = new_std_deviation;
-    }
+Peaks::Peaks(double position,double position_error,int height, double std_deviation) :
+                _position(position), _position_error(position_error), _height(height), _std_deviation(std_deviation){}
 
