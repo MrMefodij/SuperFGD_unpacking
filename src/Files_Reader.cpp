@@ -44,6 +44,9 @@ void File_Reader::ReadFile(const string& sFileName){
         ifs.read((char*)dataPtr, 4 );
         MDdataWordSFGD dw(dataPtr);
         switch (dw.GetDataType()) {
+            case MDdataWordSFGD::GateHeader:
+                std::cout << "Feb# " << dw.GetBoardId()<<endl;
+                break;
             case MDdataWordSFGD::ChargeMeas:
                 if (dw.GetAmplitudeId()==2){
                     NFEB.insert(dw.GetBoardId());
