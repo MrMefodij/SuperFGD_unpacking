@@ -17,6 +17,10 @@
  *
  */
 
+//
+// Created by amefodev on 13.06.2023. mrmefodij@gmail.com
+//
+
 #include <stdio.h>
 #include <string.h>
 #include <exception>

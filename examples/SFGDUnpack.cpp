@@ -17,6 +17,10 @@
  *
  */
 
+//
+// Created by amefodev on 13.06.2023. mrmefodij@gmail.com
+//
+
 #include <exception>
 #include <fstream>
 #include <vector>
@@ -67,6 +71,12 @@ int main( int argc, char **argv ) {
 
     if ( argh.GetValue("nwords", intBuf) != MDARGUMENT_STATUS_OK ) return -1;
     int nWords = intBuf;
+
+    std::ifstream ifs((filename).c_str());
+    if ( ifs.fail() ) {
+        cerr << "Can not open file " << filename << endl;
+        return 1;
+    }
 
     string rootFileOutput=GetLocation(filename.c_str(), ".bin");
     rootFileOutput+="_plots.root";
