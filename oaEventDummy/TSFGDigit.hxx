@@ -1,7 +1,7 @@
 #ifndef TSFGDigit_hxx_seen
 #define TSFGDigit_hxx_seen
-#include "TDigitDummy.h"
 
+#include <fstream>
 /// A single digit for the SuperFGD CITIROC electronics.  See the "getter"
 /// method definitions for documentation about the values in the class.
 ///
@@ -68,7 +68,7 @@
 ///
 /// Note: In the Digit, the analog amplitude is associated with all possible
 ///   TDC values, and a bit is set as determined by the above heuristic.
-class TSFGDigit : public TDigitDummy {
+class TSFGDigit {
 public:
     TSFGDigit ();
 //    virtual ~TSFGDigit();
@@ -88,16 +88,20 @@ public:
     /// The matchedAdcTdc provides a hint that a particular TDC should be used
     /// with the ADC.  This bit should be set by the eventUnpack code using
     /// the heuristic described on FEB protocol v1.8 page 13.
-    TSFGDigit( unsigned int chan,
+    TSFGDigit(
+              unsigned int gtsTime,
+              unsigned int chan,
               unsigned int risingEdgeTDC,
+              bool fallingEdgeExist,
               unsigned int fallingEdgeTDC,
               unsigned int highGainADC,
               unsigned int lowGainADC,
-//              unsigned int gtsTime,
               bool matchedADCandTDC);
 
     /// Return the GTS time.  (20 bit value, 10 us resolution)
     int GetGTSCounter() const;
+
+    int GetChannelNumber() const;
 
     /// Return the rising edge TDC counter.  This counts from the last GTS
     /// counter value (13 bits, 1.25 ns resolution, 10.24 us max)
@@ -122,9 +126,10 @@ public:
 //    virtual void ls(Option_t* opt = "") const;
 
 private:
-
+    unsigned int _gtsTime;
     unsigned int _chan;
     unsigned int _risingEdgeTDC;
+    bool         _fallingEdgeExist;
     unsigned int _fallingEdgeTDC;
     unsigned int _highGainADC;
     unsigned int _lowGainADC;
@@ -140,4 +145,12 @@ private:
     /// uint16_t highGainADC;
     /// uint16_t lowGainADC;
 };
+
+//std::ostream& operator << (std::ostream& os, const TSFGDigit & s)
+//{
+//    os << s.GetGTSCounter() << " " << s.GetChannelNumber() << " " << s.GetRisingEdgeTDC() << " " <<
+//    s.GetFallingEdgeTDC() << " " << s.GetHighGainADC() << " " << s.GetLowGainADC();
+//    return os ;
+//}
+
 #endif

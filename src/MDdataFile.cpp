@@ -68,7 +68,7 @@ void MDdateFile::init() {
     while (!_ifs.eof()) {
         _ifs.read( _eventBuffer, 4 );
         MDdataWordSFGD dw(_eventBuffer);
-//        cout << dw << endl;
+//        cout <<_curPos <<": "<< dw << endl;
         switch (dw.GetDataType()) {
             case MDdataWordSFGD::GTSHeader:
                 if (!insideSpill) {
@@ -79,6 +79,7 @@ void MDdateFile::init() {
                 insideSpill = true;
 //                cout << dw << endl;
                 if (dw.GetGateHeaderID() == 0){
+                    _ocb_event_number_vector.push_back(_ocb_event_number);
                     _curPos = _ifs.tellg();
                     _spill_header_pos.back().headerA = _curPos - 4;
                     _spill_header_pos.back().headerAEx = true;
@@ -98,6 +99,17 @@ void MDdateFile::init() {
                 _spill_header_pos.push_back({0,0, false, false});
                 _gts_tag_spill.push_back(_gtsTagBeforeSpillGate);
                 insideSpill = false;
+                break;
+            case MDdataWordSFGD::OcbGateHeader:
+                _curPos = _ifs.tellg();
+                _event_header_pos.push_back( _curPos - 4 );
+                _ocb_event_number = dw.GetOcbEventNumber();
+//                std::cout <<"OcbGateHeader: "<<  _event_header_pos.back() << " event number: " <<_event_number.back() << std::endl;
+                break;
+            case MDdataWordSFGD::OcbGateTrailer:
+                _curPos = _ifs.tellg();
+                _ocb_event_size.push_back(_curPos - _event_header_pos.back());
+//                std::cout <<  _event_size.back()/4 << std::endl;
                 break;
             default:
                 break;
@@ -120,9 +132,14 @@ char* MDdateFile::GetNextEvent() {
 
   uint32_t spillSize = _spill_size[_lastSpill];
   uint32_t spillPos  = std::min(_spill_header_pos[_lastSpill].headerA, _spill_header_pos[_lastSpill].headerB);
-  cout << "GetNextEvent  pos: " << spillPos/4 << "  size: " << spillSize/4 
+//  unsigned int ocbEventNumber = _ocb_event_number_vector[_lastSpill];
+  cout << "GetNextEvent  pos: " << spillPos/4 << "  size: " << spillSize/4
        << " in DW units (4 bytes)" << endl;
   return GetSpill(spillPos, spillSize);
+}
+
+unsigned int MDdateFile::GetOcbEventNumber(){
+    return _ocb_event_number_vector[_lastSpill];
 }
 
 void MDdateFile::GoTo(uint32_t pos) {

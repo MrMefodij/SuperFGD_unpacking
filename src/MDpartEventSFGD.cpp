@@ -43,7 +43,7 @@ void MDpartEventSFGD::Init() {
   if ( dw.IsValid() ) {
     // Check the reliability of the header and decode the header information.
     if (dw.GetDataType() != MDdataWordSFGD::GTSHeader ) { // The data doesn't start with a header
-        cout << dw<<endl;
+//        cout << dw<<endl;
       throw MDexception("ERROR in MDpartEventSFGD::Init() : 1st word is not a trigger header");
     } else {
         _gtsTag = dw.GetGtsTag();

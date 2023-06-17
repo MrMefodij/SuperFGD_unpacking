@@ -17,7 +17,7 @@
 std::string GetMCRnumber(std::string str);
 std::string GetSlotNumber(std::string str);
 std::string GetDir(std::string str);
-std::string GetLocation(std::string str);
+std::string GetLocation(std::string str, std::string path);
 
 class File_Reader{
 public:

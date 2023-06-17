@@ -22,13 +22,18 @@ void Connection_Map::Init(){
         tempCh.crate_ >>tempCh.slot_ >> tempCh.position_ >> tempCh.ch32_ >> tempCh.ch256_;
         map_.insert({GetGlobalChannel(tempCh),std::move(tempGeom)});
     }
-    std::cout << map_ << map_.size();
+//    std::cout << map_ << map_.size();
 }
 
-const GlGeomPosition Connection_Map::GetGlobalGeomPosition(unsigned int Feb, unsigned int ch256) const{
-    return map_.at(Feb*256 * ch256);
+const GlGeomPosition Connection_Map::GetGlobalGeomPosition(const unsigned int boardID, const unsigned int ch256) const{
+    unsigned int globalChannel =  (boardID << 8) | ch256;
+//    std::cout << boardID<< " " <<globalChannel << std::endl;
+    return map_.at(globalChannel);
 }
 
-unsigned int Connection_Map::GetGlobalChannel(const GlChannelPosition& GlCh){
-    return (GlCh.crate_*14 + GlCh.slot_)*256 + GlCh.ch256_;
+unsigned int Connection_Map::GetGlobalChannel(const GlChannelPosition& glCh){
+    unsigned int boardID = (glCh.crate_ << 4) | glCh.slot_;
+    unsigned int globalChannel = (boardID << 8) | glCh.ch256_;
+//    std::cout << boardID<< " " <<globalChannel << std::endl;
+    return globalChannel;
 }

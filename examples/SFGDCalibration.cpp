@@ -25,7 +25,7 @@ int main(int argc, char **argv){
     // Create root file
     string sFileName;
     getline(fList,sFileName);
-    string rootFileOutput=GetLocation(sFileName.c_str());
+    string rootFileOutput=GetLocation(sFileName.c_str(), ".bin");
     rootFileOutput+="_channels_signal.root";
     TFile *wfile = new TFile(rootFileOutput.c_str(), "RECREATE");
     TCanvas *c1 = new TCanvas("c1","",0,10,700,500);
