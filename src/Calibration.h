@@ -1,7 +1,4 @@
-//
-//  Calibration.h
-//  SuperFGD
-//
+
 //  Created by Maria on 27.09.2022.
 //
 
@@ -15,6 +12,7 @@
 #include <TMath.h>
 #include <TROOT.h>
 #include <TSpectrum.h>
+#include <TLegend.h>
 
 #include "Files_Reader.h"
 #include "Peaks.h"
@@ -24,10 +22,13 @@
 class Calibration{
 public:
     TH1F* SFGD_Calibration(TH1F* &h);
-    void Gain_calculstion(const vector<Peaks> & peaks);
+    void Gain_Calculation(const vector<Peaks> & peaks);
     vector<Peaks> Calibration_Par() const {return peaks;}
     Double_t Calibration_Gain() const{return hg;}
     Double_t Calibration_Gain_Error() const{return hg_error;}
+    TLegend* Calibration_Legend(); 
+    Calibration(){}
+
 #endif /* Calibration_h */
 private:
     static Double_t par[500];

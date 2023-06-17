@@ -12,7 +12,7 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
-#include <vector>
+#include <set> 
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -21,6 +21,8 @@
 #include "MDdataWordSFGD.h"
 #include "MDpartEventSFGD.h"
 
+#define SFGD_NFEB 290
+
 std::string GetMCRnumber(std::string str);
 std::string GetSlotNumber(std::string str);
 std::string GetDir(std::string str);
@@ -28,28 +30,17 @@ std::string GetLocation(std::string str, std::string path);
 
 class File_Reader{
 public:
-    // Считываем слова с помощью MDdataWordSFGD
-    std::string Read_MDdataWordSFGD(const std::string& sFileName);
-    // Проходимся по данным и заполняем гистограммы
+    // Fill histograms
     void ReadFile(const std::string& sFileName);
     // Create directory
-    TDirectory * Create_directory(TFile& wfile);
-    
-    TH1F* Print_hFEBCH(const int& ich);
-    
-    Int_t Fill_FEB();
-    void Fit_hFEBCH();
+    std::set<Int_t> GetFEBNumbers(){return NFEB;}
+    TH1F* Get_hFEBCH(const int& ih,const int& ich);
+    ~File_Reader(){}
 private:
-    Int_t channels_num = SFGD_FEB_NCHANNELS;
-    
-    std::string MCRnum;
-    std::string Slotnum;
-    std::string gainFileOutput;
-    std::ostringstream sChnum;
+    std::set<Int_t> NFEB;
     std::string sCh;
     uint32_t* dataPtr = new uint32_t;
-    int dwCount = 0;
-    TH1F *hFEBCH[SFGD_FEB_NCHANNELS];// = new TH1F[channels_num];
+    TH1F *hFEBCH[SFGD_NFEB][SFGD_FEB_NCHANNELS];
     
 };
 #endif /* Files_Reader_h */
