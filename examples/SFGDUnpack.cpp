@@ -36,8 +36,6 @@
 #include "ToaEventDummy.h"
 #include <iostream>
 
-#define SFGD_FEBS_NUM 280
-
 using namespace std;
 
 

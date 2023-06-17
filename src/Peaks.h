@@ -9,19 +9,19 @@
 
 class Peaks{
 public:
-    double GetPosition() const {return _position;}
-    double GetPositionError() const {return _position_error;}
-    int GetHeight() const {return _height;}
-    // double GetWidthRhs() const {return _width_rhs;}
-    // double GetWidthLhs() const {return _width_lhs;}
-    double GetStdDeviation() const {return _std_deviation;}
-    Peaks(double position,double position_error,int height, double std_deviation);
-    Peaks(){}
+    Peaks(double _position,double _position_error,double _height, double _std_deviation);
+    // Peaks(){}
+    ~Peaks() = default;
+    double GetPosition() const {return position;}
+    double GetPositionError() const {return position_error;}
+    double GetHeight() const {return height;}
+    double GetStdDeviation() const {return std_deviation;}
+
 private:
-    double _position;
-    double _position_error;
-    int _height; // Number of events
-    double _std_deviation;
+    double position;
+    double position_error;
+    double height;
+    double std_deviation;
 };
 
 

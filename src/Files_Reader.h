@@ -12,27 +12,24 @@
 #include "MDdataWordSFGD.h"
 #include "MDpartEventSFGD.h"
 
-#define SFGD_NFEB 290
 
-std::string GetMCRnumber(std::string str);
-std::string GetSlotNumber(std::string str);
-std::string GetDir(std::string str);
 std::string GetLocation(std::string str, std::string path);
 
 class File_Reader{
 public:
     // Fill histograms
+    File_Reader() = default;
+    ~File_Reader() = default;
     void ReadFile(const std::string& sFileName);
     // Create directory
     std::set<Int_t> GetFEBNumbers(){return NFEB;}
-    TH1F* Get_hFEBCH(const int& ih,const int& ich);
-    ~File_Reader(){}
+    TH1F* Get_hFEBCH(const int& ih,const int& ich) {return hFEBCH[ih][ich];}
 private:
+    // std::string sCh;
     std::set<Int_t> NFEB;
-    std::string sCh;
     uint32_t* dataPtr = new uint32_t;
-    TH1F *hFEBCH[SFGD_NFEB][SFGD_FEB_NCHANNELS];
-    Int_t FEB_number = 0;
+    TH1F *hFEBCH[SFGD_FEBS_NUM][SFGD_FEB_NCHANNELS];
+    Int_t FEB_number ;
     
 };
 #endif /* Files_Reader_h */

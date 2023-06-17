@@ -2,7 +2,7 @@
 //
 
 #include "Peaks.h"
-// Конструктор Peaks
-Peaks::Peaks(double position,double position_error,int height, double std_deviation) :
-                _position(position), _position_error(position_error), _height(height), _std_deviation(std_deviation){}
+// Peaks
+Peaks::Peaks(double _position,double _position_error, double _height, double _std_deviation) :
+                position(_position), position_error(_position_error), height(_height), std_deviation(_std_deviation){}
 
