@@ -9,9 +9,7 @@
 #pragma link C++ nestedclasses;
 
 // Turn on creation of dictionaries for class TwoInts
-#pragma link C++ class TwoInts;
 #pragma link C++ class ToaEventDummy;
-#pragma link C++ class TDigitDummy;
 #pragma link C++ class std::vector<ToaEventDummy>;
 // Alternatively, with a `+` at the end of a class name: (??? what does it do?)
 //#pragma link C++ class TwoInts+;

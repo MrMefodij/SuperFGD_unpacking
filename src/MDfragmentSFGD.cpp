@@ -8,10 +8,10 @@ void MDfragmentSFGD::SetDataPtr(void *d, uint32_t aSize) {
     this->Init();
 }
 
-void MDfragmentSFGD::SetPreviousSpill(bool prSpillEx, unsigned int prSpill) {
-    _previousSpillTagExist = prSpillEx;
-    _previousSpillTag = prSpill;
-}
+//void MDfragmentSFGD::SetPreviousSpill(bool prSpillEx, unsigned int prSpill) {
+//    _previousSpillTagExist = prSpillEx;
+//    _previousSpillTag = prSpill;
+//}
 
 void MDfragmentSFGD::Clean() {
     this->UnValidate();
@@ -97,7 +97,7 @@ void MDfragmentSFGD::Init() {
                                    << dw.GetGateNumber() << "!=" << _gateNumber << ")";
                                 throw MDexception(ss.str());
                             } else {
-                                _previousSpillTag = dw.GetGateNumber();
+//                                _previousSpillTag = dw.GetGateNumber();
                                 dw.SetDataPtr(++ptr);
                                 _gateTrailTime = dw.GetGateTime();
                                 done = true;

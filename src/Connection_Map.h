@@ -36,8 +36,7 @@ class Connection_Map {
 public:
     Connection_Map(const std::string& map_file);
     void Init();
-    const GlGeomPosition GetGlobalGeomPosition(unsigned int Feb, unsigned int ch256) const;
-
+    const GlGeomPosition GetGlobalGeomPosition(const unsigned int Feb, const unsigned int ch256) const;
 private:
     const std::string fileName_;
     std::map<unsigned int, GlGeomPosition> map_;

@@ -35,7 +35,7 @@ public:
     virtual ~MDfragmentSFGD() { this->Clean(); }
 
     void SetDataPtr( void *d, uint32_t aSize=0);
-    void SetPreviousSpill(bool prSpillEx = false, unsigned int prSpill=0);
+//    void SetPreviousSpill(bool prSpillEx = false, unsigned int prSpill=0);
 
     void Dump();
     void Init();
@@ -69,8 +69,8 @@ private:
     unsigned int _previousGtsTime = 0;
     unsigned int _previousGtsTag = 0;
   
-    bool         _previousSpillTagExist = false;
-    unsigned int _previousSpillTag  = 0;
+//    bool         _previousSpillTagExist = false;
+//    unsigned int _previousSpillTag  = 0;
   
     std::vector <MDpartEventSFGD*> _trigEvents = {};
 };

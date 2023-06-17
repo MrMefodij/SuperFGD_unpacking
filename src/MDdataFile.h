@@ -52,6 +52,7 @@ public:
     void  init();
     char* GetNextEvent();
 
+    unsigned int GetOcbEventNumber();
     uint32_t GetStreamPos() {
         _curPos = _ifs.tellg();
         return _curPos;
@@ -76,11 +77,17 @@ private:
         }
         return std::min(position.headerA, position.headerB);
     }
+
     std::vector<uint32_t> _gts_tag_spill;
     std::vector<GateHeadersPositions> _spill_header_pos;
     std::vector<uint32_t> _spill_size;
     bool insideSpill = false;
     unsigned int _gtsTagBeforeSpillGate = 0;
+
+    std::vector<uint32_t> _event_header_pos;
+    unsigned int _ocb_event_number;
+    std::vector<unsigned int> _ocb_event_number_vector;
+    std::vector<uint32_t> _ocb_event_size;
 };
 
 #endif

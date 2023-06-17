@@ -27,9 +27,9 @@ string GetDir(string str){
     return way;
 }
 
-string GetLocation(string str){
+string GetLocation(string str, string path){
      
-    int i = str.rfind(".bin");
+    int i = str.rfind(path.c_str());
     string way = str.substr(0,i);
     return way;
 }
