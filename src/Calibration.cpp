@@ -43,8 +43,11 @@ TH1F* Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
             if(p==0 || (p > 0 && (xpeaks[p] - xpeaks[p-1]) > 0)){
                 TF1 * fit_1 = new TF1("fit_1","gaus", xpeaks[p] - peakWidth, xpeaks[p] + peakWidth);
                 hFEBCH->Fit("fit_1","qr+");
-                Peaks peak = {fit_1->GetParameter(1),fit_1->GetParError(1),hFEBCH->GetBinContent(fit_1->GetParameter(1)),fit_1->GetParameter(2)};
-                peaks.push_back(peak);
+                if((peaks.empty()  ||  peaks.back().GetPosition() < fit_1->GetParameter(1)) &&  
+                    hFEBCH->GetBinContent(fit_1->GetParameter(1)) > 10){
+                    Peaks peak = {fit_1->GetParameter(1),fit_1->GetParError(1),hFEBCH->GetBinContent(fit_1->GetParameter(1)),fit_1->GetParameter(2)};
+                    peaks.push_back(peak);
+                }
 
             }
         }
@@ -67,9 +70,11 @@ TLegend* Calibration::Calibration_Legend(){
             to_string(peaks[i].GetPositionError());
         legend->AddEntry((TObject*)0, name.c_str(), "");
     }
+    if(peaks.size() > 2){
     std::string gain = "gain = " + to_string(Calibration_Gain())
         + " +/- " + to_string(Calibration_Gain_Error());
     legend->AddEntry((TObject*)0, gain.c_str(), "");
+    }
     return legend;
 }
 

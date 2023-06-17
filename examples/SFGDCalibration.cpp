@@ -85,11 +85,11 @@ int main(int argc, char **argv){
     string connection;
     TH1F* hGain = new TH1F("Gain_distrubution", "Gain_distrubution",  101, 0, 100);
     for (auto g : gain) {
-        hGain->Fill(g.second);
+        if (g.second != 0) hGain->Fill(g.second);
     }
     TF1 * fit = new TF1("fit","gaus");
     // adjust the fitting boundaries
-    hGain->Fit("fit","","",10,24);
+    hGain->Fit("fit","","");
     Double_t mean_gain = fit->GetParameter(1);
     Double_t std_gain = fit->GetParameter(2);
     wfile->cd();
@@ -100,10 +100,10 @@ int main(int argc, char **argv){
         for (auto iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
             connection = "FEB_" + to_string(ih) + "_Channel_" +  to_string(iCh);
             double gain_value = gain.at(connection);
-            if((gain_value < mean_gain - 3*std_gain) || (gain_value > mean_gain + 3*std_gain))
-                 if(gain_value == 0) cout<< "Problem in " << connection <<" number of peaks less than 2"<<endl;
-          
-                   else{ cout << "Problem in "<<connection <<": "<< gain_value <<endl;}
+            if((gain_value < mean_gain - 3*std_gain) || (gain_value > mean_gain + 3*std_gain)){
+                if(gain_value == 0) cout<< "Problem in " << connection <<" number of fitted peaks less than 3"<<endl;
+                else{ cout << "Problem in "<<connection <<": "<< gain_value <<endl;}
+            }
         }
     }
 
