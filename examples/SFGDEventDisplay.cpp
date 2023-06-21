@@ -37,7 +37,7 @@
 #define SFGD_FEBS_NUM 280
 
 
-std::tuple<TH1F,TH1F,TH2F> GetPictures(const ostringstream& evNumString, const std::vector<TSFGDigit>& hitsFEB, const unsigned int feb,const Connection_Map& map){
+std::tuple<TH1F,TH1F,TH2F> GetPictures(const ostringstream& evNumString, const std::vector<TSFGDigit>& hitsFEB, const unsigned int feb,const Connection_Map& connectionMap){
     ostringstream febStr;
     febStr<<feb;
     TH1F gtsSlot(("GtsSlot_" + evNumString.str() + "_" + febStr.str()).c_str(),("GtsSlot_" + evNumString.str() + "_" + febStr.str()).c_str(),5,0,5 );
@@ -46,13 +46,13 @@ std::tuple<TH1F,TH1F,TH2F> GetPictures(const ostringstream& evNumString, const s
     TH2F event;
     if (feb == 247){
         event = TH2F(("Event_" + evNumString.str() + "_" + febStr.str()).c_str(), ("Event_" + evNumString.str() + "_" + febStr.str()).c_str(),
-                     16, 0, 15, 16, 40, 55);
+                     16, 0, 16, 16, 40, 56);
     } else if (feb == 251){
         event = TH2F(("Event_" + evNumString.str() + "_" + febStr.str()).c_str(), ("Event_" + evNumString.str() + "_" + febStr.str()).c_str(),
-                     16, 40, 55, 16, 55, 70);
+                     16, 55, 71, 16, 40, 56);
     } else {
         event = TH2F(("Event_" + evNumString.str() + "_" + febStr.str()).c_str(), ("Event_" + evNumString.str() + "_" + febStr.str()).c_str(),
-                     16, 0, 15, 16, 55, 70);
+                     16, 0, 16, 16, 55, 71);
     }
     const unsigned int tDigits = 400;
     std::vector<TSFGDigit> eventsTime[tDigits];
@@ -64,13 +64,13 @@ std::tuple<TH1F,TH1F,TH2F> GetPictures(const ostringstream& evNumString, const s
     for (int i = 0; i < tDigits; ++i) {
         if (eventsTime[i].size() > 10){
             for (int j = 0; j < eventsTime[i].size(); ++j) {
-                GlGeomPosition position = map.GetGlobalGeomPosition(feb, eventsTime[i][j].GetChannelNumber());
+                GlGeomPosition position = connectionMap.GetGlobalGeomPosition(feb, eventsTime[i][j].GetChannelNumber());
                 int timeDif = eventsTime[i][j].GetFallingEdgeTDC() - eventsTime[i][j].GetRisingEdgeTDC();
                 gtsSlot.Fill(eventsTime[i][j].GetGTSCounter());
                 if (feb == 247){
                     event.Fill(position.x_, position.y_, timeDif);
                 } else if (feb == 251){
-                    event.Fill(position.y_, position.z_, timeDif);
+                    event.Fill(position.z_, position.y_, timeDif);
                 } else {
                     event.Fill(position.x_, position.z_, timeDif);
                 }
@@ -78,7 +78,7 @@ std::tuple<TH1F,TH1F,TH2F> GetPictures(const ostringstream& evNumString, const s
             }
             if (i > 0) {
                 for (int j = 0; j < eventsTime[i - 1].size(); ++j) {
-                    GlGeomPosition position = map.GetGlobalGeomPosition(feb, eventsTime[i - 1][j].GetChannelNumber());
+                    GlGeomPosition position = connectionMap.GetGlobalGeomPosition(feb, eventsTime[i - 1][j].GetChannelNumber());
                     int timeDif = eventsTime[i - 1][j].GetFallingEdgeTDC() - eventsTime[i - 1][j].GetRisingEdgeTDC();
                     gtsSlot.Fill(eventsTime[i - 1][j].GetGTSCounter());
                     if (feb == 247) {
@@ -93,7 +93,7 @@ std::tuple<TH1F,TH1F,TH2F> GetPictures(const ostringstream& evNumString, const s
             }
             if (i < tDigits) {
                 for (int j = 0; j < eventsTime[i + 1].size(); ++j) {
-                    GlGeomPosition position = map.GetGlobalGeomPosition(feb, eventsTime[i + 1][j].GetChannelNumber());
+                    GlGeomPosition position = connectionMap.GetGlobalGeomPosition(feb, eventsTime[i + 1][j].GetChannelNumber());
                     int timeDif = eventsTime[i + 1][j].GetFallingEdgeTDC() - eventsTime[i + 1][j].GetRisingEdgeTDC();
                     gtsSlot.Fill(eventsTime[i + 1][j].GetGTSCounter());
                     if (feb == 247) {
@@ -151,14 +151,14 @@ int main( int argc, char **argv ) {
     }
 
     string rootFileOutput=GetLocation((filename).c_str(), "_plots.root");
-    cout << rootFileOutput<<endl;
     rootFileOutput+="_events.root";
+    cout << rootFileOutput << endl;
     TFile wfile(rootFileOutput.c_str(), "recreate");
 
-    string mapFile = "../connection_map/map.txt";
-    Connection_Map map(mapFile);
+    string mapFile = "../connection_map/connectionMap.txt";
+    Connection_Map connectionMap(mapFile);
     try {
-        map.Init();
+        connectionMap.Init();
     } catch (const exception& e) {
         cerr << "Unable to open file " << mapFile << endl;
         exit(1);
@@ -200,7 +200,7 @@ int main( int argc, char **argv ) {
                 TDirectory *hitDir =  wfile.mkdir((evNumString.str()).c_str());
                 hitDir->cd();
                 {
-                    std::tuple<TH1F, TH1F, TH2F> tempTH = GetPictures(evNumString, temp253, 253, map);
+                    std::tuple<TH1F, TH1F, TH2F> tempTH = GetPictures(evNumString, temp253, 253, connectionMap);
                     std::get<0>(tempTH).Write();
                     std::get<0>(tempTH).Delete();
                     std::get<1>(tempTH).Write();
@@ -211,7 +211,7 @@ int main( int argc, char **argv ) {
 
                 {
                     std::vector<TSFGDigit> temp247 = FEBs[247]->back().GetHits();
-                    std::tuple<TH1F, TH1F, TH2F> tempTH = GetPictures(evNumString, temp247, 247, map);
+                    std::tuple<TH1F, TH1F, TH2F> tempTH = GetPictures(evNumString, temp247, 247, connectionMap);
                     std::get<0>(tempTH).Write();
                     std::get<0>(tempTH).Delete();
                     std::get<1>(tempTH).Write();
@@ -222,7 +222,7 @@ int main( int argc, char **argv ) {
 
                 {
                     std::vector<TSFGDigit> temp251 = FEBs[251]->back().GetHits();
-                    std::tuple<TH1F, TH1F, TH2F> tempTH = GetPictures(evNumString, temp251,251, map);
+                    std::tuple<TH1F, TH1F, TH2F> tempTH = GetPictures(evNumString, temp251, 251, connectionMap);
                     std::get<0>(tempTH).Write();
                     std::get<0>(tempTH).Delete();
                     std::get<1>(tempTH).Write();

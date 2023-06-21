@@ -3,8 +3,6 @@ namespace std { inline namespace __1 {  } }
 
 [ libSFGDoaEventDummyDict.dylib ]
 # List of selected classes
-class TDigitDummy
 class ToaEventDummy
 class vector<ToaEventDummy>
-header TDigitDummy.h
 header ToaEventDummy.h

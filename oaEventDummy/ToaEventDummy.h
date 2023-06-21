@@ -14,7 +14,7 @@
 class ToaEventDummy {
 public:
     ToaEventDummy();
-    ToaEventDummy(unsigned int eventNumber, unsigned int boardId, unsigned int gateNumber,
+    ToaEventDummy(unsigned int eventNumber, unsigned int boardId, unsigned int gateType, unsigned int gateNumber,
                   unsigned int gateTime, unsigned int gateTimeFrGts, unsigned int gateTrailTime);
     void SetOaEvent(TSFGDigit event);
     unsigned int GetNumberHits();
@@ -29,6 +29,7 @@ public:
 private:
     const unsigned int _ocbEventNumber;
     const unsigned int _boardId;
+    const unsigned int _gateType;
     const unsigned int _gateNumber;
     const unsigned int _gateTime;
     const unsigned int _gateTimeFrGts;

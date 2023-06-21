@@ -123,7 +123,7 @@ int main( int argc, char **argv ) {
                 spill.SetDataPtr(eventBuffer);
                 int nTr = spill.GetNumOfTriggers();
                 BordID = spill.GetBoardId();
-                ToaEventDummy event(ocbEventNumber, BordID, spill.GetGateNumber(),
+                ToaEventDummy event(ocbEventNumber, BordID, spill.GetGateType(), spill.GetGateNumber(),
                     spill.GetGateTime(), spill.GetGateTimeFrGTS(), spill.GetGateTrailTime());
 
                 for (int i=0; i<nTr; ++i) {

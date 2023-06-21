@@ -45,6 +45,7 @@ public:
     unsigned int GetGateNumber() const                      {return _gateNumber;}
     unsigned int GetGateTime() const                        {return _gateTime;}
     unsigned int GetGateTimeFrGTS() const                   {return _gateTimeFrGts;}
+    unsigned int GetGateType() const                        {return _gateType;}
   
     unsigned int GetGateTrailNumber() const                 {return _gateTrailNumber;}
     unsigned int GetGateTrailTime() const                   {return _gateTrailTime;}
@@ -59,6 +60,7 @@ public:
 private:
      
     unsigned int _boardId = 0;
+    unsigned int _gateType = 0;
     unsigned int _gateNumber = 0;
     unsigned int _gateTime = 0;
     unsigned int _gateTimeFrGts = 0;

@@ -37,10 +37,11 @@ public:
     Connection_Map(const std::string& map_file);
     void Init();
     const GlGeomPosition GetGlobalGeomPosition(const unsigned int Feb, const unsigned int ch256) const;
+    unsigned int GetGlobalChannel(const GlChannelPosition& tempCh);
+    unsigned int GetAsic(unsigned int globalChannel);
 private:
     const std::string fileName_;
     std::map<unsigned int, GlGeomPosition> map_;
-    unsigned int GetGlobalChannel(const GlChannelPosition& tempCh);
 };
 
 

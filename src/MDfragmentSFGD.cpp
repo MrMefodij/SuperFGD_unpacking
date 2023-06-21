@@ -36,6 +36,7 @@ void MDfragmentSFGD::Init() {
             if (dw.GetGateHeaderID() == 0) {
                 _gateNumber = dw.GetGateNumber();
                 _boardId = dw.GetBoardId();
+                _gateType = dw.GetGateType();
                 cout << "1: SFGD spill Header \"A\" Board ID " << _boardId << " SpillTag: "
                      << dw.GetGateNumber() << endl;
                 _size += 4;

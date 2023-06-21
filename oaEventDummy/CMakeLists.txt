@@ -13,8 +13,8 @@ ROOT_GENERATE_DICTIONARY(SFGDoaEventDummyDict ToaEventDummy.h TSFGDigit.hxx  LIN
 ADD_LIBRARY(SFGDoaEventDummy      SHARED            ${SOURCE_FILES} SFGDoaEventDummyDict.cxx)
 TARGET_LINK_LIBRARIES(SFGDoaEventDummy              ${ROOT_LIBRARIES})
 
-#add_custom_command(
-#        TARGET SFGDoaEventDummy
-#        POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target install
-#)
+add_custom_command(
+        TARGET SFGDoaEventDummy
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target install
+)

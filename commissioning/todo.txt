@@ -1,0 +1,30 @@
+1) XML output: Sasha
+    a) create/save/fill
+    </FEB>
+        </Name>
+        </ASIC0>
+        </ASIC1>
+        </ASIC2>
+        </ASIC3>
+    </FEB>
+
+2) Peak 0 finder (for 4 daq files)
+    a) Peak 0 mean(>N)
+    b) 1 file -> XmlOutputFolder
+          i) 14 febs -> 256 channels
+          ii) globalChannel -> peak position
+          iii) XML output Crate15.xml   (BaselineDAC_40000.xml - (14 febs * 256 channels)
+                                        (BaselineDAC_50000.xml - (14 febs * 256 channels)
+                                        (BaselineDAC_60000.xml - (14 febs * 256 channels))
+                                        (BaselineDAC_65000.xml - (14 febs * 256 channels))
+
+3) read 4 xml (folder) -> 1 xml with baseline peak at -50:
+    a) 14 febs -> 256 channels lines
+        i) fit line
+    b) find when baseline peak  < 0  && > -70 inside 1 ASIC -> BaselineDAC [x;y] -> get middle
+        i) GetAsic(global channel) Sasha
+
+        [34787, 35090, 34968 x32]
+        Check ASIC quality (BaselineDAC) > -70 & < 0
+
+    c) XML output Crate15.xml (14 * 8)
