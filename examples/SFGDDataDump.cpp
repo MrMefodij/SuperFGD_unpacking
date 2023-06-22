@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with BabyMINDdaq.  If not, see <http://www.gnu.org/licenses/>.
+ * along with SuperFGD Unpacking.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 

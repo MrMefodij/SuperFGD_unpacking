@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with BabyMINDdaq.  If not, see <http://www.gnu.org/licenses/>.
+ * along with SuperFGD Unpacking.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -47,12 +47,21 @@ std::tuple<TH1F,TH1F,TH2F> GetPictures(const ostringstream& evNumString, const s
     if (feb == 247){
         event = TH2F(("Event_" + evNumString.str() + "_" + febStr.str()).c_str(), ("Event_" + evNumString.str() + "_" + febStr.str()).c_str(),
                      16, 0, 16, 16, 40, 56);
+        event.GetYaxis()->SetTitle("Y [cm]");
+        event.GetXaxis()->SetTitle("X [cm]");
+        event.GetZaxis()->SetTitle("ToT [2.5 ns]");
     } else if (feb == 251){
         event = TH2F(("Event_" + evNumString.str() + "_" + febStr.str()).c_str(), ("Event_" + evNumString.str() + "_" + febStr.str()).c_str(),
                      16, 55, 71, 16, 40, 56);
+        event.GetYaxis()->SetTitle("Y [cm]");
+        event.GetXaxis()->SetTitle("Z [cm]");
+        event.GetZaxis()->SetTitle("ToT [2.5 ns]");
     } else {
         event = TH2F(("Event_" + evNumString.str() + "_" + febStr.str()).c_str(), ("Event_" + evNumString.str() + "_" + febStr.str()).c_str(),
                      16, 0, 16, 16, 55, 71);
+        event.GetYaxis()->SetTitle("Z [cm]");
+        event.GetXaxis()->SetTitle("X [cm]");
+        event.GetZaxis()->SetTitle("ToT [2.5 ns]");
     }
     const unsigned int tDigits = 400;
     std::vector<TSFGDigit> eventsTime[tDigits];
