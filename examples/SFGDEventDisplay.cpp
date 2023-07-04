@@ -190,6 +190,10 @@ int main( int argc, char **argv ) {
     int nEntries = AllEvents->GetEntries();
     std::cout << "entries at Feb  is " << nEntries <<std::endl;
 
+    TH1F eventLY247("EventsLY_247", "EventsLY_247",4000, 0 ,4000);
+    TH1F eventLY251("EventsLY_251", "EventsLY_251",4000, 0 ,4000);
+    TH1F eventLY253("EventsLY_253", "EventsLY_253",4000, 0 ,4000);
+
     for (int i = 0; i < nEntries -1; ++i) {
         AllEvents->GetEntry(i);
 
@@ -197,16 +201,16 @@ int main( int argc, char **argv ) {
         unsigned int evNum = FEBs[253]->back().GetEventNumber();
         ostringstream evNumString;
         evNumString << evNum;
-        if (temp253.size()>16 ){
-            unsigned int cosmicHits = 0;
+//        if (temp253.size()>16 ){
+            unsigned int cosmicHits253 = 0;
             for (int j = 0; j < temp253.size(); ++j) {
                 int timeDif = temp253[j].GetFallingEdgeTDC() - temp253[j].GetRisingEdgeTDC();
                 if (timeDif > 5){
-                    ++cosmicHits;
+                    ++cosmicHits253;
                 }
             }
-            if (cosmicHits >10) {
-                TDirectory *hitDir =  wfile.mkdir((evNumString.str()).c_str());
+            if (cosmicHits253 >10) {
+                TDirectory *hitDir = wfile.mkdir((evNumString.str()).c_str());
                 hitDir->cd();
                 {
                     std::tuple<TH1F, TH1F, TH2F> tempTH = GetPictures(evNumString, temp253, 253, connectionMap);
@@ -217,9 +221,22 @@ int main( int argc, char **argv ) {
                     std::get<2>(tempTH).Write();
                     std::get<2>(tempTH).Delete();
                 }
-
+                for (int j = 0; j < temp253.size(); ++j) {
+                    if (temp253[j].GetHighGainADC()>0){
+                        eventLY253.Fill(temp253[j].GetHighGainADC());
+                    }
+                }
+            }
+            unsigned int cosmicHits247 = 0;
+            std::vector<TSFGDigit> temp247 = FEBs[247]->back().GetHits();
+            for (int j = 0; j < temp247.size(); ++j) {
+                int timeDif = temp247[j].GetFallingEdgeTDC() - temp247[j].GetRisingEdgeTDC();
+                if (timeDif > 5){
+                    ++cosmicHits247;
+                }
+            }
+            if (cosmicHits247 >10) {
                 {
-                    std::vector<TSFGDigit> temp247 = FEBs[247]->back().GetHits();
                     std::tuple<TH1F, TH1F, TH2F> tempTH = GetPictures(evNumString, temp247, 247, connectionMap);
                     std::get<0>(tempTH).Write();
                     std::get<0>(tempTH).Delete();
@@ -228,9 +245,22 @@ int main( int argc, char **argv ) {
                     std::get<2>(tempTH).Write();
                     std::get<2>(tempTH).Delete();
                 }
-
+                for (int j = 0; j < temp247.size(); ++j) {
+                    if (temp247[j].GetHighGainADC()>0){
+                        eventLY247.Fill(temp247[j].GetHighGainADC());
+                    }
+                }
+            }
+            unsigned int cosmicHits251 = 0;
+            std::vector<TSFGDigit> temp251 = FEBs[251]->back().GetHits();
+            for (int j = 0; j < temp251.size(); ++j) {
+                int timeDif = temp251[j].GetFallingEdgeTDC() - temp251[j].GetRisingEdgeTDC();
+                if (timeDif > 5){
+                    ++cosmicHits251;
+                }
+            }
+            if (cosmicHits251 >10) {
                 {
-                    std::vector<TSFGDigit> temp251 = FEBs[251]->back().GetHits();
                     std::tuple<TH1F, TH1F, TH2F> tempTH = GetPictures(evNumString, temp251, 251, connectionMap);
                     std::get<0>(tempTH).Write();
                     std::get<0>(tempTH).Delete();
@@ -239,12 +269,21 @@ int main( int argc, char **argv ) {
                     std::get<2>(tempTH).Write();
                     std::get<2>(tempTH).Delete();
                 }
+                for (int j = 0; j < temp251.size(); ++j) {
+                    if (temp251[j].GetHighGainADC()>0){
+                        eventLY251.Fill(temp251[j].GetHighGainADC());
+                    }
+                }
             }
 
-        }
+//        }
 //        cout << temp247.size() << " " << temp251.size() << " " << temp253.size()<<endl;
         temp253.clear();
     }
+    wfile.cd();
+    eventLY247.Write();
+    eventLY251.Write();
+    eventLY253.Write();
     FileInput->Close();
     wfile.Write();
     wfile.Close();
