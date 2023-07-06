@@ -16,4 +16,10 @@ ADD_EXECUTABLE(printEvents                              SFGDEventDisplay.cpp)
 TARGET_LINK_LIBRARIES(printEvents                       SFGDUnpack SFGDoaEventDummy ${ROOT_LIBRARIES})
 
 ADD_EXECUTABLE(baseline                            		SFGDBaseLine.cpp)
-TARGET_LINK_LIBRARIES(baseline                     		SFGDUnpack ${ROOT_LIBRARIES} -lSpectrum) 
+TARGET_LINK_LIBRARIES(baseline                     		SFGDUnpack ${ROOT_LIBRARIES} -lSpectrum)
+
+ADD_EXECUTABLE(readXml                            		SFGDReadXml.cpp)
+TARGET_LINK_LIBRARIES(readXml                     		SfgdCommissioning)
+
+ADD_EXECUTABLE(thresholdStudy                           thresholdStudy.cpp)
+TARGET_LINK_LIBRARIES(thresholdStudy              		SfgdCommissioning ${ROOT_LIBRARIES} SFGDoaEventDummy)
