@@ -40,3 +40,9 @@ cmake-build-release/
 bin/
 
 build/
+
+connection_map/.DS_Store
+
+oaEvent/
+
+src/.DS_Store
