@@ -15,5 +15,5 @@ TARGET_LINK_LIBRARIES(calibration                       SFGDUnpack ${ROOT_LIBRAR
 ADD_EXECUTABLE(printEvents                              SFGDEventDisplay.cpp)
 TARGET_LINK_LIBRARIES(printEvents                       SFGDUnpack SFGDoaEventDummy ${ROOT_LIBRARIES})
 
-ADD_EXECUTABLE(readXml                              SFGDReadXml.cpp)
-TARGET_LINK_LIBRARIES(readXml                       SfgdCommissioning ${ROOT_LIBRARIES})
+ADD_EXECUTABLE(baseline                            		SFGDBaseLine.cpp)
+TARGET_LINK_LIBRARIES(baseline                     		SFGDUnpack ${ROOT_LIBRARIES} -lSpectrum) 
