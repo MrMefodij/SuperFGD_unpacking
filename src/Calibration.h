@@ -30,6 +30,7 @@ public:
     vector<Peaks> Calibration_Par() const {return peaks;}
     Double_t Calibration_Gain() const{return gain;}
     Double_t Calibration_Gain_Error() const{return gain_error;}
+
 private:
     vector<Peaks> peaks;
     Double_t gain;

@@ -18,8 +18,6 @@ using namespace std;
 
 
 int main(int argc, char **argv){
-    ifstream fList("febs_files_list.list");
-    if (!fList){cout<< "Error opening input file"<< endl;}
     
     // Create root file
 
@@ -56,27 +54,32 @@ int main(int argc, char **argv){
     TFile *wfile = new TFile(rootFileOutput.c_str(), "RECREATE");
     TCanvas *c1 = new TCanvas("c1","",0,10,700,500);
     // Going through data file
-    fList.seekg(0);
     Calibration cl;
     File_Reader file_reader;
-    file_reader.ReadFile(filename);
+    vector<vector<TH1F*>> hFEBCH(SFGD_FEBS_NUM, vector<TH1F*>(SFGD_FEB_NCHANNELS));
+    for(int i = 0; i < SFGD_FEBS_NUM; i++){
+        for(int j = 0; j < SFGD_FEB_NCHANNELS; j++){
+            std::string sCh = "FEB_"+std::to_string(i)+"_Channel_"+std::to_string(j);
+            hFEBCH[i][j] = new TH1F(sCh.c_str(),sCh.c_str(),  701, 0, 700);
+        }
+    }
+    file_reader.ReadFile(filename, hFEBCH);
     
     // find numbers of measured FEB
     set<Int_t> NFEB = file_reader.GetFEBNumbers();
-    
     // get histograms with peaks
     for(const int &ih : NFEB){
         TDirectory *FEBdir = wfile->mkdir(("FEB_"+to_string(ih)).c_str());;
         FEBdir->cd();
         for (Int_t iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
-            TH1F* hFEBCH = file_reader.Get_hFEBCH(ih,iCh);
+            //TH1F* hFEBCH = file_reader.Get_hFEBCH(ih,iCh);
             string feb_channel = "FEB_" + to_string(ih) + "_Channel_" +  to_string(iCh);
-            hFEBCH =  cl.SFGD_Calibration(hFEBCH, feb_channel);
+            hFEBCH[ih][iCh]=  cl.SFGD_Calibration(hFEBCH[ih][iCh], feb_channel);
             auto *legend = cl.Calibration_Legend();
             legend->Draw();
             c1->Update();
             c1->Write(feb_channel.c_str());
-            delete hFEBCH;
+            delete hFEBCH[ih][iCh];
         }
     } 
   
@@ -108,6 +111,5 @@ int main(int argc, char **argv){
     }
 
     wfile->Close();
-    fList.close();
     return 0;
 }

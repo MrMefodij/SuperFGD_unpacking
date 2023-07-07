@@ -39,10 +39,11 @@ TH1F* Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
     if(nfound > 0){
         for (auto p=0;p<min(nfound,6);p++) {
             //
-            Double_t peakWidth = 8;
+            Double_t peakWidth = 10;
             if(p==0 || (p > 0 && (xpeaks[p] - xpeaks[p-1]) > 0)){
                 TF1 * fit_1 = new TF1("fit_1","gaus", xpeaks[p] - peakWidth, xpeaks[p] + peakWidth);
                 hFEBCH->Fit("fit_1","qr+");
+              // cout << connection<<" "<<hFEBCH->GetBinContent(fit_1->GetParameter(1))<<" "<<endl;
                 if((peaks.empty()  ||  peaks.back().GetPosition() < fit_1->GetParameter(1)) &&  
                     hFEBCH->GetBinContent(fit_1->GetParameter(1)) > 10){
                     Peaks peak = {fit_1->GetParameter(1),fit_1->GetParError(1),hFEBCH->GetBinContent(fit_1->GetParameter(1)),fit_1->GetParameter(2)};

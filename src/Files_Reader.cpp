@@ -14,14 +14,15 @@ string GetLocation(string str, string path){
     string way = str.substr(0,i);
     return way;
 }
-
-void File_Reader::ReadFile(const string& sFileName){
-    for(int i = 0; i < SFGD_FEBS_NUM; i++){
-        for(int j = 0; j < SFGD_FEB_NCHANNELS; j++){
-            std::string sCh = "FEB_"+std::to_string(i)+"_Channel_"+std::to_string(j);
-            hFEBCH[i][j] = new TH1F(sCh.c_str(),sCh.c_str(),  701, 0, 700);
-        }
-    }
+void File_Reader::ReadFile(const std::string& sFileName, vector<vector<TH1F*>>& hFEBCH){
+// void File_Reader::ReadFile(const string& sFileName, TH1F & hFEBCH){
+    // for(int i = 0; i < SFGD_FEBS_NUM; i++){
+    //     for(int j = 0; j < SFGD_FEB_NCHANNELS; j++){
+    //         std::string sCh = "FEB_"+std::to_string(i)+"_Channel_"+std::to_string(j);
+    //         hFEBCH[i][j] = new TH1F(sCh.c_str(),sCh.c_str(),  701, 0, 700);
+    //     }
+    // }
+    //hFEBCH = hFEBCH_;
     ifstream ifs(sFileName.c_str());
     while (!ifs.eof()) {
         ifs.read((char*)dataPtr, 4 );
