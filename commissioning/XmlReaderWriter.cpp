@@ -93,3 +93,7 @@ void XmlReaderWriter::PrintXml() {
         std::cout << std::endl;
     }
 }
+
+void XmlReaderWriter::AddBoard(BoardData& boardData){
+    boardsData_.push_back(std::move(boardData));
+}
