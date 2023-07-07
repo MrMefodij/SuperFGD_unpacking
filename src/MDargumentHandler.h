@@ -34,6 +34,8 @@
 #include <algorithm> // for transform
 #include <cctype> // for tolower
 
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
 
 typedef enum MDargumentStatus_t {
   MDARGUMENT_STATUS_OK             = 0,
@@ -115,7 +117,10 @@ public:
   MDargumentStatus_t GetValue( string aName, string & aVal );
   MDargumentStatus_t GetValue( string aName, int & aVal );
   MDargumentStatus_t GetValue( string aName, double & aVal );
-  
+
+  string GetMode() {return  _mode;}
+  vector<string> GetDataFiles(const string& stringBuf, const string& extension);
+
 private:
   MDargument * Find( string aNameOrSwitch );
   bool       IsArgName(const char * str);
@@ -128,6 +133,7 @@ private:
   ArgList    _argList;
   string     _name;        // Program name - extracted form argv[0]
   string     _description; // Program description
+  string       _mode;
 };
 
 

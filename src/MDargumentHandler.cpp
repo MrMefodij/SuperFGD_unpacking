@@ -76,6 +76,7 @@ int MDargumentHandler::ProcessArguments( int argc, char **argv ){
 	strcpy(buf,argv[i]);
 	buf[2]='\0';
 	search = &buf[1];
+    _mode = search;
         if ( strlen(argv[i])>2 ) strncpy(buf,&argv[i][2],strlen(argv[i]));
 	else  strcpy(buf,"");
 	break;
@@ -306,4 +307,20 @@ MDargumentType_t  MDargumentHandler::ArgumentType(const char * str)
     if (strlen(str)<3) return MDARGUMENT_TYPE_ERROR;
     return MDARGUMENT_TYPE_NAME;
   }
+}
+
+vector<string> MDargumentHandler::GetDataFiles(const string& stringBuf, const string& extension){
+    vector<string> vFileNames;
+    if (this->GetMode() == "f"){
+        vFileNames.push_back(stringBuf);
+    } else if (this->GetMode() == "d"){
+        for (fs::directory_iterator it(stringBuf), end; it !=end; ++it) {
+            if (it->path().extension() == extension) {
+                std::cout << *it << std::endl;
+//                auto a =it->path().string();
+                vFileNames.push_back(it->path().string());
+            }
+        }
+    }
+    return vFileNames;
 }
