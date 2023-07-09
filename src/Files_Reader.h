@@ -20,7 +20,8 @@ public:
     // Fill histograms
     File_Reader() = default;
     ~File_Reader() = default;
-    void ReadFile(const std::string& sFileName, vector<vector<TH1F*>>& hFEBCH);
+    void ReadFile(const std::string& sFileName, vector<vector<TH1F*>>& hFEBCH, int HG_LG = 2);
+    void ReadFile(const std::string& sFileName, vector<vector<TH1F*>>& hFEBCH_HG,vector<vector<TH1F*>>& hFEBCH_LG);
     // Create directory
     std::set<Int_t> GetFEBNumbers(){return NFEB;}
 private:

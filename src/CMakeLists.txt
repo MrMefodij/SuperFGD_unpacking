@@ -14,5 +14,5 @@ if(Boost_FOUND)
 
 endif()
 
-ADD_LIBRARY(SFGDUnpack      SHARED            ${SOURCE_FILES})
+ADD_LIBRARY(SFGDUnpack      SHARED            ${SOURCE_FILES} BaseLine.cpp BaseLine.h)
 TARGET_LINK_LIBRARIES(SFGDUnpack              ${Boost_LIBRARIES} ${ROOT_LIBRARIES} -lSpectrum)
