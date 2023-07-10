@@ -108,7 +108,8 @@ class MDargumentHandler
 public:
   MDargumentHandler( string aDescription="" );
   virtual ~MDargumentHandler(){};
-  
+
+  bool Init();
   void AddArgument( string aName, string aDescription, string aSwitch, string aFormat="", string aDefault ="" );
   void Usage();
   int ProcessArguments( int argc, char **argv );
@@ -133,7 +134,7 @@ private:
   ArgList    _argList;
   string     _name;        // Program name - extracted form argv[0]
   string     _description; // Program description
-  string       _mode;
+  string     _mode;
 };
 
 

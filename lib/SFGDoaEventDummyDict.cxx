@@ -185,9 +185,10 @@ nullptr
 "/Users/amefodev/work/JetBrains/CLionProjects/SuperFGD/SuperFGD_unpacking/.",
 "/Users/amefodev/work/JetBrains/CLionProjects/SuperFGD/SuperFGD_unpacking/src",
 "/Users/amefodev/work/JetBrains/CLionProjects/SuperFGD/SuperFGD_unpacking/oaEventDummy",
-"/Applications/root_v6.28.04/include",
+"/Users/amefodev/work/JetBrains/CLionProjects/SuperFGD/SuperFGD_unpacking/commissioning",
+"/opt/homebrew/Cellar/root/6.28.04/include/root",
 "/Users/amefodev/work/JetBrains/CLionProjects/SuperFGD/SuperFGD_unpacking/oaEventDummy/.",
-"/Applications/root_v6.28.04/include/",
+"/opt/homebrew/Cellar/root/6.28.04/include/root",
 "/Users/amefodev/work/JetBrains/CLionProjects/SuperFGD/SuperFGD_unpacking/build/oaEventDummy/",
 nullptr
     };

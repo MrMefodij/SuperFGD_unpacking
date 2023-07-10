@@ -34,7 +34,7 @@
 #include "MDdataWordSFGD.h"
 
 #define SFGD_FEB_NCHANNELS 256
-#define SFGD_FEBS_NUM 3
+#define SFGD_FEBS_NUM 280
 
 class MDpartEventSFGD : public MDdataContainer {
 
