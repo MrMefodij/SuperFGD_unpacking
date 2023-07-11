@@ -47,9 +47,9 @@ public:
     BaseLine() = default;
     ~BaseLine() = default;
     void SFGD_BaseLine(TH1F* &hFEBCH_HG,TH1F* &hFEBCH_LG, std::pair<unsigned int,unsigned int> NFEBCh, std::vector<int> HG_LG);
-    std::map<Elems,std::vector<Baseline_values<int>>> Find_BaseLine(std::string filename);
+    std::map<Elems,std::vector<Baseline_values<int>>> Find_BaseLine(std::string filename,unsigned int files_number);
 private:
-    void Print_BaseLine(std::string filename);
+    void Print_BaseLine(std::string filename,unsigned int files_number);
     std::map<Elems,std::vector<Baseline_values<int>>> baseline;
     std::map<Elems,std::vector<Baseline_values<double>>> peaks_baseline;
     std::map<Elems,std::vector<Baseline_values<int>>> xml_data;

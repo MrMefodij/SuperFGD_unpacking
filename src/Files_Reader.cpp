@@ -43,27 +43,16 @@ void File_Reader::ReadFile(const std::string& sFileName, vector<vector<TH1F*>>& 
         MDdataWordSFGD dw(_dataPtr);
         switch (dw.GetDataType()) {
             case MDdataWordSFGD::GateHeader:
-                if(dw.GetBoardId() == 247){
-                    _boad_Id_set.insert(0);
-                    _board_Id = 0;
-                }
-                if(dw.GetBoardId() == 251){
-                    _boad_Id_set.insert(1);
-                    _board_Id = 1;
-                }
-                if(dw.GetBoardId() == 253){
-                    _boad_Id_set.insert(2);
-                    _board_Id = 2;
-                }
-//                _boad_Id_set.insert(dw.GetBoardId() );
-//                _board_Id = dw.GetBoardId() ;
+                _board_Id = dw.GetBoardId();
+                _boad_Id_set.insert(_board_Id );
+                _slot_Id = _board_Id & 0x0f ;
                 break;
             case MDdataWordSFGD::ChargeMeas:
                 if (dw.GetAmplitudeId()==2){
-                    hFEBCH_HG[_board_Id][dw.GetChannelId()]->Fill(dw.GetAmplitude());
+                    hFEBCH_HG[_slot_Id][dw.GetChannelId()]->Fill(dw.GetAmplitude());
                 }
                 if (dw.GetAmplitudeId()==3){
-                    hFEBCH_LG[_board_Id][dw.GetChannelId()]->Fill(dw.GetAmplitude());
+                    hFEBCH_LG[_slot_Id][dw.GetChannelId()]->Fill(dw.GetAmplitude());
                 }
                 break;
             default:

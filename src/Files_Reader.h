@@ -31,6 +31,7 @@ private:
     std::set<unsigned int> _boad_Id_set;
     unsigned int* _dataPtr = new unsigned int;
     unsigned int _board_Id ;
+    unsigned int _slot_Id ;
     
 };
 #endif /* Files_Reader_h */

@@ -5,7 +5,6 @@
 #include "BaseLine.h"
 #include <fstream>
 #include <iomanip>
-#include <sstream>
 #include "TGraph.h"
 #include <TCanvas.h>
 #include <TF1.h>
@@ -22,12 +21,6 @@
 void BaseLine::SFGD_BaseLine(TH1F* &hFEBCH_HG,TH1F* &hFEBCH_LG, std::pair<unsigned int,unsigned int> NFEBCh,std::vector<int> HG_LG){
     std::vector<TH1F*> hFEBCH_full = {hFEBCH_HG,hFEBCH_LG};
     for(unsigned int i = 0; i < hFEBCH_full.size(); i++ ) {
-        if(NFEBCh.first == 0)
-            NFEBCh.first = 247;
-        if(NFEBCh.first == 1)
-            NFEBCh.first = 251;
-        if(NFEBCh.first == 2)
-            NFEBCh.first = 253;
         std::string connection = "FEB_" + std::to_string(NFEBCh.first) + "_Channel_" + std::to_string(NFEBCh.second);
         Calibration cl;
         TH1F *th = cl.SFGD_Calibration(hFEBCH_full[i], connection);
@@ -38,12 +31,12 @@ void BaseLine::SFGD_BaseLine(TH1F* &hFEBCH_HG,TH1F* &hFEBCH_LG, std::pair<unsign
     }
 }
 
-void BaseLine::Print_BaseLine(std::string filename){
+void BaseLine::Print_BaseLine(std::string filename,unsigned int files_number){
     TFile *wfile = new TFile((filename+"_baseline.root").c_str(), "RECREATE");
     TCanvas *c1 = new TCanvas("c1","",0,10,700,500);
     for(auto b_l : baseline){
         std::string s = "FEB_"+std::to_string(b_l.first._boardId)+"_Channel_"+std::to_string(b_l.first._asicId_channelId);
-        if(b_l.second.size()==4){
+        if(b_l.second.size()==files_number){
             wfile->cd();
             TGraph* g = new TGraph();
             c1->cd();
@@ -76,8 +69,8 @@ void BaseLine::Print_BaseLine(std::string filename){
     wfile->Close();
 }
 
-std::map<Elems,std::vector<Baseline_values<int>>> BaseLine::Find_BaseLine(std::string filename){
-Print_BaseLine(filename);
+std::map<Elems,std::vector<Baseline_values<int>>> BaseLine::Find_BaseLine(std::string filename, unsigned int files_number){
+Print_BaseLine(filename, files_number);
 std::ofstream fout((filename+".txt").c_str());
 for(auto iCh : peaks_baseline)
 {

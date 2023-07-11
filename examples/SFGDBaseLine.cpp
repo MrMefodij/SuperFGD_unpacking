@@ -9,8 +9,9 @@
 #include "BaseLine.h"
 #include <algorithm>
 
+#define SFGD_SLOT 16
 
-#define SFGD_NUM 50
+
 int main(int argc, char **argv){
 
     string stringBuf;
@@ -35,9 +36,9 @@ int main(int argc, char **argv){
 
     set<unsigned int> NFEB;
 
-    vector<vector<TH1F*>> hFEBCH_HG(SFGD_NUM, vector<TH1F*>(SFGD_FEB_NCHANNELS));
-    vector<vector<TH1F*>> hFEBCH_LG(SFGD_NUM, vector<TH1F*>(SFGD_FEB_NCHANNELS));
-    for(int i = 0; i < SFGD_NUM; i++){
+    vector<vector<TH1F*>> hFEBCH_HG(SFGD_SLOT, vector<TH1F*>(SFGD_FEB_NCHANNELS));
+    vector<vector<TH1F*>> hFEBCH_LG(SFGD_SLOT, vector<TH1F*>(SFGD_FEB_NCHANNELS));
+    for(int i = 0; i < SFGD_SLOT; i++){
         for(int j = 0; j < SFGD_FEB_NCHANNELS; j++){
             std::string sCh = "FEB_"+std::to_string(i)+"_Channel_"+std::to_string(j);
             hFEBCH_HG[i][j] = new TH1F((sCh+"_HG").c_str(),sCh.c_str(),  701, 0, 700);
@@ -52,7 +53,7 @@ int main(int argc, char **argv){
         string FileOutput =GetLocation(filename.c_str(), ".bin");
         size_t pos_1 = FileOutput.find("HG");
         size_t pos_2 = FileOutput.find("LG");
-        HG_LG[0] = atoi(FileOutput.substr(pos_1+2,pos_2 - pos_1 - 3).c_str());
+        HG_LG[0] = atoi(FileOutput.substr(pos_1 + 2,pos_2 - pos_1 - 3).c_str());
         HG_LG[1] = atoi(FileOutput.substr(pos_2 + 2).c_str());
         // Going through data file
         File_Reader file_reader;
@@ -62,33 +63,22 @@ int main(int argc, char **argv){
         //get histograms with peaks
         for (unsigned int ih: NFEB) {
             for (unsigned int iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
-                b.SFGD_BaseLine(hFEBCH_HG[ih][iCh], hFEBCH_LG[ih][iCh], {ih,iCh},HG_LG);
-                hFEBCH_HG[ih][iCh]->Reset();
-                hFEBCH_LG[ih][iCh]->Reset();
-
+                b.SFGD_BaseLine(hFEBCH_HG[ih & 0x0f][iCh], hFEBCH_LG[ih & 0x0f][iCh], {ih,iCh},HG_LG);
+                hFEBCH_HG[ih & 0x0f][iCh]->Reset();
+                hFEBCH_LG[ih & 0x0f][iCh]->Reset();
             }
         }
         i++;
     }
     cout << "Reading files done"<<endl;
-    for(int i = 0; i < SFGD_NUM; i++){
+    for(int i = 0; i < SFGD_SLOT; i++){
         for(int j = 0; j < SFGD_FEB_NCHANNELS; j++){
             delete hFEBCH_HG[i][j];
             delete hFEBCH_LG[i][j];
         }
     }
-//    std::for_each(hFEBCH_HG.begin(),hFEBCH_HG.end(),[]( vector<TH1F*> a)
-//    {
-//        std::for_each(a.begin(),a.end(),[] (TH1F* b) {delete b;} );
-//    });
-//    hFEBCH_HG.clear();
-//    hFEBCH_HG.shrink_to_fit();
-//    hFEBCH_LG.clear();
-//    hFEBCH_LG.shrink_to_fit();
-//    destroy(hFEBCH_HG.begin(), hFEBCH_HG.end());
-//    destroy(hFEBCH_LG.begin(), hFEBCH_LG.end());
     string rootFileOutput = GetLocation(vFileNames[0].c_str(), ".bin");
-    std::map<Elems,std::vector<Baseline_values<int>>> xml_data = b.Find_BaseLine(rootFileOutput);
+    std::map<Elems,std::vector<Baseline_values<int>>> xml_data = b.Find_BaseLine(rootFileOutput,vFileNames.size());
     XmlReaderWriter xmlFile;
     map<unsigned int,vector<AsicData>> tempBoard;
     for(auto xml : xml_data){
