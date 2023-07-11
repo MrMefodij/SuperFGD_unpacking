@@ -121,6 +121,7 @@ public:
 
   string GetMode() {return  _mode;}
   vector<string> GetDataFiles(const string& stringBuf, const string& extension);
+  vector<string> GetDataFiles(const string& stringBuf, const string& extension, const string& filter);
 
 private:
   MDargument * Find( string aNameOrSwitch );

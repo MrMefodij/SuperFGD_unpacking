@@ -26,6 +26,7 @@
 //
 
 #include <string.h>
+#include <vector>
 #include "MDargumentHandler.h"
 
 using namespace std;
@@ -334,5 +335,29 @@ vector<string> MDargumentHandler::GetDataFiles(const string& stringBuf, const st
             }
         }
     }
+    return vFileNames;
+}
+
+vector<string> MDargumentHandler::GetDataFiles(const string& stringBuf, const string& extension, const string& filter){
+    vector<string> vFileNames;
+
+    if (this->GetMode() == "f"){
+        vFileNames.push_back(stringBuf);
+    } else if (this->GetMode() == "d"){
+        for (fs::directory_iterator it(stringBuf), end; it !=end; ++it) {
+            if (it->path().extension() == extension) {
+                vFileNames.push_back(it->path().string());
+            }
+        }
+    }
+    auto it = std::remove_if(vFileNames.begin(), vFileNames.end(), [&](auto &item) {
+        if (item.find(filter) != std::string::npos){
+            std::cout << item << std::endl;
+            return false;
+        }
+        return true;
+    });
+    vFileNames.erase(it, vFileNames.end());
+
     return vFileNames;
 }

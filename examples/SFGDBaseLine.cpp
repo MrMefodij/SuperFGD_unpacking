@@ -16,9 +16,7 @@ int main(int argc, char **argv){
 
     string stringBuf;
     MDargumentHandler argh("Example of sfgd baseline.");
-    argh.AddArgument("help","print this message","h");
-    argh.AddArgument("directory","Path for a data file","d","<string>","." );
-//    argh.AddArgument("file","Name of a data file","f","<string>","mandatory");
+    argh.Init();
 
     // Check the user arguments consistancy
     // All mandatory arguments should be provided and
@@ -27,7 +25,15 @@ int main(int argc, char **argv){
     if ( argh.ProcessArguments(argc, argv) ) {argh.Usage(); return -1;}
     // Treat arguments, obtain values to be used later
     if ( argh.GetValue("help") ) {argh.Usage(); return 0;}
-    if ( argh.GetValue("directory", stringBuf) != MDARGUMENT_STATUS_OK ) return -1;
+
+    if (argh.GetMode() == "f") {
+        if (argh.GetValue("file", stringBuf) != MDARGUMENT_STATUS_OK) return -1;
+    } else if (argh.GetMode() == "d") {
+        if (argh.GetValue("directory", stringBuf) != MDARGUMENT_STATUS_OK) return -1;
+    } else {
+        return -1;
+    }
+
     vector<string> vFileNames = argh.GetDataFiles(stringBuf,".bin");
     if ( vFileNames.empty() ) {
         cerr << "Can not open directory " << stringBuf << endl;
