@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdio.h>
 #include "Files_Reader.h"
+#include "BaseLine.h"
 #include <typeinfo>
 
 
@@ -13,19 +14,19 @@ string GetLocation(string str, string path){
     string way = str.substr(0,i);
     return way;
 }
-void File_Reader::ReadFile(const std::string& sFileName, vector<vector<TH1F*>>& hFEBCH, int HG_LG){
+void File_Reader::ReadFile(const std::string& sFileName, vector<TH1F*>& hFEBCH, int HG_LG){
     ifstream ifs(sFileName.c_str());
     while (!ifs.eof()) {
-        ifs.read((char*)dataPtr, 4 );
-        MDdataWordSFGD dw(dataPtr);
+        ifs.read((char*)_dataPtr, 4 );
+        MDdataWordSFGD dw(_dataPtr);
         switch (dw.GetDataType()) {
             case MDdataWordSFGD::GateHeader:
-                NFEB.insert(dw.GetBoardId());
-                FEB_number = dw.GetBoardId();
+                _boad_Id_set.insert(dw.GetBoardId());
+                _board_Id = dw.GetBoardId();
                 break;
             case MDdataWordSFGD::ChargeMeas:
-                if (dw.GetAmplitudeId()==2){
-                    hFEBCH[FEB_number][dw.GetChannelId()]->Fill(dw.GetAmplitude());
+                if (dw.GetAmplitudeId()==HG_LG){
+                    hFEBCH[_board_Id * SFGD_FEB_NCHANNELS + dw.GetChannelId()]->Fill(dw.GetAmplitude());
                 }
             break;
         default:
@@ -38,29 +39,31 @@ void File_Reader::ReadFile(const std::string& sFileName, vector<vector<TH1F*>>& 
 void File_Reader::ReadFile(const std::string& sFileName, vector<vector<TH1F*>>& hFEBCH_HG,vector<vector<TH1F*>>& hFEBCH_LG ){
     ifstream ifs(sFileName.c_str());
     while (!ifs.eof()) {
-        ifs.read((char*)dataPtr, 4 );
-        MDdataWordSFGD dw(dataPtr);
+        ifs.read((char*)_dataPtr, 4 );
+        MDdataWordSFGD dw(_dataPtr);
         switch (dw.GetDataType()) {
             case MDdataWordSFGD::GateHeader:
                 if(dw.GetBoardId() == 247){
-                    NFEB.insert(0);
-                    FEB_number = 0;
+                    _boad_Id_set.insert(0);
+                    _board_Id = 0;
                 }
                 if(dw.GetBoardId() == 251){
-                    NFEB.insert(1);
-                    FEB_number = 1;
+                    _boad_Id_set.insert(1);
+                    _board_Id = 1;
                 }
                 if(dw.GetBoardId() == 253){
-                    NFEB.insert(2);
-                    FEB_number = 2;
+                    _boad_Id_set.insert(2);
+                    _board_Id = 2;
                 }
+//                _boad_Id_set.insert(dw.GetBoardId() );
+//                _board_Id = dw.GetBoardId() ;
                 break;
             case MDdataWordSFGD::ChargeMeas:
                 if (dw.GetAmplitudeId()==2){
-                    hFEBCH_HG[FEB_number][dw.GetChannelId()]->Fill(dw.GetAmplitude());
+                    hFEBCH_HG[_board_Id][dw.GetChannelId()]->Fill(dw.GetAmplitude());
                 }
                 if (dw.GetAmplitudeId()==3){
-                    hFEBCH_LG[FEB_number][dw.GetChannelId()]->Fill(dw.GetAmplitude());
+                    hFEBCH_LG[_board_Id][dw.GetChannelId()]->Fill(dw.GetAmplitude());
                 }
                 break;
             default:

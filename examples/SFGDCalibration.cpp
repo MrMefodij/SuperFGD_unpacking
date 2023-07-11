@@ -48,7 +48,7 @@ int main(int argc, char **argv){
     }
 
     string rootFileOutput=GetLocation(filename.c_str(), ".bin");
-    rootFileOutput+="_channels_signal.root";
+    rootFileOutput+="_channels_signal_LG.root";
     cout << rootFileOutput<<endl;
 
     TFile *wfile = new TFile(rootFileOutput.c_str(), "RECREATE");
@@ -56,35 +56,35 @@ int main(int argc, char **argv){
     // Going through data file
     Calibration cl;
     File_Reader file_reader;
-    vector<vector<TH1F*>> hFEBCH(SFGD_FEBS_NUM, vector<TH1F*>(SFGD_FEB_NCHANNELS));
+    vector<TH1F*> hFEBCH(SFGD_FEBS_NUM*SFGD_FEB_NCHANNELS);
     for(int i = 0; i < SFGD_FEBS_NUM; i++){
         for(int j = 0; j < SFGD_FEB_NCHANNELS; j++){
             std::string sCh = "FEB_"+std::to_string(i)+"_Channel_"+std::to_string(j);
-            hFEBCH[i][j] = new TH1F(sCh.c_str(),sCh.c_str(),  701, 0, 700);
+            hFEBCH[SFGD_FEB_NCHANNELS*i + j] = new TH1F(sCh.c_str(),sCh.c_str(),  701, 0, 700);
         }
     }
-    file_reader.ReadFile(filename, hFEBCH);
+    file_reader.ReadFile(filename, hFEBCH,3);
     
     // find numbers of measured FEB
-    set<Int_t> NFEB = file_reader.GetFEBNumbers();
+    set<unsigned int> NFEB = file_reader.GetFEBNumbers();
     // get histograms with peaks
-    for(const int &ih : NFEB){
+    for(const unsigned int &ih : NFEB){
         TDirectory *FEBdir = wfile->mkdir(("FEB_"+to_string(ih)).c_str());;
         FEBdir->cd();
-        for (Int_t iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
+        for (unsigned int iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
             //TH1F* hFEBCH = file_reader.Get_hFEBCH(ih,iCh);
             string feb_channel = "FEB_" + to_string(ih) + "_Channel_" +  to_string(iCh);
-            hFEBCH[ih][iCh]=  cl.SFGD_Calibration(hFEBCH[ih][iCh], feb_channel);
+            hFEBCH[SFGD_FEB_NCHANNELS*ih + iCh]=  cl.SFGD_Calibration(hFEBCH[SFGD_FEB_NCHANNELS*ih + iCh], feb_channel);
             auto *legend = cl.Calibration_Legend();
             legend->Draw();
             c1->Update();
             c1->Write(feb_channel.c_str());
-            delete hFEBCH[ih][iCh];
+//            delete hFEBCH[SFGD_FEB_NCHANNELS*ih + iCh];
         }
-    } 
-  
+    }
+
     // find channels with std more than 3 sigma 
-    map<string,Double_t> gain = cl.GetGain();
+    map<string,double> gain = cl.GetGain();
     string connection;
     TH1F* hGain = new TH1F("Gain_distrubution", "Gain_distrubution",  101, 0, 100);
     for (auto g : gain) {
@@ -93,8 +93,8 @@ int main(int argc, char **argv){
     TF1 * fit = new TF1("fit","gaus");
     // adjust the fitting boundaries
     hGain->Fit("fit","","");
-    Double_t mean_gain = fit->GetParameter(1);
-    Double_t std_gain = fit->GetParameter(2);
+    double mean_gain = fit->GetParameter(1);
+    double std_gain = fit->GetParameter(2);
     wfile->cd();
     hGain->Write();
     cout << "Mean_gain: "<<mean_gain<<", std_gain: "<<std_gain<<endl;
@@ -109,7 +109,8 @@ int main(int argc, char **argv){
             }
         }
     }
-
+//    for(auto i = 0; i < hFEBCH.size(); i++)
+//        delete hFEBCH[i];
     wfile->Close();
     return 0;
 }

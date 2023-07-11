@@ -20,17 +20,17 @@ public:
     ~Calibration() = default;
     TH1F* SFGD_Calibration(TH1F* &hFEBCH, std::string connection);
     TLegend* Calibration_Legend();
-    std::map<std::string,Double_t> GetGain(){return gain_values;};
-    std::vector<Peaks> Calibration_Par() const {return peaks;}
+    std::map<std::string,double> GetGain(){return _gain_values;};
+    std::vector<Peaks> Calibration_Par() const {return _peaks;}
 
 private:
-    std::vector<Peaks> peaks;
-    Double_t gain;
-    Double_t gain_error;
-    std::map<std::string,Double_t> gain_values;
+    std::vector<Peaks> _peaks;
+    double _gain;
+    double _gain_error;
+    std::map<std::string,double> _gain_values;
     void Gain_Calculation();
-    Double_t Calibration_Gain() const{return gain;}
-    Double_t Calibration_Gain_Error() const{return gain_error;}
+    double Calibration_Gain() const{return _gain;}
+    double Calibration_Gain_Error() const{return _gain_error;}
 };
 
 

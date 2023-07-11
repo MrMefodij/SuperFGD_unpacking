@@ -9,7 +9,7 @@ using boost::property_tree::xml_writer_settings;
 using boost::property_tree::xml_parser::trim_whitespace;
 
 struct AsicData {
-    int asicId;
+    unsigned int asicId;
     int hgValue;
     int lgValue;
 };

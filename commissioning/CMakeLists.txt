@@ -15,4 +15,4 @@ endif()
 
 
 ADD_LIBRARY(SfgdCommissioning      SHARED            ${SOURCE_FILES})
-TARGET_LINK_LIBRARIES(SfgdCommissioning              ${Boost_LIBRARIES})
+TARGET_LINK_LIBRARIES(SfgdCommissioning              ${Boost_LIBRARIES} ${ROOT_LIBRARIES} SFGDUnpack)
