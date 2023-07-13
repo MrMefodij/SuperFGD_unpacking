@@ -23,3 +23,4 @@ TARGET_LINK_LIBRARIES(readXml                     		SfgdCommissioning)
 
 ADD_EXECUTABLE(thresholdStudy                           SFGDThresholdStudy.cpp)
 TARGET_LINK_LIBRARIES(thresholdStudy              		SfgdCommissioning ${ROOT_LIBRARIES} SFGDoaEventDummy SFGDUnpack)
+

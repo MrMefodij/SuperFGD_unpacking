@@ -60,7 +60,7 @@ bool ThresholdXmlOutput::WriteXml(const std::string& filename) {
             ptree& asicNode = boardNode.add("Asic", "");
             asicNode.put("<xmlattr>.id", asicData.asicId);
             for (int i = 0; i < asicData.peThreshold.size(); ++i) {
-                asicNode.put("<xmlattr>.pe"+ std::to_string(i), asicData.peThreshold.at(i));
+                asicNode.put("<xmlattr>.pe"+ std::to_string(i + 1), asicData.peThreshold.at(i));
             }
 //            asicNode.put("<xmlattr>.HG", asicData.hgValue);
 //            asicNode.put("<xmlattr>.LG", asicData.lgValue);

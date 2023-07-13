@@ -22,17 +22,10 @@ int main(int argc, char **argv){
     // Create root file
 
     string stringBuf;
-    // The following shows how to use the MDargumentHandler class
-    // to deal with the main arguments
-    // Define the arguments
-    MDargumentHandler argh("Example of sfgd calibration.");
-    argh.AddArgument("help","print this message","h");
-    argh.AddArgument("directory","Path for a data file","d","<string>","." );
-    argh.AddArgument("file","Name of a data file","f","<string>","mandatory");
+    MDargumentHandler argh("Example of sfgd baseline.");
+    argh.Init();
 
-    // Check the user arguments consistancy
-    // All mandatory arguments should be provided and
-    // There should be no extra arguments
+
     if ( argh.ProcessArguments(argc, argv) ) {argh.Usage(); return -1;}
 
     // Treat arguments, obtain values to be used later
@@ -48,7 +41,7 @@ int main(int argc, char **argv){
     }
 
     string rootFileOutput=GetLocation(filename.c_str(), ".bin");
-    rootFileOutput+="_channels_signal_LG.root";
+    rootFileOutput+="_channels_signal.root";
     cout << rootFileOutput<<endl;
 
     TFile *wfile = new TFile(rootFileOutput.c_str(), "RECREATE");
@@ -63,7 +56,7 @@ int main(int argc, char **argv){
             hFEBCH[SFGD_FEB_NCHANNELS*i + j] = new TH1F(sCh.c_str(),sCh.c_str(),  701, 0, 700);
         }
     }
-    file_reader.ReadFile(filename, hFEBCH,3);
+    file_reader.ReadFile(filename, hFEBCH,2);
     
     // find numbers of measured FEB
     set<unsigned int> NFEB = file_reader.GetFEBNumbers();
@@ -72,14 +65,13 @@ int main(int argc, char **argv){
         TDirectory *FEBdir = wfile->mkdir(("FEB_"+to_string(ih)).c_str());;
         FEBdir->cd();
         for (unsigned int iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
-            //TH1F* hFEBCH = file_reader.Get_hFEBCH(ih,iCh);
             string feb_channel = "FEB_" + to_string(ih) + "_Channel_" +  to_string(iCh);
             hFEBCH[SFGD_FEB_NCHANNELS*ih + iCh]=  cl.SFGD_Calibration(hFEBCH[SFGD_FEB_NCHANNELS*ih + iCh], feb_channel);
             auto *legend = cl.Calibration_Legend();
             legend->Draw();
             c1->Update();
             c1->Write(feb_channel.c_str());
-//            delete hFEBCH[SFGD_FEB_NCHANNELS*ih + iCh];
+            delete hFEBCH[SFGD_FEB_NCHANNELS*ih + iCh];
         }
     }
 
