@@ -154,7 +154,7 @@ int main(int argc, char **argv){
     BoardData<ThresholdData> tempBoardData;
     tempBoardData.AddAsics(board_Id,tempBoard);
     xmlFile.AddBoard(tempBoardData);
-    xmlFile.WriteXml((rootFileOutput+".xml").c_str());
+    xmlFile.WriteXml((stringBuf+"Threshold.xml").c_str());
 
 
     g->GetYaxis()->SetTitle("DAC10b");
