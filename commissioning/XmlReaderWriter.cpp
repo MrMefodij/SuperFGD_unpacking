@@ -20,7 +20,7 @@ bool XmlReaderWriter::ReadXml(const std::string& filename){
         const ptree & boards = tree.get_child("FEBsList", empty_ptree());
         BOOST_FOREACH(const ptree::value_type & f, boards){
             const ptree & attributes = f.second.get_child("<xmlattr>", empty_ptree());
-            BoardData boardTemp;
+            BoardData<AsicData> boardTemp;
 
             boardTemp.boardId = f.second.get<unsigned int>("<xmlattr>.id");
 
@@ -94,6 +94,6 @@ void XmlReaderWriter::PrintXml() {
     }
 }
 
-void XmlReaderWriter::AddBoard(BoardData& boardData){
+void XmlReaderWriter::AddBoard(BoardData<AsicData>& boardData){
     boardsData_.push_back(std::move(boardData));
 }

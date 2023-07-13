@@ -14,7 +14,7 @@ int main() {
     for (int i = 0; i < 7; ++i) {
         tempBoard.push_back({tempAsic.asicId+i,tempAsic.hgValue + i, tempAsic.lgValue +10*i});
     }
-    BoardData tempData;
+    BoardData<AsicData> tempData;
     tempData.AddAsics(12,tempBoard);
     xmlFile.AddBoard(tempData);
     xmlFile.WriteXml("test2.xml");

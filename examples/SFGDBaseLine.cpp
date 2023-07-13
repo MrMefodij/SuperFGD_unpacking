@@ -105,7 +105,7 @@ int main(int argc, char **argv){
     }
     cout << "Drawing baseline done "<<endl;
     for(auto i : tempBoard){
-        BoardData tempData;
+        BoardData<AsicData> tempData;
         tempData.AddAsics(i.first,i.second);
         xmlFile.AddBoard(tempData);
     }
