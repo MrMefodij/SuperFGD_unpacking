@@ -11,6 +11,14 @@ struct AsicData {
     int lgValue;
 };
 
+struct ThresholdData {
+    void AddPeThreshold(unsigned int threshold){
+        this->peThreshold.push_back(threshold);
+    }
+    unsigned int asicId;
+    std::vector<unsigned int> peThreshold;
+};
+
 template<typename T>
 struct BoardData {
     unsigned int boardId;

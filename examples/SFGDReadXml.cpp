@@ -3,20 +3,23 @@
 //
 #include <iostream>
 #include <fstream>
-#include "XmlReaderWriter.h"
+#include "ThresholdXmlOutput.h"
 
 int main() {
-    XmlReaderWriter xmlFile;
-    xmlFile.ReadXml("test1.xml");
-    xmlFile.PrintXml();
-    AsicData tempAsic{0,100,200};
-    std::vector<AsicData> tempBoard;
-    for (int i = 0; i < 7; ++i) {
-        tempBoard.push_back({tempAsic.asicId+i,tempAsic.hgValue + i, tempAsic.lgValue +10*i});
+    ThresholdXmlOutput xmlFile;
+    xmlFile.ReadXml("test.xml");
+    ThresholdData tempData {0,{134,154,278}};
+    std::vector<ThresholdData> tempBoard;
+    for (int i = 0; i <= 7; ++i) {
+        for (auto& a :tempData.peThreshold) {
+            a=a+10*i;
+        }
+        tempBoard.push_back({tempData.asicId+i,tempData.peThreshold});
     }
-    BoardData<AsicData> tempData;
-    tempData.AddAsics(12,tempBoard);
-    xmlFile.AddBoard(tempData);
+    BoardData<ThresholdData> tempBoardData;
+    tempBoardData.AddAsics(12,tempBoard);
+    xmlFile.AddBoard(tempBoardData);
+    xmlFile.PrintXml();
     xmlFile.WriteXml("test2.xml");
     return 0;
 }
