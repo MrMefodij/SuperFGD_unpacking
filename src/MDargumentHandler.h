@@ -109,7 +109,7 @@ public:
   MDargumentHandler( string aDescription="" );
   virtual ~MDargumentHandler(){};
 
-  bool Init();
+  void Init();
   void AddArgument( string aName, string aDescription, string aSwitch, string aFormat="", string aDefault ="" );
   void Usage();
   int ProcessArguments( int argc, char **argv );

@@ -35,16 +35,12 @@ using namespace std;
 MDargumentHandler::MDargumentHandler(string aDescription):_name(""),_description(aDescription){
 }
 
-bool MDargumentHandler::Init(){
+void MDargumentHandler::Init(){
     this->AddArgument("help", "print this message", "h");
     this->AddArgument("directory", "Path for a data file", "d", "<string>", ".");
     this->AddArgument("file", "Name of a data file", "f", "<string>", "test.bin");
     this->AddArgument("begin", "Initial position in input file", "b", "<int>", "0");
     this->AddArgument("nwords", "Number of data words to be processed", "n", "<int>", "0");
-
-    // Check the user arguments consistancy
-    // All mandatory arguments should be provided and
-    // There should be no extra arguments
 }
 
 void MDargumentHandler::AddArgument( string aName, string aDescription, string aSwitch, string aFormat, string aDefault ){
