@@ -83,32 +83,51 @@ int main( int argc, char **argv ) {
         for (Int_t i = 0; i < SFGD_FEBS_NUM; ++i) {
             FEBs[i].clear();
         }
+        std::vector<unsigned int> availableFeb;
 
         ostringstream sFEBnum;
         string sFEB;
 
         TTree AllEvents("AllEvents", "The ROOT tree of events");
-        for (int ih = 0; ih < SFGD_FEBS_NUM; ++ih) {
-            sFEBnum.str("");
-            sFEBnum << ih;
-            sFEB = "FEB_" + sFEBnum.str();
-            AllEvents.Branch((sFEB).c_str(), "std::vector<ToaEventDummy>", &FEBs[ih]);
-        }
+//        for (int ih = 0; ih < SFGD_FEBS_NUM; ++ih) {
+//            sFEBnum.str("");
+//            sFEBnum << ih;
+//            sFEB = "FEB_" + sFEBnum.str();
+//            AllEvents.Branch((sFEB).c_str(), "std::vector<ToaEventDummy>", &FEBs[ih]);
+//        }
         MDdateFile dfile(fileName);
 // Open the file and loop over events.
         unsigned int BordID = 0;
         char *eventBuffer;
         unsigned int ocbEventNumber = 0;
         bool firstEventNumber = true;
+        bool allFebInitialized = false;
         if (dfile.open()) { // There is a valid files to unpack
             dfile.init();
             do { // Loop over all spills
                 eventBuffer = dfile.GetNextEvent();
 
                 if (dfile.GetOcbEventNumber() != ocbEventNumber && !firstEventNumber) {
-                    AllEvents.Fill();
-                    for (int i = 0; i < SFGD_FEBS_NUM; ++i) {
-                        FEBs[i].clear();
+                    if (allFebInitialized){
+                        AllEvents.Fill();
+                        for (const auto i : availableFeb) {
+                            FEBs[i].clear();
+                        }
+                    } else {
+                        for (unsigned int i = 0; i < SFGD_FEBS_NUM; ++i) {
+                            if (!FEBs[i].empty()){
+                                availableFeb.push_back(i);
+                                sFEBnum.str("");
+                                sFEBnum << i;
+                                sFEB = "FEB_" + sFEBnum.str();
+                                AllEvents.Branch((sFEB).c_str(), "std::vector<ToaEventDummy>", &FEBs[i]);
+                            }
+                        }
+                        AllEvents.Fill();
+                        for (const auto i : availableFeb) {
+                            FEBs[i].clear();
+                        }
+                        allFebInitialized = true;
                     }
                 } else {
                     firstEventNumber = false;
