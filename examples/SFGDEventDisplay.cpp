@@ -128,11 +128,7 @@ int main( int argc, char **argv ) {
     // to deal with the main arguments
     // Define the arguments
     MDargumentHandler argh("Example of unpacking application.");
-    argh.AddArgument("help","print this message","h");
-    argh.AddArgument("directory","Path for a data file","d","<string>","." );
-    argh.AddArgument("file","Name of a data file","f","<string>","mandatory");
-    argh.AddArgument("begin","Initial position in input file","b","<int>","0");
-    argh.AddArgument("nwords","Number of data words to be processed","n","<int>","0");
+    argh.Init();
 
     // Check the user arguments consistancy
     // All mandatory arguments should be provided and
@@ -144,12 +140,6 @@ int main( int argc, char **argv ) {
 
     if ( argh.GetValue("file", stringBuf) != MDARGUMENT_STATUS_OK ) return -1;
     string filename = stringBuf;
-
-    if ( argh.GetValue("begin", intBuf) != MDARGUMENT_STATUS_OK ) return -1;
-    int pos = intBuf*4;
-
-    if ( argh.GetValue("nwords", intBuf) != MDARGUMENT_STATUS_OK ) return -1;
-    int nWords = intBuf;
 
 
     TFile *FileInput = new TFile((filename).c_str());
@@ -184,7 +174,11 @@ int main( int argc, char **argv ) {
         sFEBnum.str("");
         sFEBnum << ih;
         sFEB = "FEB_"+sFEBnum.str();
-        AllEvents->SetBranchAddress((sFEB).c_str(), &FEBs[ih]);
+        auto* br = AllEvents->GetListOfBranches()->FindObject((sFEB).c_str());
+        if (br){
+            cout << "Branch " <<(sFEB).c_str() <<" found."<<endl;
+            AllEvents->SetBranchAddress((sFEB).c_str(), &FEBs[ih]);
+        }
     }
     int nEntries = AllEvents->GetEntries();
     std::cout << "entries at Feb  is " << nEntries <<std::endl;
