@@ -24,7 +24,6 @@
 
 #include "MDdataContainer.h"
 
-using namespace std;
 
 class MDdataWord : public MDdataContainer {
  public:
@@ -51,7 +50,7 @@ class MDdataWord : public MDdataContainer {
   virtual void Dump() {
     if (_valid)
       MDdataContainer::Dump();
-    else cout << "  Data Word NOT valid " << endl;
+    else std::cout << "  Data Word NOT valid " << std::endl;
   }
 };
 

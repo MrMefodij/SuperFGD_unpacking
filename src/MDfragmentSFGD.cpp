@@ -1,7 +1,6 @@
 #include "MDfragmentSFGD.h"
 #include "MDdataWordSFGD.h"
 
-using namespace std;
 
 void MDfragmentSFGD::SetDataPtr(void *d, uint32_t aSize) {
     MDdataContainer::SetDataPtr(d);
@@ -37,21 +36,21 @@ void MDfragmentSFGD::Init() {
                 _gateNumber = dw.GetGateNumber();
                 _boardId = dw.GetBoardId();
                 _gateType = dw.GetGateType();
-                cout << "1: SFGD spill Header \"A\" Board ID " << _boardId << " SpillTag: "
-                     << dw.GetGateNumber() << endl;
+                std::cout << "1: SFGD spill Header \"A\" Board ID " << _boardId << " SpillTag: "
+                     << dw.GetGateNumber() << std::endl;
                 _size += 4;
                 dw.SetDataPtr(++ptr);
             }
             if (dw.GetGateHeaderID() == 1) {
                 _gateTimeFrGts = dw.GetGateTimeFrGts();
                 _boardId = dw.GetBoardId();
-                cout << "2: SFGD spill Header \"B\" Spill Time from GTRIG (10ns res.): " << _gateTimeFrGts
-                     << endl;
+                std::cout << "2: SFGD spill Header \"B\" Spill Time from GTRIG (10ns res.): " << _gateTimeFrGts
+                     << std::endl;
                 _size += 4;
                 dw.SetDataPtr(++ptr);
             }
             if (dw.GetDataType() != MDdataWordSFGD::GateTime) {
-                cout <<dw.GetDataType()<< " "<< dw << endl;
+                std::cout <<dw.GetDataType()<< " "<< dw << std::endl;
                 throw MDexception("ERROR in MDfragmentBM::Init() : 3rd word is not a spill spill time.");
             } else {
                 _gateTime = dw.GetGateTime();
@@ -93,7 +92,7 @@ void MDfragmentSFGD::Init() {
                             throw MDexception("ERROR in MDfragmentBM::Init() : preLast word is not a spill trailer.");
                         } else {
                             if (dw.GetGateNumber()!= _gateNumber){
-                                stringstream ss;
+                                std::stringstream ss;
                                 ss << "ERROR in MDfragmentSFGD::Init() : The Gate trailer is not consistent \n(Gate #: "
                                    << dw.GetGateNumber() << "!=" << _gateNumber << ")";
                                 throw MDexception(ss.str());
@@ -102,7 +101,7 @@ void MDfragmentSFGD::Init() {
                                 dw.SetDataPtr(++ptr);
                                 _gateTrailTime = dw.GetGateTime();
                                 done = true;
-                                cout<<endl;
+                                std::cout<<std::endl;
                             }
                         }
                     } else {
@@ -118,7 +117,7 @@ void MDfragmentSFGD::Init() {
 
 MDpartEventSFGD* MDfragmentSFGD::GetTriggerEventPtr(unsigned int evId) {
   if ( evId >= _trigEvents.size() ) {
-    stringstream ss;
+    std::stringstream ss;
     ss << "ERROR in MDfragmentSFGD::GetTriggerEventPtr() : ";
     ss << "Wrong Event Id: " << evId << ". Exceeds the total number of triggers." ;
     throw MDexception( ss.str() );

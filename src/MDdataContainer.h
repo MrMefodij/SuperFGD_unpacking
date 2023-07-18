@@ -35,7 +35,6 @@
 
 #include "MDexception.h"
 
-using namespace std;
 
 class MDdataContainer {
  protected:
@@ -62,7 +61,7 @@ class MDdataContainer {
   uint32_t* Get32bWordPtr(unsigned int i=0) {
     if ( (i*4) < _size ) return (uint32_t*)&_data[i*4];
     else {
-      stringstream ss;
+      std::stringstream ss;
       ss << "ERROR in MDdataContainer::Get32bWordPtr - the size is exceeded ";
       ss << "(i=" << i << " size=" << _size <<").";
       throw MDexception(ss.str());
@@ -85,7 +84,7 @@ class MDdataContainer {
 
   virtual void Dump(){
     if (_size%4) {
-      cerr << " Not 32 bits data !! Trying to ignore \n" ;
+      std::cerr << " Not 32 bits data !! Trying to ignore \n" ;
       return;
     }
 
@@ -93,12 +92,12 @@ class MDdataContainer {
     unsigned int nword=_size>>2;
 
     for (iword=0 ; iword < nword ; ++iword) {
-      cout << noshowbase << hex ;
-      cout << setfill('0') << setw(8)
+        std::cout << std::noshowbase << std::hex ;
+        std::cout << std::setfill('0') << std::setw(8)
            << *Get32bWordPtr(iword) << "  ";
     }
-    cout << endl;
-    cout << dec << noshowbase << setfill(' ') ;
+      std::cout << std::endl;
+      std::cout << std::dec << std::noshowbase << std::setfill(' ') ;
   }
 };
 

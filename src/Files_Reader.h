@@ -1,5 +1,6 @@
 #ifndef FILES_READER_H
 #define FILES_READER_H
+
 #include <fstream>
 #include <iomanip>
 #include <sstream>
@@ -10,7 +11,7 @@
 #include <TH1.h>
 
 #include "MDdataWordSFGD.h"
-#include "MDpartEventSFGD.h"
+#include "SFGD_defines.h"
 
 
 std::string GetLocation(std::string str, std::string path);

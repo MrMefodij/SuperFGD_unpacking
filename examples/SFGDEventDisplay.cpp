@@ -33,8 +33,7 @@
 #include "ToaEventDummy.h"
 #include "Connection_Map.h"
 #include "Files_Reader.h"
-
-#define SFGD_FEBS_NUM 280
+#include "SFGD_defines.h"
 
 
 std::tuple<TH1F,TH1F,TH2F> GetPictures(const ostringstream& evNumString, const std::vector<TSFGDigit>& hitsFEB, const unsigned int feb,const Connection_Map& connectionMap){

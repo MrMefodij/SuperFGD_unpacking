@@ -1,20 +1,15 @@
 #include <iostream>
 #include <fstream>
-#include <iomanip>
-#include <sstream>
 
 #include <TCanvas.h>
 #include <TTree.h>
 #include <TF1.h>
-#include <TMath.h>
 #include <TROOT.h>
 #include "Calibration.h"
 #include "Files_Reader.h"
-#include "MDpartEventSFGD.h"
+#include "SFGD_defines.h"
 #include "MDargumentHandler.h"
 #include <map>
-using namespace std;
-
 
 
 int main(int argc, char **argv){

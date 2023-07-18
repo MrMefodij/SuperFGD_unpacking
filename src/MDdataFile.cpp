@@ -19,9 +19,8 @@
 #include "MDdataWordSFGD.h"
 #include "MDexception.h"
 
-using namespace std;
 
-MDdateFile::MDdateFile(string fn)
+MDdateFile::MDdateFile(std::string fn)
             :_eventBuffer(NULL), _fileName(fn),_curPos(0),_fileSize(0),_nBytesRead(0), _lastSpill(-1) {}
 
 MDdateFile::~MDdateFile() {
@@ -31,23 +30,23 @@ MDdateFile::~MDdateFile() {
 }
 
 bool MDdateFile::open() {
-    string fullName = _fileName;
+    std::string fullName = _fileName;
     _ifs.open( fullName.c_str() );
     if ( _ifs.fail() ) {
-        cerr << "Can not open file " << fullName.c_str() << endl;
+        std::cerr << "Can not open file " << fullName.c_str() << std::endl;
         return false;
     }
     uint32_t end;
     _curPos = _ifs.tellg();
-    _ifs.seekg (0, ios::end);
+    _ifs.seekg (0, std::ios::end);
     end = _ifs.tellg();
     _fileSize = end - _curPos;
-    cout << " File size " << _fileSize << endl;
+    std::cout << " File size " << _fileSize << std::endl;
     if ( _fileSize%4 != 0 ) {
-        cerr << " File size is not a multiple of 4. The file " << fullName.c_str() << " is rejected!" << endl;
+        std::cerr << " File size is not a multiple of 4. The file " << fullName.c_str() << " is rejected!" << std::endl;
         return false;
     }
-    _ifs.seekg (0, ios::beg); // go back to the begining ( = _curPos )
+    _ifs.seekg (0, std::ios::beg); // go back to the begining ( = _curPos )
     return true;
 }
 
@@ -133,8 +132,8 @@ char* MDdateFile::GetNextEvent() {
   uint32_t spillSize = _spill_size[_lastSpill];
   uint32_t spillPos  = std::min(_spill_header_pos[_lastSpill].headerA, _spill_header_pos[_lastSpill].headerB);
 //  unsigned int ocbEventNumber = _ocb_event_number_vector[_lastSpill];
-  cout << "GetNextEvent  pos: " << spillPos/4 << "  size: " << spillSize/4
-       << " in DW units (4 bytes)" << endl;
+  std::cout << "GetNextEvent  pos: " << spillPos/4 << "  size: " << spillSize/4
+       << " in DW units (4 bytes)" << std::endl;
   return GetSpill(spillPos, spillSize);
 }
 
@@ -143,11 +142,11 @@ unsigned int MDdateFile::GetOcbEventNumber(){
 }
 
 void MDdateFile::GoTo(uint32_t pos) {
-  _ifs.seekg (pos , ios::beg);
+  _ifs.seekg (pos , std::ios::beg);
 }
 
 char* MDdateFile::GetSpill(uint32_t pos, uint32_t size) {
-  _ifs.seekg (pos , ios::beg);
+  _ifs.seekg (pos , std::ios::beg);
 
   if (_eventBuffer) delete _eventBuffer;
     _eventBuffer = new char[size];
@@ -166,6 +165,6 @@ void MDdateFile::reset() {
   /* go back to the begining */
   _nBytesRead = 0;
   _ifs.clear();
-  _ifs.seekg (0, ios::beg);
+  _ifs.seekg (0, std::ios::beg);
   _lastSpill = -1;
 }

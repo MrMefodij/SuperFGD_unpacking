@@ -1,21 +1,19 @@
 
 //  Created by Maria on 08.10.2022.
 //
-#include <stdio.h>
-#include <stdio.h>
+
 #include "Files_Reader.h"
 #include "BaseLine.h"
-#include <typeinfo>
 
 
-string GetLocation(std::string str, std::string path){
+std::string GetLocation(std::string str, std::string path){
      
     int i = str.rfind(path.c_str());
-    string way = str.substr(0,i);
+    std::string way = str.substr(0,i);
     return way;
 }
 void File_Reader::ReadFile(const std::string& sFileName, std::vector<TH1F*>& hFEBCH, int HG_LG){
-    ifstream ifs(sFileName.c_str());
+    std::ifstream ifs(sFileName.c_str());
     while (!ifs.eof()) {
         ifs.read((char*)_dataPtr, 4 );
         MDdataWordSFGD dw(_dataPtr);
@@ -37,7 +35,7 @@ void File_Reader::ReadFile(const std::string& sFileName, std::vector<TH1F*>& hFE
 };
 
 void File_Reader::ReadFile(const std::string& sFileName, std::vector<std::vector<TH1F*>>& hFEBCH_HG,std::vector<std::vector<TH1F*>>& hFEBCH_LG ){
-    ifstream ifs(sFileName.c_str());
+    std::ifstream ifs(sFileName.c_str());
     while (!ifs.eof()) {
         ifs.read((char*)_dataPtr, 4 );
         MDdataWordSFGD dw(_dataPtr);
@@ -63,7 +61,7 @@ void File_Reader::ReadFile(const std::string& sFileName, std::vector<std::vector
 };
 
 void File_Reader::ReadFile(const std::string& sFileName, std::vector<TH1F*>& hFEBCH){
-    ifstream ifs(sFileName.c_str());
+    std::ifstream ifs(sFileName.c_str());
     while (!ifs.eof()) {
         ifs.read((char*)_dataPtr, 4 );
         MDdataWordSFGD dw(_dataPtr);

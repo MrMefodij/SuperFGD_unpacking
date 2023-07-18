@@ -188,7 +188,7 @@ private:
   };
 };
 
-ostream &operator<<(ostream &s, MDdataWordSFGD &dw);
+std::ostream &operator<<(std::ostream &s, MDdataWordSFGD &dw);
 
 #endif
 

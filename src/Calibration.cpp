@@ -5,7 +5,7 @@
 
 
 #include "Calibration.h"
-#include <math.h>
+
 
 void Calibration::Gain_Calculation(){
     _gain = 0;

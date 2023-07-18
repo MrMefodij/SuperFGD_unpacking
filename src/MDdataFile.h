@@ -21,9 +21,6 @@
 // Created by amefodev on 13.06.2023. mrmefodij@gmail.com
 //
 
-//
-// Created by amefodev on 13.06.2023. mrmefodij@gmail.com
-//
 
 #ifndef __MDDATEFILE_H
 #define __MDDATEFILE_H

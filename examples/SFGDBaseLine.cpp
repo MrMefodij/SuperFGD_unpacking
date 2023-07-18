@@ -1,15 +1,14 @@
 #include <iostream>
+#include <algorithm>
 #include "TGraph.h"
 #include <TTree.h>
 #include <TROOT.h>
+#include "SFGD_defines.h"
 #include "Files_Reader.h"
-#include "MDpartEventSFGD.h"
 #include "MDargumentHandler.h"
 #include "XmlReaderWriter.h"
 #include "BaseLine.h"
-#include <algorithm>
 
-#define SFGD_SLOT 16
 
 
 int main(int argc, char **argv){

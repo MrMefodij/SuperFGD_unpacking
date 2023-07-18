@@ -29,8 +29,6 @@
 #include <vector>
 #include "MDargumentHandler.h"
 
-using namespace std;
-
 
 MDargumentHandler::MDargumentHandler(string aDescription):_name(""),_description(aDescription){
 }

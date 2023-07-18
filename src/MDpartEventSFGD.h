@@ -32,9 +32,8 @@
 
 #include "MDdataContainer.h"
 #include "MDdataWordSFGD.h"
+#include "SFGD_defines.h"
 
-#define SFGD_FEB_NCHANNELS 256
-#define SFGD_FEBS_NUM 280
 
 class MDpartEventSFGD : public MDdataContainer {
 
@@ -113,7 +112,7 @@ private:
 
     bool _gateTrailerExist = false;
 
-    friend ostream &operator<<(std::ostream &s, MDpartEventSFGD &df);
+    friend std::ostream &operator<<(std::ostream &s, MDpartEventSFGD &df);
 };
 
 #endif
