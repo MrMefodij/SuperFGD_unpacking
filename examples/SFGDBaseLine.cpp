@@ -17,12 +17,12 @@ int main(int argc, char **argv){
     MDargumentHandler argh("Example of sfgd baseline.");
     argh.Init();
 
-    // Check the user arguments consistancy
-    // All mandatory arguments should be provided and
-    // There should be no extra arguments
+    /// Check the user arguments consistancy
+    /// All mandatory arguments should be provided and
+    /// There should be no extra arguments
 
     if ( argh.ProcessArguments(argc, argv) ) {argh.Usage(); return -1;}
-    // Treat arguments, obtain values to be used later
+    /// Treat arguments, obtain values to be used later
     if ( argh.GetValue("help") ) {argh.Usage(); return 0;}
 
     if (argh.GetMode() == "f") {
@@ -51,6 +51,7 @@ int main(int argc, char **argv){
         }
     }
 
+    /// Read input files, writes down TH1F for HG/LG for each channel and finds baseline positions for each ASIC.
     BaseLine b;
     vector<int> HG_LG(2);
     int i = 0;
@@ -82,6 +83,8 @@ int main(int argc, char **argv){
             delete hFEBCH_LG[i][j];
         }
     }
+
+    /// Prepare data for creating xml files using baseline study results.
     string rootFileOutput = GetLocation(vFileNames[0].c_str(), ".bin");
     std::map<Elems,std::vector<Baseline_values<int>>> xml_data = b.Find_BaseLine(rootFileOutput,vFileNames.size());
     XmlReaderWriter xmlFile;
@@ -103,11 +106,14 @@ int main(int argc, char **argv){
         }
     }
     cout << "Drawing baseline done "<<endl;
+
+    /// Write xml files
     for(auto i : tempBoard){
         BoardData<AsicData> tempData;
         tempData.AddAsics(i.first,i.second);
         xmlFile.AddBoard(tempData);
     }
+
     xmlFile.WriteXml((rootFileOutput+".xml").c_str());
     cout << "Writing xml done "<<endl;
 

@@ -28,7 +28,6 @@ TH1F* Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
     TSpectrum *s = new TSpectrum(2*npeaks);
     int nfound = s->Search(hFEBCH,2,"",0.001);
     double *xpeaks = s->GetPositionX();
-    // Double_t par[3*nfound+4];
     if(nfound > 0){
         for (auto p=0;p<std::min(nfound,6);p++) {
             //
@@ -65,8 +64,8 @@ TLegend* Calibration::Calibration_Legend(){
         legend->AddEntry((TObject*)0, name.c_str(), "");
     }
     if(_peaks.size() > 2){
-    std::string gain = "gain = " + std::to_string(Calibration_Gain())
-        + " +/- " + std::to_string(Calibration_Gain_Error());
+    std::string gain = "gain = " + std::to_string(_gain)
+        + " +/- " + std::to_string(_gain_error);
     legend->AddEntry((TObject*)0, gain.c_str(), "");
     }
     return legend;

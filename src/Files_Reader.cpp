@@ -12,7 +12,7 @@ std::string GetLocation(std::string str, std::string path){
     std::string way = str.substr(0,i);
     return way;
 }
-void File_Reader::ReadFile(const std::string& sFileName, std::vector<TH1F*>& hFEBCH, int HG_LG){
+void File_Reader::ReadFile(const std::string& sFileName, std::vector<std::vector<TH1F*>>& hFEBCH, int HG_LG){
     std::ifstream ifs(sFileName.c_str());
     while (!ifs.eof()) {
         ifs.read((char*)_dataPtr, 4 );
@@ -24,7 +24,7 @@ void File_Reader::ReadFile(const std::string& sFileName, std::vector<TH1F*>& hFE
                 break;
             case MDdataWordSFGD::ChargeMeas:
                 if (dw.GetAmplitudeId()==HG_LG){
-                    hFEBCH[_board_Id * SFGD_FEB_NCHANNELS + dw.GetChannelId()]->Fill(dw.GetAmplitude());
+                    hFEBCH[_board_Id & 0x0f][dw.GetChannelId()]->Fill(dw.GetAmplitude());
                 }
             break;
         default:
@@ -43,14 +43,13 @@ void File_Reader::ReadFile(const std::string& sFileName, std::vector<std::vector
             case MDdataWordSFGD::GateHeader:
                 _board_Id = dw.GetBoardId();
                 _boad_Id_set.insert(_board_Id );
-                _slot_Id = _board_Id & 0x0f ;
                 break;
             case MDdataWordSFGD::ChargeMeas:
                 if (dw.GetAmplitudeId()==2){
-                    hFEBCH_HG[_slot_Id][dw.GetChannelId()]->Fill(dw.GetAmplitude());
+                    hFEBCH_HG[_board_Id & 0x0f][dw.GetChannelId()]->Fill(dw.GetAmplitude());
                 }
                 if (dw.GetAmplitudeId()==3){
-                    hFEBCH_LG[_slot_Id][dw.GetChannelId()]->Fill(dw.GetAmplitude());
+                    hFEBCH_LG[_board_Id & 0x0f][dw.GetChannelId()]->Fill(dw.GetAmplitude());
                 }
                 break;
             default:
@@ -60,7 +59,7 @@ void File_Reader::ReadFile(const std::string& sFileName, std::vector<std::vector
     ifs.close();
 };
 
-void File_Reader::ReadFile(const std::string& sFileName, std::vector<TH1F*>& hFEBCH){
+void File_Reader::ReadFile(const std::string& sFileName,std::vector<TH1F*>& hFEBCH){
     std::ifstream ifs(sFileName.c_str());
     while (!ifs.eof()) {
         ifs.read((char*)_dataPtr, 4 );
@@ -69,12 +68,12 @@ void File_Reader::ReadFile(const std::string& sFileName, std::vector<TH1F*>& hFE
             case MDdataWordSFGD::GateHeader:
                 _board_Id = dw.GetBoardId();
                 _boad_Id_set.insert(_board_Id );
-                _slot_Id = _board_Id & 0x0f ;
                 break;
             case MDdataWordSFGD::ChargeMeas:
                 if (dw.GetAmplitudeId()== 2 ){
+                    _feb_channel[_board_Id] = _channel_Id;
                     _channel_Id = dw.GetChannelId();
-                    hFEBCH[_slot_Id]->Fill(dw.GetAmplitude());
+                    hFEBCH[_board_Id & 0x0f]->Fill(dw.GetAmplitude());
                 }
                 break;
             default:
