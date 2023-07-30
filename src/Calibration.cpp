@@ -5,20 +5,25 @@
 
 
 #include "Calibration.h"
-
-
+#include <algorithm>
 void Calibration::Gain_Calculation(){
     _gain = 0;
     _gain_error = 0;
-    if(_peaks.size() > 2){
-        _gain_error+=pow(_peaks[1].GetPositionError(),2);
-        for(auto p=2;p<_peaks.size();p++)
+    unsigned int start_peak = 2;
+
+    if(_peaks.size() > start_peak + 1){
+        if(_peaks[1].GetPosition() - _peaks[0].GetPosition() < 1.2 * (_peaks[2].GetPosition() - _peaks[1].GetPosition()) && _peaks[1].GetPosition() - _peaks[0].GetPosition() < 1.2 * (_peaks[3].GetPosition() - _peaks[2].GetPosition()))
+            start_peak = 1;
+        _gain_error+=pow(_peaks[start_peak].GetPositionError(),start_peak);
+        for(int p=start_peak + 1; p < _peaks.size();p++)
         {
+//            if(Connection == "FEB_251_Channel_210")
+//            std::cout << _peaks[p].GetPosition()<<" "<<_peaks[p].GetPosition() - _peaks[p-1].GetPosition()<<" "<<start_peak<<std::endl;
             _gain+=(_peaks[p].GetPosition()-_peaks[p-1].GetPosition());
             _gain_error += pow(_peaks[p].GetPositionError(),2);
         }
-        _gain  /= (int)(_peaks.size()-2);
-        _gain_error= sqrt(_gain_error/(_peaks.size()-1));
+        _gain /= (int) (_peaks.size() - (start_peak + 1));
+        _gain_error = sqrt(_gain_error / (_peaks.size() - start_peak));
     }
 }
 
@@ -28,20 +33,37 @@ TH1F* Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
     TSpectrum *s = new TSpectrum(2*npeaks);
     int nfound = s->Search(hFEBCH,2,"",0.001);
     double *xpeaks = s->GetPositionX();
-    if(nfound > 0){
-        for (auto p=0;p<std::min(nfound,6);p++) {
-            //
-            Double_t peakWidth = 10;
-            if(p==0 || (p > 0 && (xpeaks[p] - xpeaks[p-1]) > 0)){
-                TF1 * fit_1 = new TF1("fit_1","gaus", xpeaks[p] - peakWidth, xpeaks[p] + peakWidth);
-                hFEBCH->Fit("fit_1","qr+");
-                if((_peaks.empty()  ||  _peaks.back().GetPosition() < fit_1->GetParameter(1)) &&
-                    hFEBCH->GetBinContent(fit_1->GetParameter(1)) > 10){
-                    Peaks peak = {fit_1->GetParameter(1),fit_1->GetParError(1),hFEBCH->GetBinContent(fit_1->GetParameter(1)),fit_1->GetParameter(2)};
+    if(nfound > 0 ){
+        for (auto p=0;p<std::min(nfound,15) ;p++) {
+            if(hFEBCH->GetBinContent(xpeaks[p]) > 50) {
+                Double_t peakWidth = 10;
+                TF1 *fit_1 = new TF1("fit_1", "gaus", xpeaks[p] - peakWidth, xpeaks[p] + peakWidth);
+                hFEBCH->Fit("fit_1", "qr+");
+                if (fit_1->GetParError(1) < 2 && fit_1->GetParameter(2) < 25) {
+                    Peaks peak = {fit_1->GetParameter(1), fit_1->GetParError(1),
+                                  hFEBCH->GetBinContent(fit_1->GetParameter(1)), fit_1->GetParameter(2)};
                     _peaks.push_back(peak);
                 }
-
             }
+        }
+        if(_peaks.size()> 1) {
+            sort(_peaks.begin(), _peaks.end(), [](const Peaks &p_0, const Peaks &p_1) {
+                return p_0.GetPosition() < p_1.GetPosition();
+            });
+
+            for (int i = 0; i < _peaks.size() - 1; i++) {
+                if (_peaks[i].GetHeight() < 0.6 * _peaks[i + 1].GetHeight() || _peaks[i+1].GetPosition() - _peaks[i].GetPosition() < 20
+                ) {
+                    _peaks.erase(std::next(_peaks.begin(), i));
+                    i--;
+                }
+            }
+            if(_peaks.size() > 5)
+            _peaks.erase(_peaks.begin()+5, _peaks.end());
+//            _peaks.resize(5);
+//            while(_peaks.size() > 5){
+//                _peaks.pop_back();
+//            }
         }
     }
     Gain_Calculation();

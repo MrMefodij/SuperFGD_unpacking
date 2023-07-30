@@ -27,153 +27,153 @@ using namespace std;
 
 uint32_t MDdataWordSFGD::GetDataType() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & DataTypeMask ) >> DataTypeShift );
-  return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetDataType()");
 }
 
 uint32_t MDdataWordSFGD::GetBoardId() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & BoardIdMask ) >> BoardIdShift );
-  return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetBoardId()");
 }
 
 uint32_t MDdataWordSFGD::GetGateHeaderID(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & GateHeaderIDMask ) >> GateHeaderIDShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetGateHeaderID()");
 }
 
 uint32_t MDdataWordSFGD::GetGateType() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & GateTypeMask ) >> GateTypeShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetGateType()");
 }
 
 uint32_t MDdataWordSFGD::GetGateNumber() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & GateNumberMask ) >> GateNumberShift );
-  return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetGateNumber()");
 }
 
 uint32_t MDdataWordSFGD::GetGateTimeFrGts() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & GateTimeFrGtsMask ) >> GateTimeFrGtsShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetGateTimeFrGts()");
 }
 
 uint32_t MDdataWordSFGD::GetGateTime() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & GateTimeMask ) >> GateTimeShift );
-  return 0;
+  throw MDexception("Error to get MDdataWordSFGD::GetGateTime()");
 }
 
 uint32_t MDdataWordSFGD::GetHoldTimeID(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & HoldTimeIDMask ) >> HoldTimeIDShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetHoldTimeID()");
 }
 
 uint32_t MDdataWordSFGD::GetHoldTimeStartFrGTS(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & HoldTimeGTSMask ) >> HoldTimeGTSShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetHoldTimeStartFrGTS()");
 }
 
 uint32_t MDdataWordSFGD::GetHoldTimeStopFrGTS(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & HoldTimeGTSMask ) >> HoldTimeGTSShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetHoldTimeStopFrGTS()");
 }
 
 uint32_t MDdataWordSFGD::GetGtsTag(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & GtsTagMask ) >> GtsTagShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetGtsTag()");
 }
 
 uint32_t MDdataWordSFGD::GetGtsTagShort(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & GtsTagShortMask ) >> GtsTagShortShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetGtsTagShort()");
 }
 
 uint32_t MDdataWordSFGD::GetChannelId() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & ChannelIdMask ) >> ChannelIdShift );
-  return 0;
+  throw MDexception("Error to get MDdataWordSFGD::GetChannelId()");
 }
 
 uint32_t MDdataWordSFGD::GetHitId() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & HitIdMask ) >> HitIdShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetHitId()");
 }
 
 uint32_t MDdataWordSFGD::GetTagId() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & TagIdMask ) >> TagIdShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetTagId()");
 }
 
 uint32_t MDdataWordSFGD::GetEdgeId() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & EdgeIdMask ) >> EdgeIdShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetEdgeId()");
 }
 
 uint32_t MDdataWordSFGD::GetHitTime() {
   if (IsValid())  return ( (*(uint32_t*)(_data) & HitTimeMask ) >> HitTimeShift );
-  return 0;
+  throw MDexception("Error to get MDdataWordSFGD::GetHitTime()");
 }
 
 uint32_t MDdataWordSFGD::GetAmplitudeId() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & AmplitudeIdMask ) >> AmplitudeIdShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetAmplitudeId()");
 }
 
 uint32_t MDdataWordSFGD::GetAmplitude() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & AmplitudeMask ) >> AmplitudeShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetAmplitude()");
 }
 
 uint32_t MDdataWordSFGD::GetGtsDataFlag() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & GtsDataFlagMask ) >> GtsDataFlagShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetGtsDataFlag()");
 }
 
 uint32_t MDdataWordSFGD::GetGtsTime() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & GtsTimeMask ) >> GtsTimeShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetGtsTime()");
 }
 
 uint32_t MDdataWordSFGD::GetOcbGateType(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & OcbGateType ) >> OcbGateTypeShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetOcbGateType()");
 }
 
 uint32_t MDdataWordSFGD::GetOcbGateTag(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & OcbGateTag ) >> OcbGateTagShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetOcbGateTag()");
 }
 uint32_t MDdataWordSFGD::GetOcbEventNumber(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & OcbEventNumber ) >> OcbEventNumberShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetOcbEventNumber()");
 }
 uint32_t MDdataWordSFGD::GetOcbGateOpenTimeout(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & OcbGateOpenTimeout ) >> OcbGateOpenTimeoutShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetOcbGateOpenTimeout()");
 }
 uint32_t MDdataWordSFGD::GetOcbGateCloseError(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & OcbGateCloseError ) >> OcbGateCloseErrorShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetOcbGateCloseError()");
 }
 uint32_t MDdataWordSFGD::GetOcbFebDataErrNum(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & OcbFebDataErrNum ) >> OcbFebDataErrNumShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetOcbFebDataErrNum()");
 }
 
 uint32_t MDdataWordSFGD::GetFebGateFifo0Full(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & OcbFebGateFifo0Full ) >> OcbFebGateFifo0Shift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetFebGateFifo0Full()");
 }
 
 uint32_t MDdataWordSFGD::GetFebGateFifo1Full(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & OcbFebGateFifo1Full ) >> OcbFebGateFifo1Shift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetDataType()");
 }
 
 uint32_t MDdataWordSFGD::GetFebGateErrNum(){
     if (IsValid())  return ( (*(uint32_t*)(_data) & OcbFebGateErrNum ) >> OcbFebGateErrNumShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetFebGateFifo1Full()");
 }
 
 uint32_t MDdataWordSFGD::GetSpecialWord() {
     if (IsValid())  return ( (*(uint32_t*)(_data) & SpecialIDParamMask ) >> SpecialIDParamShift );
-    return 0;
+    throw MDexception("Error to get MDdataWordSFGD::GetSpecialWord()");
 }
 
 void MDdataWordSFGD::Dump() {

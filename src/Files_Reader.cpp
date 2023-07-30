@@ -12,29 +12,40 @@ std::string GetLocation(std::string str, std::string path){
     std::string way = str.substr(0,i);
     return way;
 }
-void File_Reader::ReadFile(const std::string& sFileName, std::vector<std::vector<TH1F*>>& hFEBCH, int HG_LG){
+void File_Reader::ReadFile_for_Calibration(const std::string &sFileName, std::vector<std::vector<TH1F *>> &hFEBCH, int HG_LG) {
     std::ifstream ifs(sFileName.c_str());
+    _boad_Id_set.clear();
+    int dwCount(0);
     while (!ifs.eof()) {
-        ifs.read((char*)_dataPtr, 4 );
-        MDdataWordSFGD dw(_dataPtr);
-        switch (dw.GetDataType()) {
-            case MDdataWordSFGD::GateHeader:
-                _boad_Id_set.insert(dw.GetBoardId());
-                _board_Id = dw.GetBoardId();
-                break;
-            case MDdataWordSFGD::ChargeMeas:
-                if (dw.GetAmplitudeId()==HG_LG){
-                    hFEBCH[_board_Id & 0x0f][dw.GetChannelId()]->Fill(dw.GetAmplitude());
-                }
-            break;
-        default:
-            break;
+        try {
+            ifs.read((char *) _dataPtr, 4);
+            MDdataWordSFGD dw(_dataPtr);
+            ++dwCount;
+            switch (dw.GetDataType()) {
+                case MDdataWordSFGD::GateHeader:
+                    _board_Id = dw.GetBoardId();
+//                  if(_board_Id!=0)
+                    _boad_Id_set.insert(_board_Id);
+                    break;
+                case MDdataWordSFGD::ChargeMeas:
+                    if (dw.GetAmplitudeId() == HG_LG) {
+//                  if(_board_Id!=0)
+                        hFEBCH[_board_Id & 0x0f][dw.GetChannelId()]->Fill(dw.GetAmplitude());
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
+        catch(...){
+            std::cerr<<"Error"<<std::endl;
+        }
+
     }
     ifs.close();
 };
 
-void File_Reader::ReadFile(const std::string& sFileName, std::vector<std::vector<TH1F*>>& hFEBCH_HG,std::vector<std::vector<TH1F*>>& hFEBCH_LG ){
+void File_Reader::ReadFile_for_Baseline(const std::string &sFileName, std::vector<std::vector<TH1F *>> &hFEBCH_HG,std::vector<std::vector<TH1F *>> &hFEBCH_LG) {
     std::ifstream ifs(sFileName.c_str());
     while (!ifs.eof()) {
         ifs.read((char*)_dataPtr, 4 );
@@ -59,18 +70,19 @@ void File_Reader::ReadFile(const std::string& sFileName, std::vector<std::vector
     ifs.close();
 };
 
-void File_Reader::ReadFile(const std::string& sFileName,std::vector<TH1F*>& hFEBCH){
+void File_Reader::ReadFile_for_Threshold(const std::string &sFileName, std::vector<TH1F *> &hFEBCH) {
     std::ifstream ifs(sFileName.c_str());
+    _boad_Id_set.clear();
     while (!ifs.eof()) {
-        ifs.read((char*)_dataPtr, 4 );
+        ifs.read((char *) _dataPtr, 4);
         MDdataWordSFGD dw(_dataPtr);
         switch (dw.GetDataType()) {
             case MDdataWordSFGD::GateHeader:
                 _board_Id = dw.GetBoardId();
-                _boad_Id_set.insert(_board_Id );
+                _boad_Id_set.insert(_board_Id);
                 break;
             case MDdataWordSFGD::ChargeMeas:
-                if (dw.GetAmplitudeId()== 2 ){
+                if (dw.GetAmplitudeId() == 2) {
                     _feb_channel[_board_Id] = _channel_Id;
                     _channel_Id = dw.GetChannelId();
                     hFEBCH[_board_Id & 0x0f]->Fill(dw.GetAmplitude());

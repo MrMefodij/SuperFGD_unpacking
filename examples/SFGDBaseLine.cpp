@@ -54,7 +54,6 @@ int main(int argc, char **argv){
     /// Read input files, writes down TH1F for HG/LG for each channel and finds baseline positions for each ASIC.
     BaseLine b;
     vector<int> HG_LG(2);
-    int i = 0;
     for(const std::string& filename : vFileNames){
         string FileOutput =GetLocation(filename.c_str(), ".bin");
         size_t pos_1 = FileOutput.find("HG");
@@ -63,18 +62,22 @@ int main(int argc, char **argv){
         HG_LG[1] = atoi(FileOutput.substr(pos_2 + 2).c_str());
         // Going through data file
         File_Reader file_reader;
-        file_reader.ReadFile(filename,hFEBCH_HG,hFEBCH_LG);
+        file_reader.ReadFile_for_Baseline(filename,hFEBCH_HG,hFEBCH_LG);
         // find numbers of measured FEB
         NFEB = file_reader.GetFEBNumbers();
         //get histograms with peaks
         for (unsigned int ih: NFEB) {
             for (unsigned int iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
-                b.SFGD_BaseLine(hFEBCH_HG[ih & 0x0f][iCh], hFEBCH_LG[ih & 0x0f][iCh], {ih,iCh},HG_LG);
+                if(hFEBCH_HG[ih & 0x0f][iCh]->GetEntries() != 0 && hFEBCH_LG[ih & 0x0f][iCh]->GetEntries() != 0) {
+                    b.SFGD_BaseLine(hFEBCH_HG[ih & 0x0f][iCh], hFEBCH_LG[ih & 0x0f][iCh], {ih, iCh}, HG_LG);
+                }
+                else{
+                    std::cout << "Problem in file: "<< filename<<" FEB_"<<ih<<"_Channel_"<<iCh<<std::endl;
+                }
                 hFEBCH_HG[ih & 0x0f][iCh]->Reset();
                 hFEBCH_LG[ih & 0x0f][iCh]->Reset();
             }
         }
-        i++;
     }
     cout << "Reading files done"<<endl;
     for(int i = 0; i < SFGD_SLOT; i++){

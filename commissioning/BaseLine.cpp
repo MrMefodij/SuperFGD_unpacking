@@ -26,6 +26,7 @@ void BaseLine::SFGD_BaseLine(TH1F* &hFEBCH_HG,TH1F* &hFEBCH_LG, std::pair<unsign
         TH1F *th = cl.SFGD_Calibration(hFEBCH_full[i], connection);
         Elems el = {i + 2, NFEBCh.first, NFEBCh.second};
         Peaks peak = cl.Calibration_Par()[0];
+//        std::cout << connection<<" "<< peak.GetPosition()<<std::endl;
         if (peak.GetHeight() > BASELINE_HEIGHT && peak.GetPosition() != 0)
             _baseline[el].push_back({HG_LG[i], peak.GetPosition()});
     }
@@ -61,9 +62,9 @@ void BaseLine::Print_BaseLine(std::string filename,unsigned int files_number){
             c1->Write();
             g->Clear();
         }
-        else{
-            std::cout <<"Problem with calibration in "<< s<<std::endl;
-        }
+//        else{
+//            std::cout <<"Problem in "<< s<<std::endl;
+//        }
     }
     c1->Clear();
     wfile->Close();
@@ -84,7 +85,7 @@ std::map<Elems,std::vector<Baseline_values<int>>> BaseLine::Find_BaseLine(std::s
                 {
                     return p1._par_1 < p2._par_1;
                 });
-        std::string s = "FEB_"+std::to_string(iCh.first._boardId)+"_ASIC_"+std::to_string(iCh.first._asicId_channelId);
+        std::string s = "FEB_" + std::to_string(iCh.first._boardId)+"_ASIC_" + std::to_string(iCh.first._asicId_channelId);
         if(iCh.first._DAC == 2) s+="_HG";
         if(iCh.first._DAC == 3) s+="_LG";
 

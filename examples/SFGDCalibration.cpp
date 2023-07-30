@@ -52,7 +52,9 @@ int main(int argc, char **argv){
     /// Going through data file
     Calibration cl;
     File_Reader file_reader;
-    file_reader.ReadFile(filename, hFEBCH,2);
+
+    /// parameter HG_LG: for HG - 2, for LG - 3, default - 2
+    file_reader.ReadFile_for_Calibration(filename, hFEBCH,2);
     
     /// Find numbers of measured FEB
     set<unsigned int> NFEB = file_reader.GetFEBNumbers();
@@ -78,7 +80,7 @@ int main(int argc, char **argv){
     /// Find channels with std more than 3 sigma
     map<string,double> gain = cl.GetGain();
     string connection;
-    TH1F* hGain = new TH1F("Gain_distrubution", "Gain_distrubution",  101, 0, 100);
+    TH1F* hGain = new TH1F("Gain_distrubution", "Gain_distrubution",  400, 0, 100);
     for (auto g : gain) {
         if (g.second != 0) hGain->Fill(g.second);
     }
@@ -92,12 +94,12 @@ int main(int argc, char **argv){
     hGain->Write();
     cout << "Mean_gain: "<<mean_gain<<", std_gain: "<<std_gain<<endl;
 
-    for(auto ih : NFEB){   
+    for(auto ih : NFEB){
         for (auto iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
             connection = "FEB_" + to_string(ih) + "_Channel_" +  to_string(iCh);
             double gain_value = gain.at(connection);
             if((gain_value < mean_gain - 3*std_gain) || (gain_value > mean_gain + 3*std_gain)){
-                if(gain_value == 0) cout<< "Problem in " << connection <<" number of fitted peaks less than 3"<<endl;
+                if(gain_value == 0) cout<< "Problem in " << connection <<" number of fitted peaks less than 4"<<endl;
                 else{ cout << "Problem in "<<connection <<": "<< gain_value <<endl;}
             }
         }

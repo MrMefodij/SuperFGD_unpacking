@@ -25,11 +25,11 @@ public:
         delete _dataPtr;
     }
     /// Function for calibration study
-    void ReadFile(const std::string& sFileName, std::vector<std::vector<TH1F*>>& hFEBCH, int HG_LG);
+    void ReadFile_for_Calibration(const std::string& sFileName, std::vector<std::vector<TH1F*>>& hFEBCH, int HG_LG = 2);
     /// Function for baseline study
-    void ReadFile(const std::string& sFileName, std::vector<std::vector<TH1F*>>& hFEBCH_HG,std::vector<std::vector<TH1F*>>& hFEBCH_LG);
+    void ReadFile_for_Baseline(const std::string& sFileName, std::vector<std::vector<TH1F*>>& hFEBCH_HG,std::vector<std::vector<TH1F*>>& hFEBCH_LG);
     /// Function for threshold study
-    void ReadFile(const std::string& sFileName, std::vector<TH1F*>& hFEBCH);
+    void ReadFile_for_Threshold(const std::string& sFileName, std::vector<TH1F*>& hFEBCH);
 
     /// Create directory
     std::map<unsigned int, unsigned int> GetFEBchannel() {return _feb_channel;}

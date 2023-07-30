@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
     /// Read directory with data and create histograms for each DACs
     for(auto i = 0; i < vFileNames.size(); i++) {
         File_Reader file_reader;
-        file_reader.ReadFile(vFileNames[i], hFEBCH[i]);
+        file_reader.ReadFile_for_Threshold(vFileNames[i], hFEBCH[i]);
         auto NFEBs = file_reader.GetFEBNumbers();
         auto feb_channel = file_reader.GetFEBchannel();
         for(auto board_Id : NFEBs) {
@@ -93,11 +93,10 @@ int main(int argc, char **argv) {
     for(auto tr : threshold_data) {
         cout << "FEB_"<<tr.first._DAC<<"_Channel_"<<tr.first._ADC<<endl;
         ThresholdStudy threshold;
-        threshold.FindThreshold(tr.second, DAC, 8
-        );
+        threshold.FindThreshold(tr.second, DAC, 20);
         FEBdir[tr.first._DAC & 0x0f]->cd();
         TGraph *g = threshold.PrintThreshold(2);
-        g->SetTitle(("FEBs_DAC10b_study_ASIC_" + to_string(tr.first._ADC / 32)).c_str());
+        g->SetTitle(("FEB" + to_string(tr.first._DAC) +"_DAC10b_study_ASIC_" + to_string(tr.first._ADC / 32)).c_str());
         g->GetXaxis()->SetTitle("DAC10b");
         g->GetYaxis()->SetTitle("ADC channels");
         g->Draw("AC* same");

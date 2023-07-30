@@ -10,7 +10,7 @@
 class Peaks{
 public:
     Peaks(double _position,double _position_error,double _height, double _std_deviation);
-    // Peaks(){}
+    Peaks(){}
     ~Peaks() = default;
     double GetPosition() const {return position;}
     double GetPositionError() const {return position_error;}
