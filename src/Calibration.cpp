@@ -6,6 +6,9 @@
 
 #include "Calibration.h"
 #include <algorithm>
+
+#define MIN_HEIGHT 20
+
 void Calibration::Gain_Calculation(){
     _gain = 0;
     _gain_error = 0;
@@ -17,8 +20,6 @@ void Calibration::Gain_Calculation(){
         _gain_error+=pow(_peaks[start_peak].GetPositionError(),start_peak);
         for(int p=start_peak + 1; p < _peaks.size();p++)
         {
-//            if(Connection == "FEB_251_Channel_210")
-//            std::cout << _peaks[p].GetPosition()<<" "<<_peaks[p].GetPosition() - _peaks[p-1].GetPosition()<<" "<<start_peak<<std::endl;
             _gain+=(_peaks[p].GetPosition()-_peaks[p-1].GetPosition());
             _gain_error += pow(_peaks[p].GetPositionError(),2);
         }
@@ -27,7 +28,7 @@ void Calibration::Gain_Calculation(){
     }
 }
 
-TH1F* Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
+void Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
     _peaks.clear();
     int npeaks = 30;
     TSpectrum *s = new TSpectrum(2*npeaks);
@@ -35,7 +36,7 @@ TH1F* Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
     double *xpeaks = s->GetPositionX();
     if(nfound > 0 ){
         for (auto p=0;p<std::min(nfound,15) ;p++) {
-            if(hFEBCH->GetBinContent(xpeaks[p]) > 50) {
+            if(hFEBCH->GetBinContent(xpeaks[p]) > MIN_HEIGHT) {
                 Double_t peakWidth = 10;
                 TF1 *fit_1 = new TF1("fit_1", "gaus", xpeaks[p] - peakWidth, xpeaks[p] + peakWidth);
                 hFEBCH->Fit("fit_1", "qr+");
@@ -60,17 +61,12 @@ TH1F* Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
             }
             if(_peaks.size() > 5)
             _peaks.erase(_peaks.begin()+5, _peaks.end());
-//            _peaks.resize(5);
-//            while(_peaks.size() > 5){
-//                _peaks.pop_back();
-//            }
         }
     }
     Gain_Calculation();
     _gain_values.insert({connection,_gain});
     hFEBCH->GetYaxis()->SetTitle("Number of events");
     hFEBCH->GetXaxis()->SetTitle("ADC channels");
-    return hFEBCH;
 }
 
 

@@ -65,8 +65,8 @@ int main(int argc, char **argv){
         FEBdir->cd();
         for (unsigned int iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
             unsigned int slot_id = ih & 0x0f;
-                string feb_channel = "FEB_" + to_string(ih) + "_Channel_" + to_string(iCh);
-                hFEBCH[slot_id][iCh] = cl.SFGD_Calibration(hFEBCH[slot_id][iCh], feb_channel);
+            string feb_channel = "FEB_" + to_string(ih) + "_Channel_" + to_string(iCh);
+            cl.SFGD_Calibration(hFEBCH[slot_id][iCh], feb_channel);
             if(hFEBCH[slot_id][iCh]->GetEntries() > 0) {
                 auto *legend = cl.Calibration_Legend();
                 legend->Draw();

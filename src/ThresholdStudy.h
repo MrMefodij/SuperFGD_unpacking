@@ -47,7 +47,7 @@ public:
     /// Function takes histograms for all DACs, DAC values and bin_entries (number of entries in bin below which the values aren't taken into account)
     /// For each DAC algorithm finds out the smallest ADC value (with entries > bin_entries in bin) and writes them down to vector _threshold
     /// If there is something wrong with data, you will see message: "Error: Something wrong with DAC #" in terminal
-    void FindThreshold(std::vector<TH1F*>& hFEBCH, std::vector<unsigned int> DAC, unsigned int bin_entries = 8);
+    void FindThreshold(std::vector<TH1F*>& hFEBCH, std::vector<unsigned int> DAC, unsigned int bin_entries = 20);
 
     /// Returns vector of DACs values which are correspond to p.e. peaks after threshold study
     std::vector<unsigned int> GetDAC() {return _DAC;}

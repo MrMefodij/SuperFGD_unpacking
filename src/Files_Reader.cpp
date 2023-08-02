@@ -24,12 +24,12 @@ void File_Reader::ReadFile_for_Calibration(const std::string &sFileName, std::ve
             switch (dw.GetDataType()) {
                 case MDdataWordSFGD::GateHeader:
                     _board_Id = dw.GetBoardId();
-//                  if(_board_Id!=0)
+                  if(_board_Id!=0)
                     _boad_Id_set.insert(_board_Id);
                     break;
                 case MDdataWordSFGD::ChargeMeas:
                     if (dw.GetAmplitudeId() == HG_LG) {
-//                  if(_board_Id!=0)
+                  if(_board_Id!=0)
                         hFEBCH[_board_Id & 0x0f][dw.GetChannelId()]->Fill(dw.GetAmplitude());
                     }
                     break;
@@ -47,6 +47,7 @@ void File_Reader::ReadFile_for_Calibration(const std::string &sFileName, std::ve
 
 void File_Reader::ReadFile_for_Baseline(const std::string &sFileName, std::vector<std::vector<TH1F *>> &hFEBCH_HG,std::vector<std::vector<TH1F *>> &hFEBCH_LG) {
     std::ifstream ifs(sFileName.c_str());
+    _boad_Id_set.clear();
     while (!ifs.eof()) {
         ifs.read((char*)_dataPtr, 4 );
         MDdataWordSFGD dw(_dataPtr);

@@ -27,7 +27,7 @@ public:
     /// and string FEB_#_Channel_# (#-number) as input and use library TSpectrum to find peaks position.
     /// If any peaks were found, each of them are fitted using the Gaussian distribution curve.
     /// If position of current peak is more then previous one, peak is added into peaks vector for this histogram.
-    TH1F* SFGD_Calibration(TH1F* &hFEBCH, std::string connection);
+    void SFGD_Calibration(TH1F* &hFEBCH, std::string connection);
 
     /// Returns Legend with peaks position, errors and gain for histogram which was used in function SFGD_Calibration
     TLegend* Calibration_Legend();

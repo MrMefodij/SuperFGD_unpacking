@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <algorithm>
 #include "TGraph.h"
@@ -34,6 +35,7 @@ int main(int argc, char **argv){
     }
 
     vector<string> vFileNames = argh.GetDataFiles(stringBuf,".bin");
+    std::sort(vFileNames.begin(), vFileNames.end());
     if ( vFileNames.empty() ) {
         cerr << "Can not open directory " << stringBuf << endl;
         return 1;
@@ -55,11 +57,11 @@ int main(int argc, char **argv){
     BaseLine b;
     vector<int> HG_LG(2);
     for(const std::string& filename : vFileNames){
-        string FileOutput =GetLocation(filename.c_str(), ".bin");
+        string FileOutput =GetLocation(filename, ".bin");
         size_t pos_1 = FileOutput.find("HG");
         size_t pos_2 = FileOutput.find("LG");
-        HG_LG[0] = atoi(FileOutput.substr(pos_1 + 2,pos_2 - pos_1 - 3).c_str());
-        HG_LG[1] = atoi(FileOutput.substr(pos_2 + 2).c_str());
+        HG_LG[0] = stoi(FileOutput.substr(pos_1 + 2,pos_2 - pos_1 - 3));
+        HG_LG[1] = stoi(FileOutput.substr(pos_2 + 2));
         // Going through data file
         File_Reader file_reader;
         file_reader.ReadFile_for_Baseline(filename,hFEBCH_HG,hFEBCH_LG);
@@ -68,8 +70,9 @@ int main(int argc, char **argv){
         //get histograms with peaks
         for (unsigned int ih: NFEB) {
             for (unsigned int iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
-                if(hFEBCH_HG[ih & 0x0f][iCh]->GetEntries() != 0 && hFEBCH_LG[ih & 0x0f][iCh]->GetEntries() != 0) {
-                    b.SFGD_BaseLine(hFEBCH_HG[ih & 0x0f][iCh], hFEBCH_LG[ih & 0x0f][iCh], {ih, iCh}, HG_LG);
+                if(hFEBCH_HG[ih & 0x0f][iCh]->GetEntries() != 0 && hFEBCH_LG[ih & 0x0f][iCh]->GetEntries() != 0){
+                    TH1F* hfull[2] = {hFEBCH_HG[ih & 0x0f][iCh], hFEBCH_LG[ih & 0x0f][iCh]};
+                    b.SFGD_BaseLine(hfull, {ih, iCh}, HG_LG);
                 }
                 else{
                     std::cout << "Problem in file: "<< filename<<" FEB_"<<ih<<"_Channel_"<<iCh<<std::endl;
@@ -88,7 +91,7 @@ int main(int argc, char **argv){
     }
 
     /// Prepare data for creating xml files using baseline study results.
-    string rootFileOutput = GetLocation(vFileNames[0].c_str(), ".bin");
+    string rootFileOutput = GetLocation(vFileNames[0], ".bin");
     std::map<Elems,std::vector<Baseline_values<int>>> xml_data = b.Find_BaseLine(rootFileOutput,vFileNames.size());
     XmlReaderWriter xmlFile;
     map<unsigned int,vector<AsicData>> tempBoard;
@@ -111,13 +114,13 @@ int main(int argc, char **argv){
     cout << "Drawing baseline done "<<endl;
 
     /// Write xml files
-    for(auto i : tempBoard){
+    for(const auto& i : tempBoard){
         BoardData<AsicData> tempData;
         tempData.AddAsics(i.first,i.second);
         xmlFile.AddBoard(tempData);
     }
 
-    xmlFile.WriteXml((rootFileOutput+".xml").c_str());
+    xmlFile.WriteXml(rootFileOutput+".xml");
     cout << "Writing xml done "<<endl;
 
     return 0;
