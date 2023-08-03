@@ -10,6 +10,8 @@
 #include <vector>
 #include <map>
 #include <TH1.h>
+#include <TFile.h>
+#include <TCanvas.h>
 
 /// Structure is use to keep DAC, FEB and ASIC/Channel (depends on the case) values.
 struct Elems{
@@ -60,13 +62,14 @@ public:
     /// (max value among 32 channel for baseline in -100 position and min value among 32 channel for baseline in 0 position)
     /// and find baseline position as the midpoint of the segment. If left border is bigger than right you'll see message:
     /// "Problem in # FEB_#_ASIC_#_HG/LG_CHANNEL_#" in terminal
-    std::map<Elems,std::vector<Baseline_values<int>>> Find_BaseLine(std::string filename,unsigned int files_number);
-private:
+    std::map<Elems,std::vector<Baseline_values<int>>> Find_BaseLine(std::string filename);
 
     /// Function creates root file, draws and fits TGraphs for each FEB, Channel and HG/LG
     /// a total of 2*256*(Number of FEB) graphs are obtained (2 - different plots for HG and LG, 256 - number of channels)
     /// And creates _peaks_baseline map with  Elems (DAC, FEB, ASIC number) as key and Baseline_values as value which consists of 2 params with  -100 and 0 baseline position and Channel number as _par_3.
-    void Print_BaseLine(std::string& filename,unsigned int files_number);
+    void Print_BaseLine(TFile* &wfile, unsigned int files_number);
+
+private:
 
     /// Used for keeping FEB and Channel number as key and points for baseline study (DAC, peak position) as value.
     std::map<Elems,std::vector<Baseline_values<int>>> _baseline;

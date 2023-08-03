@@ -13,7 +13,7 @@
 #include "Calibration.h"
 #include <TMath.h>
 #include <TROOT.h>
-#define MIN_BASELINE_POSITION -100
+#define MIN_BASELINE_POSITION -110
 #define MAX_BASELINE_POSITION 0
 
 
@@ -33,19 +33,17 @@ void BaseLine::SFGD_BaseLine(TH1F* (&hFEBCH_full)[2], std::pair<unsigned int,uns
 
 }
 
-void BaseLine::Print_BaseLine(std::string& filename,unsigned int files_number){
-    auto *wfile = new TFile((filename+"_baseline.root").c_str(), "RECREATE");
-    auto *c1 = new TCanvas("c1","",0,10,700,500);
-    TDirectory *FEBdir;
+void BaseLine::Print_BaseLine(TFile* &wfile,unsigned int files_number){
+
     for(const auto &b_l : _baseline){
         std::string s = "FEB_"+std::to_string(b_l.first._boardId);
-        if(wfile->GetDirectory(s.c_str()) == nullptr)
-           FEBdir = wfile->mkdir(s.c_str());
+        if(wfile->GetDirectory(s.c_str()) == nullptr) {
+            wfile->mkdir(s.c_str());
+            wfile->cd(s.c_str());
+        }
         s+="_Channel_"+std::to_string(b_l.first._asicId_channelId);
         if(b_l.second.size()==files_number){
-            wfile->cd();
             auto g = new TGraph();
-            c1->cd();
             if(b_l.first._DAC == 2) s+="_HG";
             if(b_l.first._DAC == 3) s+="_LG";
             g->SetTitle(s.c_str());
@@ -63,23 +61,18 @@ void BaseLine::Print_BaseLine(std::string& filename,unsigned int files_number){
                 Baseline_values min_max_baseline_channel = {(MIN_BASELINE_POSITION - par[0])/par[1], (MAX_BASELINE_POSITION - par[0])/par[1], b_l.first._asicId_channelId};
                 _peaks_baseline[el].push_back(min_max_baseline_channel);
             }
-            FEBdir->cd();
             g->Write(s.c_str());
-            c1->Clear();
             delete g;
             delete f;
+
         }
         else{
             std::cout << s<<" number of points: "<<b_l.second.size()<<std::endl;
         }
     }
-    delete c1;
-    delete FEBdir;
-    delete wfile;
 }
 
-std::map<Elems,std::vector<Baseline_values<int>>> BaseLine::Find_BaseLine(std::string filename, unsigned int files_number){
-    Print_BaseLine(filename, files_number);
+std::map<Elems,std::vector<Baseline_values<int>>> BaseLine::Find_BaseLine(std::string filename){
     std::ofstream fout((filename+".txt").c_str());
     for(auto iCh : _peaks_baseline)
     {
