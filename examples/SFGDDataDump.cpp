@@ -71,11 +71,13 @@ int main( int argc, char **argv ) {
   uint32_t* dataPtr = new uint32_t;
   ifs.seekg(pos);
 
-  int dwCount(0);
+  unsigned int dwCount(0);
   while (!ifs.eof()) {
     ifs.read((char*)dataPtr, 4 );
     MDdataWordSFGD dw(dataPtr);
-    cout <<dwCount<<" "<< dw << endl;
+    cout << std::dec << dwCount << "\t";
+    cout <<"0x"<< std::hex << uppercase << *dataPtr;
+    cout << std::dec << "\t" << dw << endl;;
 //cout << dw;
     ++dwCount;
 

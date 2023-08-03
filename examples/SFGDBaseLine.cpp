@@ -1,4 +1,3 @@
-#pragma once
 #include <iostream>
 #include <algorithm>
 #include "TGraph.h"
@@ -41,7 +40,7 @@ int main(int argc, char **argv){
         return 1;
     }
 
-    set<unsigned int> NFEB;
+    TCanvas *c1 = new TCanvas("c1","",0,10,700,500);
 
     vector<vector<TH1F*>> hFEBCH_HG(SFGD_SLOT, vector<TH1F*>(SFGD_FEB_NCHANNELS));
     vector<vector<TH1F*>> hFEBCH_LG(SFGD_SLOT, vector<TH1F*>(SFGD_FEB_NCHANNELS));
@@ -56,6 +55,7 @@ int main(int argc, char **argv){
     /// Read input files, writes down TH1F for HG/LG for each channel and finds baseline positions for each ASIC.
     BaseLine b;
     vector<int> HG_LG(2);
+    File_Reader file_reader;
     for(const std::string& filename : vFileNames){
         string FileOutput =GetLocation(filename, ".bin");
         size_t pos_1 = FileOutput.find("HG");
@@ -63,14 +63,14 @@ int main(int argc, char **argv){
         HG_LG[0] = stoi(FileOutput.substr(pos_1 + 2,pos_2 - pos_1 - 3));
         HG_LG[1] = stoi(FileOutput.substr(pos_2 + 2));
         // Going through data file
-        File_Reader file_reader;
+//        File_Reader file_reader;
         file_reader.ReadFile_for_Baseline(filename,hFEBCH_HG,hFEBCH_LG);
         // find numbers of measured FEB
-        NFEB = file_reader.GetFEBNumbers();
+        const set<unsigned int> NFEB = file_reader.GetFEBNumbers();
         //get histograms with peaks
-        for (unsigned int ih: NFEB) {
+        for (const unsigned int& ih: NFEB) {
             for (unsigned int iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
-                if(hFEBCH_HG[ih & 0x0f][iCh]->GetEntries() != 0 && hFEBCH_LG[ih & 0x0f][iCh]->GetEntries() != 0){
+                if(hFEBCH_HG[ih & 0x0f][iCh]->GetEntries() > 0 && hFEBCH_LG[ih & 0x0f][iCh]->GetEntries() > 0){
                     TH1F* hfull[2] = {hFEBCH_HG[ih & 0x0f][iCh], hFEBCH_LG[ih & 0x0f][iCh]};
                     b.SFGD_BaseLine(hfull, {ih, iCh}, HG_LG);
                 }
@@ -90,9 +90,13 @@ int main(int argc, char **argv){
         }
     }
 
-    /// Prepare data for creating xml files using baseline study results.
+    /// Print Baseline
     string rootFileOutput = GetLocation(vFileNames[0], ".bin");
-    std::map<Elems,std::vector<Baseline_values<int>>> xml_data = b.Find_BaseLine(rootFileOutput,vFileNames.size());
+    auto *wfile = new TFile((rootFileOutput+"_baseline.root").c_str(), "RECREATE");
+    b.Print_BaseLine(wfile,vFileNames.size());
+
+    /// Prepare data for creating xml files using baseline study results.
+    std::map<Elems,std::vector<Baseline_values<int>>> xml_data = b.Find_BaseLine(rootFileOutput);
     XmlReaderWriter xmlFile;
     map<unsigned int,vector<AsicData>> tempBoard;
     for(auto xml : xml_data){
@@ -123,6 +127,7 @@ int main(int argc, char **argv){
     xmlFile.WriteXml(rootFileOutput+".xml");
     cout << "Writing xml done "<<endl;
 
+    delete wfile;
+    delete c1;
     return 0;
 }
-
