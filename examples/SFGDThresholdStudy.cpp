@@ -66,8 +66,6 @@ int main(int argc, char **argv) {
     rootFileOutput+="/DAC10b.root";
     TFile *wfile = new TFile(rootFileOutput.c_str(), "RECREATE");
     TCanvas *c1 = new TCanvas("c1","",0,10,700,500);
-    vector<TDirectory*> FEBdir (SFGD_SLOT);
-    unsigned int channel_Id;
 
     /// Read directory with data and create histograms for each DACs
     for(auto i = 0; i < vFileNames.size(); i++) {
@@ -77,11 +75,12 @@ int main(int argc, char **argv) {
         auto feb_channel = file_reader.GetFEBchannel();
         for(auto board_Id : NFEBs) {
             unsigned int slot_Id = board_Id & 0x0f;
-            if(i==0)
-                FEBdir[slot_Id] = wfile->mkdir(("FEB_" + to_string(board_Id )).c_str());
-
+            string s = "FEB_" + to_string(board_Id);
+            if(wfile->GetDirectory(s.c_str()) == nullptr) {
+                wfile->mkdir(s.c_str());
+            }
+            wfile->cd(s.c_str());
             if (hFEBCH[i][slot_Id]->GetEntries() > 1) {
-                FEBdir[slot_Id]->cd();
                 hFEBCH[i][slot_Id]->Write((to_string(DAC[i])).c_str());
                 threshold_data[{board_Id, feb_channel[board_Id]}].push_back(hFEBCH[i][slot_Id]);
             }
@@ -94,7 +93,8 @@ int main(int argc, char **argv) {
         cout << "FEB_"<<tr.first._DAC<<"_Channel_"<<tr.first._ADC<<endl;
         ThresholdStudy threshold;
         threshold.FindThreshold(tr.second, DAC, 10);
-        FEBdir[tr.first._DAC & 0x0f]->cd();
+        string s = "FEB_" + to_string(tr.first._DAC);
+        wfile->cd(s.c_str());
         TGraph *g = threshold.PrintThreshold(2);
         g->SetTitle(("FEB" + to_string(tr.first._DAC) +"_DAC10b_study_ASIC_" + to_string(tr.first._ADC / 32)).c_str());
         g->GetXaxis()->SetTitle("DAC10b");
@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
             l1->Draw();
         }
         c1->Update();
-        c1->Write(("FEBs_DAC10b_study_"+ to_string(tr.first._ADC / 32)).c_str());
+        g->Write(("FEBs_DAC10b_study_"+ to_string(tr.first._ADC / 32)).c_str());
         ThresholdData tempData{tr.first._ADC / 32, threshold.GetDAC()};
         std::vector<ThresholdData> tempBoard;
         tempBoard.push_back(tempData);
@@ -124,6 +124,7 @@ int main(int argc, char **argv) {
     }
 
     wfile->Close();
+    delete wfile;
     delete c1;
     return 0;
 }

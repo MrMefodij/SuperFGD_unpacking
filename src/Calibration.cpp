@@ -25,6 +25,8 @@ void Calibration::Gain_Calculation(){
         }
         _gain /= (int) (_peaks.size() - (start_peak + 1));
         _gain_error = sqrt(_gain_error / (_peaks.size() - start_peak));
+
+        _peaks.erase(_peaks.begin(), _peaks.begin() + start_peak);
     }
 }
 
@@ -76,7 +78,7 @@ TLegend* Calibration::Calibration_Legend(){
     legend->SetHeader(header.c_str());
     legend -> SetFillColor(0);
     for(auto i = 0; i < _peaks.size();i++){
-        std::string name = "mean peak " + std::to_string(i) /*+ " p. e."*/+" = " +
+        std::string name = "mean peak " + std::to_string(i + 2) /*+ " p. e."*/+" = " +
                 std::to_string(_peaks[i].GetPosition()) + " +/- " +
                 std::to_string(_peaks[i].GetPositionError());
         legend->AddEntry((TObject*)0, name.c_str(), "");
