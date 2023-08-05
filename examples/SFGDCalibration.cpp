@@ -9,6 +9,7 @@
 #include "Files_Reader.h"
 #include "SFGD_defines.h"
 #include "MDargumentHandler.h"
+#include <numeric>
 #include <map>
 
 
@@ -34,6 +35,7 @@ int main(int argc, char **argv){
 
     /// Create root file
     string rootFileOutput=GetLocation(filename.c_str(), ".bin");
+    std::ofstream fout((rootFileOutput+".txt").c_str());
     rootFileOutput+="_channels_signal.root";
     cout << rootFileOutput<<endl;
 
@@ -59,14 +61,20 @@ int main(int argc, char **argv){
     /// Find numbers of measured FEB
     set<unsigned int> NFEB = file_reader.GetFEBNumbers();
 
+
+
     /// Get histograms with peaks
     for(const unsigned int &ih : NFEB){
         TDirectory *FEBdir = wfile->mkdir(("FEB_"+to_string(ih)).c_str());
         FEBdir->cd();
+        map<unsigned int, vector<double>> gain_values;
         for (unsigned int iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
             unsigned int slot_id = ih & 0x0f;
             string feb_channel = "FEB_" + to_string(ih) + "_Channel_" + to_string(iCh);
             cl.SFGD_Calibration(hFEBCH[slot_id][iCh], feb_channel);
+            if(hFEBCH[slot_id][iCh]->GetMean() < 350)
+                gain_values[iCh / 64].push_back(cl.GetGain());
+
             if(hFEBCH[slot_id][iCh]->GetEntries() > 0) {
                 auto *legend = cl.Calibration_Legend();
                 legend->Draw();
@@ -75,10 +83,30 @@ int main(int argc, char **argv){
             }
             delete hFEBCH[slot_id][iCh];
         }
+
+        for(auto gain: gain_values){
+            fout << "FEB_" << ih << "_PCB_" <<gain.first;
+            if( gain.second.size() > 54){
+                gain.second.erase(std::remove_if(gain.second.begin(), gain.second.end(), [&](const double &x)
+                {
+                    return x == 0;
+                }),gain.second.end());
+                if(!gain.second.empty()) {
+                    double mean = std::accumulate(gain.second.begin(), gain.second.end(), 0.0) / gain.second.size();
+                    fout << " mean gain: " << mean << std::endl;
+                }
+                else{
+                    fout  << " Insufficient number of peaks" << std::endl;
+                }
+            }
+            else{
+                fout <<" problem with LED"<<std::endl;
+            }
+        }
     }
 
     /// Find channels with std more than 3 sigma
-    map<string,double> gain = cl.GetGain();
+    map<string,double> gain = cl.GetGains();
     string connection;
     TH1F* hGain = new TH1F("Gain_distrubution", "Gain_distrubution",  400, 0, 100);
     for (auto g : gain) {
@@ -104,7 +132,6 @@ int main(int argc, char **argv){
             }
         }
     }
-
     wfile->Close();
     return 0;
 }

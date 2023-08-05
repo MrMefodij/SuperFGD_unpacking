@@ -7,6 +7,7 @@
 #include "Files_Reader.h"
 #include "MDargumentHandler.h"
 #include "XmlReaderWriter.h"
+#include "BaseLineThresholdXmlOutput.h"
 #include "BaseLine.h"
 
 
@@ -56,6 +57,7 @@ int main(int argc, char **argv){
     BaseLine b;
     vector<int> HG_LG(2);
     File_Reader file_reader;
+    set<unsigned int> NFEB;
     for(const std::string& filename : vFileNames){
         string FileOutput =GetLocation(filename, ".bin");
         size_t pos_1 = FileOutput.find("HG");
@@ -66,7 +68,15 @@ int main(int argc, char **argv){
 //        File_Reader file_reader;
         file_reader.ReadFile_for_Baseline(filename,hFEBCH_HG,hFEBCH_LG);
         // find numbers of measured FEB
-        const set<unsigned int> NFEB = file_reader.GetFEBNumbers();
+        if(!NFEB.empty()){
+            if(NFEB != file_reader.GetFEBNumbers())
+                std::cout << "FEB numbers are different"<<std::endl;
+            set_intersection(NFEB.begin(), NFEB.end(), file_reader.GetFEBNumbers().begin(), file_reader.GetFEBNumbers().end(),
+                                    std::inserter(NFEB, NFEB.begin()));
+        }
+        else{
+            NFEB = file_reader.GetFEBNumbers();
+        }
         //get histograms with peaks
         for (const unsigned int& ih: NFEB) {
             for (unsigned int iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
@@ -97,34 +107,54 @@ int main(int argc, char **argv){
 
     /// Prepare data for creating xml files using baseline study results.
     std::map<Elems,std::vector<Baseline_values<unsigned int>>> xml_data = b.Find_BaseLine(rootFileOutput);
-    XmlReaderWriter xmlFile;
-    map<unsigned int,vector<AsicData>> tempBoard;
+    XmlReaderWriter xmlFile_for_baseline;
+    map<unsigned int,vector<AsicData>> tempBoard_for_baseline;
     for(auto xml : xml_data){
         if(xml.second.size() == 2) {
-            AsicData asic_data = {xml.first._asicId_channelId, xml.second[0]._par_1, xml.second[1]._par_1};
-            tempBoard[xml.first._boardId].push_back(asic_data);
+            AsicData asic_data = {xml.first._connection._asicId_channelId, xml.second[0]._par_1, xml.second[1]._par_1};
+            tempBoard_for_baseline[xml.first._connection._boardId].push_back(asic_data);
         }
         if(xml.second.size() == 1) {
             if (xml.second[0]._par_2 == 2.0) {
-                AsicData asic_data = {xml.first._asicId_channelId, xml.second[0]._par_1, 0};
-                tempBoard[xml.first._boardId].push_back(asic_data);
+                AsicData asic_data = {xml.first._connection._asicId_channelId, xml.second[0]._par_1, 0};
+                tempBoard_for_baseline[xml.first._connection._boardId].push_back(asic_data);
             }
             if (xml.second[0]._par_2 == 3.0) {
-                AsicData asic_data = {xml.first._asicId_channelId, 0, xml.second[0]._par_1};
-                tempBoard[xml.first._boardId].push_back(asic_data);
+                AsicData asic_data = {xml.first._connection._asicId_channelId, 0, xml.second[0]._par_1};
+                tempBoard_for_baseline[xml.first._connection._boardId].push_back(asic_data);
             }
         }
     }
     cout << "Drawing baseline done "<<endl;
 
-    /// Write xml files
-    for(const auto& i : tempBoard){
+    /// Write xml file for baseline
+    for(const auto& i : tempBoard_for_baseline){
         BoardData<AsicData> tempData;
         tempData.AddAsics(i.first,i.second);
-        xmlFile.AddBoard(tempData);
+        xmlFile_for_baseline.AddBoard(tempData);
+    }
+    xmlFile_for_baseline.WriteXml(rootFileOutput+"_baseline.xml");
+
+    /// Prepare data for creating xml files using baseline study results.
+    std::map<Connection, unsigned int> baseLine_threshold = b.Get_Recommended_Threshold();
+    for(const auto& i : NFEB){
+        for(unsigned int j = 0; j < SFGD_FEB_NCHANNELS/32; j++)
+        baseLine_threshold.insert(std::pair<Connection,unsigned int>({i,j}, THRESHOLD_VALUE));
+    }
+    std::map<unsigned int,std::vector<BaseLineThreshold>> tempBoard_for_threshold;
+    for(const auto& i : baseLine_threshold){
+        tempBoard_for_threshold[i.first._boardId].push_back({i.first._asicId_channelId, i.second });
     }
 
-    xmlFile.WriteXml(rootFileOutput+".xml");
+    /// Write xml file for baseline threshold
+    BoardData<BaseLineThreshold> tempBoardData;
+    BaseLineThresholdXmlOutput xmlFile_for_threshold;
+    for(const auto& i : tempBoard_for_threshold){
+        tempBoardData.AddAsics(i.first,i.second);
+        xmlFile_for_threshold.AddBoard(tempBoardData);
+    }
+    xmlFile_for_threshold.WriteXml(rootFileOutput+"_threshold.xml");
+
     cout << "Writing xml done "<<endl;
 
     delete wfile;

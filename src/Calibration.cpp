@@ -42,7 +42,7 @@ void Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
                 Double_t peakWidth = 10;
                 TF1 *fit_1 = new TF1("fit_1", "gaus", xpeaks[p] - peakWidth, xpeaks[p] + peakWidth);
                 hFEBCH->Fit("fit_1", "qr+");
-                if (fit_1->GetParError(1) < 2 && fit_1->GetParameter(2) < 25) {
+                if (fit_1->GetParError(1) < 3 && fit_1->GetParameter(2) < 25) {
                     Peaks peak = {fit_1->GetParameter(1), fit_1->GetParError(1),
                                   hFEBCH->GetBinContent(fit_1->GetParameter(1)), fit_1->GetParameter(2)};
                     _peaks.push_back(peak);
@@ -54,13 +54,15 @@ void Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
                 return p_0.GetPosition() < p_1.GetPosition();
             });
 
+
             for (int i = 0; i < _peaks.size() - 1; i++) {
-                if (_peaks[i].GetHeight() < 0.6 * _peaks[i + 1].GetHeight() || _peaks[i+1].GetPosition() - _peaks[i].GetPosition() < 20
-                ) {
+                if (_peaks[i].GetHeight() < 0.6 * _peaks[i + 1].GetHeight() || _peaks[i+1].GetPosition() - _peaks[i].GetPosition() < 15
+                        ) {
                     _peaks.erase(std::next(_peaks.begin(), i));
                     i--;
                 }
             }
+
             if(_peaks.size() > 5)
             _peaks.erase(_peaks.begin()+5, _peaks.end());
         }

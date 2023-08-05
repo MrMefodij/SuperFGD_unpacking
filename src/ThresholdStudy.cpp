@@ -6,7 +6,7 @@
 #include "Files_Reader.h"
 
 
-#define THRESHOLD_VALUE 0.25
+#define ADC_FOR_THRESHOLD_VALUE 0.25
 
 void ThresholdStudy::FindThreshold(std::vector<TH1F*>& hFEBCH, std::vector<unsigned int> DAC, unsigned int bin_entries){
 
@@ -62,7 +62,7 @@ TGraph* ThresholdStudy::PrintThreshold(double tan_angle){
                 double par[3];
                 f1->GetParameters(&par[0]);
                 double DAC_value = (-par[1] + sqrt(par[1] * par[1] - 4 * par[2] * (par[0] - (_section[i]._y +
-                                                                                             THRESHOLD_VALUE *
+                                                                                        ADC_FOR_THRESHOLD_VALUE *
                                                                                              (_pars[i + 1] -
                                                                                               _pars[i]))))
                                    ) / 2 / par[2];

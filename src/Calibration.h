@@ -33,10 +33,13 @@ public:
     TLegend* Calibration_Legend();
 
     /// Returns all gain values as map with key value:  FEB_#_Channel_#. #-number
-    std::map<std::string,double> GetGain(){return _gain_values;};
+    std::map<std::string,double> GetGains(){return _gain_values;}
 
+    /// Return current gain value
+    double GetGain(){return _gain;}
     /// Returns peaks which were found during calibration
     std::vector<Peaks> Calibration_Par() const {return _peaks;}
+
 
 private:
     std::vector<Peaks> _peaks;

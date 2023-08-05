@@ -12,23 +12,35 @@
 #include <TH1.h>
 #include <TFile.h>
 
+
+struct Connection{
+    unsigned int _boardId;
+    unsigned int _asicId_channelId;
+    bool operator < (const Connection& other) const
+    {
+        if (_boardId == other._boardId)
+            return _asicId_channelId < other._asicId_channelId;
+        return _boardId < other._boardId;
+    }
+    bool const operator == (const Connection& other) const
+    {
+        return _boardId == other._boardId && _asicId_channelId == other._asicId_channelId && _asicId_channelId == other._asicId_channelId;
+    }
+};
 /// Structure is use to keep DAC, FEB and ASIC/Channel (depends on the case) values.
 struct Elems{
     unsigned int _DAC;
-    unsigned int _boardId;
-    unsigned int _asicId_channelId;
+    Connection _connection;
     bool operator < (const Elems& other) const
     {
-        if (_boardId == other._boardId) {
-            if (_asicId_channelId == other._asicId_channelId)
+        if (_connection == other._connection) {
                 return _DAC < other._DAC;
-            return _asicId_channelId < other._asicId_channelId;
         }
-        return _boardId < other._boardId;
+        return _connection < other._connection;
     }
     bool const operator == (const Elems& other) const
     {
-        return _boardId == other._boardId && _asicId_channelId == other._asicId_channelId && _asicId_channelId == other._asicId_channelId;
+        return _connection == other._connection;
     }
 };
 
@@ -53,7 +65,7 @@ public:
     /// which consist of 2 values HG DAC and LG DAC  as input.
     /// Function using class Calibration finds 0 peak of histograms and creates map _baseline which has Structure Elems (DAC, FEB, and Channel number) as key
     /// and Baseline_values (DAC, peak position) as value.
-    void SFGD_BaseLine(TH1F* (&hFEBCH_full)[2], std::pair<unsigned int,unsigned int> NFEBCh,std::vector<int> HG_LG);
+    void SFGD_BaseLine(TH1F* (&hFEBCH_full)[2], Connection NFEBCh,std::vector<int> HG_LG);
 
     /// Returns data for xml as map with key Elems (DAC, FEB, and ASIC number) and value as vector
     /// of Structure Baseline_values which has recommended baseline position and HG/LG (2 - HG, 3 - LG).
@@ -67,6 +79,8 @@ public:
     /// a total of 2*256*(Number of FEB) graphs are obtained (2 - different plots for HG and LG, 256 - number of channels)
     /// And creates _peaks_baseline map with  Elems (DAC, FEB, ASIC number) as key and Baseline_values as value which consists of 2 params with  -100 and 0 baseline position and Channel number as _par_3.
     void Print_BaseLine(TFile* &wfile,unsigned int files_number);
+
+    std::map<Connection, unsigned int> Get_Recommended_Threshold(){return _baseLine_threshold;}
 private:
 
     /// Used for keeping FEB and Channel number as key and points for baseline study (DAC, peak position) as value.
@@ -77,6 +91,8 @@ private:
 
     /// Used for keeping FEB and ASIC number as key, recommended baseline position and HG/LG for each ASIC as value.
     std::map<Elems,std::vector<Baseline_values<unsigned int>>> _xml_data;
+
+   std::map<Connection, unsigned int> _baseLine_threshold;
 };
 
 
