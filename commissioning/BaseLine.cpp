@@ -64,7 +64,7 @@ void BaseLine::Print_BaseLine(TFile* &wfile,unsigned int files_number){
     }
 }
 
-std::map<Elems,std::vector<Baseline_values<int>>> BaseLine::Find_BaseLine(std::string& filename){
+std::map<Elems,std::vector<Baseline_values<unsigned int>>> BaseLine::Find_BaseLine(std::string& filename){
 
     std::ofstream fout((filename+".txt").c_str());
     for(auto iCh : _peaks_baseline)
@@ -95,9 +95,9 @@ std::map<Elems,std::vector<Baseline_values<int>>> BaseLine::Find_BaseLine(std::s
             fout << s << ": [" << left_value->_par_1 << "," << right_value->_par_2 << "]" << std::endl;
             Elems el = {0,iCh.first._boardId, iCh.first._asicId_channelId};
             if(iCh.first._DAC == 2)
-                _xml_data[el].push_back({int((left_value->_par_1+right_value->_par_2)/2),2.0});
+                _xml_data[el].push_back({(unsigned int)((left_value->_par_1+right_value->_par_2)/2),2.0});
             if(iCh.first._DAC == 3)
-                _xml_data[el].push_back({int((left_value->_par_1+right_value->_par_2)/2),3.0});
+                _xml_data[el].push_back({(unsigned int)((left_value->_par_1+right_value->_par_2)/2),3.0});
         }
     }
     return _xml_data;

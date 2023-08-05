@@ -61,7 +61,7 @@ public:
     /// (max value among 32 channel for baseline in -100 position and min value among 32 channel for baseline in 0 position)
     /// and find baseline position as the midpoint of the segment. If left border is bigger than right you'll see message:
     /// "Problem in # FEB_#_ASIC_#_HG/LG_CHANNEL_#" in terminal
-    std::map<Elems,std::vector<Baseline_values<int>>> Find_BaseLine(std::string& filename);
+    std::map<Elems,std::vector<Baseline_values<unsigned int>>> Find_BaseLine(std::string& filename);
 
     /// Function creates root file, draws and fits TGraphs for each FEB, Channel and HG/LG
     /// a total of 2*256*(Number of FEB) graphs are obtained (2 - different plots for HG and LG, 256 - number of channels)
@@ -76,7 +76,7 @@ private:
     std::map<Elems,std::vector<Baseline_values<double>>> _peaks_baseline;
 
     /// Used for keeping FEB and ASIC number as key, recommended baseline position and HG/LG for each ASIC as value.
-    std::map<Elems,std::vector<Baseline_values<int>>> _xml_data;
+    std::map<Elems,std::vector<Baseline_values<unsigned int>>> _xml_data;
 };
 
 

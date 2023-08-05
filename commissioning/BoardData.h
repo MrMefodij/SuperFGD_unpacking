@@ -4,11 +4,15 @@
 
 #ifndef UNPACKING_BOARDDATA_H
 #define UNPACKING_BOARDDATA_H
+struct BaseLineThreshold{
+    unsigned int asicId;
+    unsigned int thresholdForBaseline;
+};
 
 struct AsicData {
     unsigned int asicId;
-    int hgValue;
-    int lgValue;
+    unsigned int hgValue;
+    unsigned int lgValue;
 };
 
 struct ThresholdData {

@@ -96,7 +96,7 @@ int main(int argc, char **argv){
     b.Print_BaseLine(wfile,vFileNames.size());
 
     /// Prepare data for creating xml files using baseline study results.
-    std::map<Elems,std::vector<Baseline_values<int>>> xml_data = b.Find_BaseLine(rootFileOutput);
+    std::map<Elems,std::vector<Baseline_values<unsigned int>>> xml_data = b.Find_BaseLine(rootFileOutput);
     XmlReaderWriter xmlFile;
     map<unsigned int,vector<AsicData>> tempBoard;
     for(auto xml : xml_data){

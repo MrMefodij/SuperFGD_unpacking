@@ -4,19 +4,18 @@
 #include <iostream>
 #include <fstream>
 #include "ThresholdXmlOutput.h"
+#include "BaseLineThresholdXmlOutput.h"
 
 int main() {
-    ThresholdXmlOutput xmlFile;
+    BaseLineThresholdXmlOutput xmlFile;
     xmlFile.ReadXml("test.xml");
-    ThresholdData tempData {0,{134,154,278}};
-    std::vector<ThresholdData> tempBoard;
+    BaseLineThreshold tempData {0,134};
+    std::vector<BaseLineThreshold> tempBoard;
     for (int i = 0; i <= 7; ++i) {
-        for (auto& a :tempData.peThreshold) {
-            a=a+10*i;
-        }
-        tempBoard.push_back({tempData.asicId+i,tempData.peThreshold});
+        unsigned int a = 10*i + 134;
+        tempBoard.push_back({tempData.asicId+i, a});
     }
-    BoardData<ThresholdData> tempBoardData;
+    BoardData<BaseLineThreshold> tempBoardData;
     tempBoardData.AddAsics(12,tempBoard);
     xmlFile.AddBoard(tempBoardData);
     xmlFile.PrintXml();
