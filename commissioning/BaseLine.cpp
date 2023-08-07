@@ -14,7 +14,7 @@
 #define MIN_BASELINE_POSITION -110
 #define MAX_BASELINE_POSITION 0
 #define MIN_BIN_VALUE 100
-#define MAX_NUM_ENTRIES 5000
+#define MAX_NUM_ENTRIES 4000
 
 
 void BaseLine::SFGD_BaseLine(TH1F* (&hFEBCH_full)[2], Connection NFEBCh,std::vector<int> HG_LG){

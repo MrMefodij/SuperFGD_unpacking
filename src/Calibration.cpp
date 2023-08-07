@@ -42,7 +42,8 @@ void Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
                 Double_t peakWidth = 10;
                 TF1 *fit_1 = new TF1("fit_1", "gaus", xpeaks[p] - peakWidth, xpeaks[p] + peakWidth);
                 hFEBCH->Fit("fit_1", "qr+");
-                if (fit_1->GetParError(1) < 3 && fit_1->GetParameter(2) < 25) {
+                if (fit_1->GetParError(1) < 3
+                && fit_1->GetParameter(2) < 25) {
                     Peaks peak = {fit_1->GetParameter(1), fit_1->GetParError(1),
                                   hFEBCH->GetBinContent(fit_1->GetParameter(1)), fit_1->GetParameter(2)};
                     _peaks.push_back(peak);

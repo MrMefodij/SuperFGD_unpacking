@@ -12,6 +12,8 @@
 #include <numeric>
 #include <map>
 
+#define MEAN_VALUE 300
+#define ENTRIES_NUM 60
 
 int main(int argc, char **argv){
 
@@ -72,7 +74,7 @@ int main(int argc, char **argv){
             unsigned int slot_id = ih & 0x0f;
             string feb_channel = "FEB_" + to_string(ih) + "_Channel_" + to_string(iCh);
             cl.SFGD_Calibration(hFEBCH[slot_id][iCh], feb_channel);
-            if(hFEBCH[slot_id][iCh]->GetMean() < 350)
+            if(hFEBCH[slot_id][iCh]->GetMean() < MEAN_VALUE)
                 gain_values[iCh / 64].push_back(cl.GetGain());
 
             if(hFEBCH[slot_id][iCh]->GetEntries() > 0) {
@@ -83,16 +85,15 @@ int main(int argc, char **argv){
             }
             delete hFEBCH[slot_id][iCh];
         }
-
-        for(auto gain: gain_values){
-            fout << "FEB_" << ih << "_PCB_" <<gain.first;
-            if( gain.second.size() > 54){
-                gain.second.erase(std::remove_if(gain.second.begin(), gain.second.end(), [&](const double &x)
+        for(int i = 0; i < 4; i++){
+            fout << "FEB_" << ih << "_PCB_" <<i;
+            if( gain_values[i].size() > ENTRIES_NUM){
+                gain_values[i].erase(std::remove_if(gain_values[i].begin(), gain_values[i].end(), [&](const double &x)
                 {
                     return x == 0;
-                }),gain.second.end());
-                if(!gain.second.empty()) {
-                    double mean = std::accumulate(gain.second.begin(), gain.second.end(), 0.0) / gain.second.size();
+                }),gain_values[i].end());
+                if(!gain_values[i].empty()) {
+                    double mean = std::accumulate(gain_values[i].begin(), gain_values[i].end(), 0.0) / gain_values[i].size();
                     fout << " mean gain: " << mean << std::endl;
                 }
                 else{
