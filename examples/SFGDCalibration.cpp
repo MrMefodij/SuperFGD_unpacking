@@ -12,7 +12,7 @@
 #include <numeric>
 #include <map>
 
-#define MEAN_VALUE 300
+#define MEAN_VALUE 350
 #define ENTRIES_NUM 60
 
 int main(int argc, char **argv){
