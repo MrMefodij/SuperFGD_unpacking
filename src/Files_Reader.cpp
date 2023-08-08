@@ -55,18 +55,18 @@ void File_Reader::ReadFile_for_Baseline(const std::string &sFileName, std::vecto
             case MDdataWordSFGD::GateHeader:
                 _board_Id = dw.GetBoardId();
 //                if(_board_Id>=16 && _board_Id<=29)
-                if(_board_Id!=0)
+//                if(_board_Id!=0)
                     _boad_Id_set.insert(_board_Id );
                 break;
             case MDdataWordSFGD::ChargeMeas:
                 if (dw.GetAmplitudeId()==2){
 //                    if(_board_Id>=16 && _board_Id<=29)
-                    if(_board_Id!=0)
+//                    if(_board_Id!=0)
                         hFEBCH_HG[_board_Id & 0x0f][dw.GetChannelId()]->Fill(dw.GetAmplitude());
                 }
                 if (dw.GetAmplitudeId()==3){
 //                    if(_board_Id>=16 && _board_Id<=29)
-                    if(_board_Id!=0)
+//                    if(_board_Id!=0)
                         hFEBCH_LG[_board_Id & 0x0f][dw.GetChannelId()]->Fill(dw.GetAmplitude());
                 }
                 break;

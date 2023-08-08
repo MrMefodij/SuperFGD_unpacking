@@ -9,8 +9,7 @@
 #include "XmlReaderWriter.h"
 #include "BaseLineThresholdXmlOutput.h"
 #include "BaseLine.h"
-
-
+#include "CrateSlotAsic_missingChs.h"
 
 int main(int argc, char **argv){
 
@@ -58,6 +57,8 @@ int main(int argc, char **argv){
     vector<int> HG_LG(2);
     File_Reader file_reader;
     set<unsigned int> NFEB;
+    CrateSlotAsic_missingChs missing_chs("../connection_map/crateSlotAsic_missingChs.txt");
+    missing_chs.Init();
     for(const std::string& filename : vFileNames){
         string FileOutput =GetLocation(filename, ".bin");
         size_t pos_1 = FileOutput.find("HG");
@@ -68,11 +69,23 @@ int main(int argc, char **argv){
 //        File_Reader file_reader;
         file_reader.ReadFile_for_Baseline(filename,hFEBCH_HG,hFEBCH_LG);
         // find numbers of measured FEB
+        try{
+            if(file_reader.GetFEBNumbers().empty()) {
+                std::cout << filename<< " is empty"<<std::endl;
+                throw ;
+            }
+        }
+        catch(...){
+            std::cerr << "Something wrong with file "<<filename<<std::endl;
+            return -1;
+        }
         if(!NFEB.empty()){
-            if(NFEB != file_reader.GetFEBNumbers())
-                std::cout << "FEB numbers are different"<<std::endl;
-            set_intersection(NFEB.begin(), NFEB.end(), file_reader.GetFEBNumbers().begin(), file_reader.GetFEBNumbers().end(),
-                                    std::inserter(NFEB, NFEB.begin()));
+            if(NFEB != file_reader.GetFEBNumbers()) {
+                std::cout << "FEB numbers are different" << std::endl;
+                set_intersection(NFEB.begin(), NFEB.end(), file_reader.GetFEBNumbers().begin(),
+                                 file_reader.GetFEBNumbers().end(),
+                                 std::inserter(NFEB, NFEB.begin()));
+            }
         }
         else{
             NFEB = file_reader.GetFEBNumbers();
@@ -80,12 +93,14 @@ int main(int argc, char **argv){
         //get histograms with peaks
         for (const unsigned int& ih: NFEB) {
             for (unsigned int iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
-                if(hFEBCH_HG[ih & 0x0f][iCh]->GetEntries() > 0 && hFEBCH_LG[ih & 0x0f][iCh]->GetEntries() > 0){
-                    TH1F* hfull[2] = {hFEBCH_HG[ih & 0x0f][iCh], hFEBCH_LG[ih & 0x0f][iCh]};
-                    b.SFGD_BaseLine(hfull, {ih, iCh}, HG_LG);
-                }
-                else{
-                    std::cout << "Problem in file: "<< filename<<" FEB_"<<ih<<"_Channel_"<<iCh<<std::endl;
+                if(!missing_chs.Is_Missing_Chs({ih >> 4, ih & 0x0f,iCh / 32}, iCh) && !missing_chs.Is_Missing_FEB(ih)) {
+                    if (hFEBCH_HG[ih & 0x0f][iCh]->GetEntries() > 0 && hFEBCH_LG[ih & 0x0f][iCh]->GetEntries() > 0) {
+                        TH1F *hfull[2] = {hFEBCH_HG[ih & 0x0f][iCh], hFEBCH_LG[ih & 0x0f][iCh]};
+                        b.SFGD_BaseLine(hfull, {ih, iCh}, HG_LG);
+                    } else {
+                        std::cout << "Problem in file: " << filename << " FEB_" << ih << "_Channel_" << iCh
+                                  << std::endl;
+                    }
                 }
                 hFEBCH_HG[ih & 0x0f][iCh]->Reset();
                 hFEBCH_LG[ih & 0x0f][iCh]->Reset();
@@ -156,7 +171,6 @@ int main(int argc, char **argv){
     xmlFile_for_threshold.WriteXml(rootFileOutput+"_threshold.xml");
 
     cout << "Writing xml done "<<endl;
-
     delete wfile;
     delete c1;
     return 0;
