@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
                 wfile->mkdir(s.c_str());
             }
             wfile->cd(s.c_str());
-            if (hFEBCH[i][slot_Id]->GetEntries() > 1) {
+            if (hFEBCH[i][slot_Id]->GetEntries() > 300) {
                 hFEBCH[i][slot_Id]->Write((to_string(DAC[i])).c_str());
                 threshold_data[{board_Id, feb_channel[board_Id]}].push_back(hFEBCH[i][slot_Id]);
             }
@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
         threshold.FindThreshold(tr.second, DAC, 25);
         string s = "FEB_" + to_string(tr.first._DAC);
         wfile->cd(s.c_str());
-        TGraph *g = threshold.PrintThreshold(2);
+        TGraph *g = threshold.PrintThreshold(3);
         g->SetTitle(("FEB" + to_string(tr.first._DAC) +"_DAC10b_study_ASIC_" + to_string(tr.first._ADC / 32)).c_str());
         g->GetXaxis()->SetTitle("DAC10b");
         g->GetYaxis()->SetTitle("ADC channels");
@@ -113,8 +113,9 @@ int main(int argc, char **argv) {
         tempBoardData.AddAsics(tr.first._DAC, tempBoard);
         xmlFile.AddBoard(tempBoardData);
     }
-    xmlFile.WriteXml((stringBuf + "/Threshold.xml").c_str());
-    cout <<"XML file: "<<stringBuf + "/Threshold.xml"<<endl;
+    string sub = stringBuf.substr(stringBuf.find("ASIC",0), stringBuf.size());
+    xmlFile.WriteXml((stringBuf.substr(0,stringBuf.size()-5) + "/Threshold_" + sub +".xml").c_str());
+    cout <<"XML file: "<< stringBuf.substr(0,stringBuf.size()-5) + "/Threshold_" << sub << ".xml" << endl;
 
 
     for(int j = 0; j < vFileNames.size();j++) {

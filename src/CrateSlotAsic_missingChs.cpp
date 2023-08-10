@@ -7,6 +7,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
+
 CrateSlotAsic_missingChs::CrateSlotAsic_missingChs( const std::string& map_file) : _filename(map_file){}
 
 void CrateSlotAsic_missingChs::Init(){
