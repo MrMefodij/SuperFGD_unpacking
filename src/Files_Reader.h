@@ -1,3 +1,7 @@
+//
+//  Created by Maria on 08.10.2022 kolupanova@inr.ru
+//
+
 #ifndef FILES_READER_H
 #define FILES_READER_H
 

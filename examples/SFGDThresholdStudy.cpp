@@ -1,5 +1,5 @@
 //
-// Created by Maria on 12.07.2023.
+// Created by Maria on 12.07.2023 kolupanova@inr.ru
 //
 
 #include <iostream>
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
     for(auto tr : threshold_data) {
         cout << "FEB_"<<tr.first._DAC<<"_Channel_"<<tr.first._ADC<<endl;
         ThresholdStudy threshold;
-        threshold.FindThreshold(tr.second, DAC, 25);
+        threshold.FindThreshold(tr.second, DAC, 50);
         string s = "FEB_" + to_string(tr.first._DAC);
         wfile->cd(s.c_str());
         TGraph *g = threshold.PrintThreshold(3);

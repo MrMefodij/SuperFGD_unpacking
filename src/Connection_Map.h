@@ -13,14 +13,22 @@ struct GlGeomPosition{
     unsigned int x_;
     unsigned int y_;
     unsigned int z_;
+    unsigned int rotate_;
+    unsigned int cablelength_;
 };
 
 struct GlChannelPosition{
+    std::string pcbid_;
+    unsigned int pcbtype_;
+    unsigned int mppcch_;
+    unsigned int channelid_mc_;
+    unsigned int cabletype_;
     unsigned int crate_;
     unsigned int slot_;
     unsigned int position_;
     unsigned int ch32_;
     unsigned int ch256_;
+    unsigned int channelid_elec_;
 };
 
 
@@ -37,11 +45,15 @@ public:
     Connection_Map(const std::string& map_file);
     void Init();
     const GlGeomPosition GetGlobalGeomPosition(const unsigned int Feb, const unsigned int ch256) const;
+    const GlChannelPosition GetGlobalChannelPosition(const unsigned int Feb, const unsigned int ch256) const;
     unsigned int GetGlobalChannel(const GlChannelPosition& tempCh);
     unsigned int GetAsic(unsigned int globalChannel);
 private:
+    void InitbyCSV();
+    void InitbyTXT();
     const std::string fileName_;
-    std::map<unsigned int, GlGeomPosition> map_;
+    std::map<unsigned int, GlGeomPosition> mapGeom_;
+    std::map<unsigned int, GlChannelPosition> mapCh_;
 };
 
 

@@ -1,3 +1,7 @@
+//
+//  Created by Maria on 11.07.2023 kolupanova@inr.ru
+//
+
 #include <iostream>
 #include <algorithm>
 #include "TGraph.h"
@@ -65,10 +69,9 @@ int main(int argc, char **argv){
         size_t pos_2 = FileOutput.find("LG");
         HG_LG[0] = stoi(FileOutput.substr(pos_1 + 2,pos_2 - pos_1 - 3));
         HG_LG[1] = stoi(FileOutput.substr(pos_2 + 2));
-        // Going through data file
-//        File_Reader file_reader;
+        /// Going through data file
         file_reader.ReadFile_for_Baseline(filename,hFEBCH_HG,hFEBCH_LG);
-        // find numbers of measured FEB
+        /// find numbers of measured FEB
         try{
             if(file_reader.GetFEBNumbers().empty()) {
                 std::cout << filename<< " is empty"<<std::endl;
@@ -90,7 +93,7 @@ int main(int argc, char **argv){
         else{
             NFEB = file_reader.GetFEBNumbers();
         }
-        //get histograms with peaks
+        ///get histograms with peaks
         for (const unsigned int& ih: NFEB) {
             for (unsigned int iCh = 0; iCh < SFGD_FEB_NCHANNELS; iCh++) {
                 if(!missing_chs.Is_Missing_Chs({ih >> 4, ih & 0x0f,iCh / 32}, iCh) && !missing_chs.Is_Missing_FEB(ih)) {

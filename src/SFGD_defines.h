@@ -1,5 +1,5 @@
 //
-// Created by Maria on 18.07.2023.
+// Created by Maria on 18.07.2023 kolupanova@inr.ru
 //
 
 #ifndef UNPACKING_SFGD_DEFINES_H
@@ -110,9 +110,7 @@ crateSlotAsic_missingChs = { # (crate, slot, position) : {missing channels}
 
 }
  */
-class ChannelsCheck{
 
-};
 
 
 #endif //UNPACKING_SFGD_DEFINES_H

@@ -1,5 +1,5 @@
-
-//  Created by Maria on 27.09.2022.
+//
+//  Created by Maria on 27.09.2022 kolupanova@inr.ru
 //
 
 #ifndef Calibration_h
@@ -13,6 +13,10 @@
 #include <TH1.h>
 #include <TF1.h>
 #include <TLegend.h>
+#include <TLine.h>
+#include <TGraphErrors.h>
+#include <iostream>
+#include <sstream>
 
 
 
@@ -29,8 +33,20 @@ public:
     /// If position of current peak is more then previous one, peak is added into peaks vector for this histogram.
     void SFGD_Calibration(TH1F* &hFEBCH, std::string connection);
 
+    /// Calculates the gain as the average value between the positions of the peaks
+    /// without taking into account zero peak.
+    /// If number of peaks less than 3  the gain is considered equal to 0.
+    void Gain_Calculation(TGraphErrors* gr,std::string connection);
+
     /// Returns Legend with peaks position, errors and gain for histogram which was used in function SFGD_Calibration
     TLegend* Calibration_Legend();
+
+    /// Returns Legend with gain value
+    TLegend* Get_Legend_for_TGraphErrors(){return _legend_for_peaks;}
+
+    /// Returns line for mean/median position.
+    TLine* Calibration_Line_Mean();
+    TLine* Calibration_Line_Median();
 
     /// Returns all gain values as map with key value:  FEB_#_Channel_#. #-number
     std::map<std::string,double> GetGains(){return _gain_values;}
@@ -40,18 +56,16 @@ public:
     /// Returns peaks which were found during calibration
     std::vector<Peaks> Calibration_Par() const {return _peaks;}
 
+    /// Returns mean/median
+    double GetMean(){ return _mean;}
+    double GetMedian(){ return _median;}
 
 private:
     std::vector<Peaks> _peaks;
-    double _gain;
-    double _gain_error;
     std::map<std::string,double> _gain_values;
-
-    /// Calculates the gain as the average value between the positions of the peaks without
-    /// taking into account zero peak.
-    /// If number of peaks less than 3  the gain is considered equal to 0.
-    void Gain_Calculation();
-
+    double _gain,_mean_gain_value,_gain_error,_mean, _median, _max_height;
+    TLegend* _legend_for_peaks;
+    std::ostringstream os;
 };
 
 

@@ -1,5 +1,5 @@
 //
-// Created by Maria on 18.07.2023.
+// Created by Maria on 18.07.2023 kolupanova@inr.ru
 //
 
 #ifndef UNPACKING_THRESHOLDSTUDY_H
