@@ -63,6 +63,7 @@ public:
 private:
     std::vector<Peaks> _peaks;
     std::map<std::string,double> _gain_values;
+    unsigned int start_peak;
     double _gain,_mean_gain_value,_gain_error,_mean, _median, _max_height;
     TLegend* _legend_for_peaks;
     std::ostringstream os;

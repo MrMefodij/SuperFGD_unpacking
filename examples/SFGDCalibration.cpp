@@ -98,7 +98,7 @@ int main(int argc, char **argv){
             unsigned int slot_id = ih & 0x0f;
             string feb_channel = "FEB_" + to_string(ih) + "_Channel_" + to_string(iCh);
             cl.SFGD_Calibration(hFEBCH[slot_id][iCh], feb_channel);
-            TGraphErrors* gr = new TGraphErrors;
+            TGraphErrors *gr = new TGraphErrors;
             cl.Gain_Calculation(gr, feb_channel);
             /// for tree
             GlGeomPosition glgeom = connectionMap.GetGlobalGeomPosition(ih,iCh);
@@ -129,11 +129,13 @@ int main(int argc, char **argv){
                 c1->Update();
                 c1->Write(feb_channel.c_str());
             }
-            gr->Draw("APE");
-            auto legend = cl.Get_Legend_for_TGraphErrors();
-            legend->Draw("LSame");
-            c1->Update();
-            c1->Write((feb_channel+"_graph").c_str());
+            if(hFEBCH[slot_id][iCh]->GetEntries()>0) {
+                gr->Draw("APE");
+                auto legend = cl.Get_Legend_for_TGraphErrors();
+                legend->Draw("LSame");
+                c1->Update();
+                c1->Write((feb_channel + "_graph").c_str());
+            }
             delete gr;
             delete hFEBCH[slot_id][iCh];
         }

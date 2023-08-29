@@ -11,10 +11,7 @@
 void Calibration::Gain_Calculation(TGraphErrors* gr,std::string connection){
     _gain = 0;
     _gain_error=0;
-    unsigned int start_peak = 2;
     if(_peaks.size() > start_peak + 1){
-        if(_peaks[1].GetPosition() - _peaks[0].GetPosition() < 1.2 * (_peaks[2].GetPosition() - _peaks[1].GetPosition()) && _peaks[1].GetPosition() - _peaks[0].GetPosition() < 1.2 * (_peaks[3].GetPosition() - _peaks[2].GetPosition()))
-            start_peak = 1;
         _peaks.erase(_peaks.begin(), _peaks.begin() + start_peak);
         _mean_gain_value = (_peaks.back().GetPosition()-_peaks[0].GetPosition())/(_peaks.size()-1);
         for (int i = 0; i < _peaks.size(); i++) {
@@ -61,6 +58,7 @@ void Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
                 hFEBCH->Fit("fit_1", "qr+");
                 if (fit_1->GetParError(1) < 3
                     && fit_1->GetParameter(2) < 25) {
+
                     Peaks peak = {fit_1->GetParameter(1), fit_1->GetParError(1),
                                   hFEBCH->GetBinContent(fit_1->GetParameter(1)), fit_1->GetParameter(2),
                                   fit_1->GetChisquare(),fit_1->GetNDF()};
@@ -68,18 +66,21 @@ void Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
                 }
             }
         }
-        if(_peaks.size()> 1) {
+        if(_peaks.size()> 2) {
             sort(_peaks.begin(), _peaks.end(), [](const Peaks &p_0, const Peaks &p_1) {
                 return p_0.GetPosition() < p_1.GetPosition();
             });
 
-
             for (int i = 0; i < _peaks.size() - 1; i++) {
-                if (_peaks[i].GetHeight() < 0.6 * _peaks[i + 1].GetHeight() || _peaks[i+1].GetPosition() - _peaks[i].GetPosition() < 15
+                if (_peaks[i].GetHeight() < 0.4 * _peaks[i + 1].GetHeight() || _peaks[i+1].GetPosition() - _peaks[i].GetPosition() < 15
                         ) {
                     _peaks.erase(std::next(_peaks.begin(), i));
                     i--;
                 }
+            }
+            start_peak = 1;
+            if(_peaks[0].GetHeight() > 0.9 * hFEBCH->GetMaximumBin() && _peaks[1].GetPosition() - _peaks[0].GetPosition() > 2 * (_peaks[2].GetPosition() - _peaks[1].GetPosition())){
+                start_peak = 2;
             }
 
             if(_peaks.size() > 5)
@@ -105,25 +106,26 @@ TLegend* Calibration::Calibration_Legend(){
     std::string header = "peaks found: " + std::to_string(_peaks.size());
     legend->SetHeader(header.c_str());
     legend -> SetFillColor(0);
-    for(auto i = 0; i < _peaks.size();i++){
+    if(_peaks.size() > 0) {
+        for (auto i = 0; i < _peaks.size(); i++) {
+            os.str("");
+            os << "mean peak " << i + 2 /*+ " p. e."*/ << " = "
+               << std::fixed << std::setprecision(1) << _peaks[i].GetPosition()
+               << " +/- " << _peaks[i].GetPositionError()
+               << ", #chi^{2} / ndf = " << _peaks[i].GetChisquare() / _peaks[i].GetNDF();
+            legend->AddEntry((TObject *) 0, os.str().c_str(), "");
+        }
+        if (_peaks.size() > 2) {
+            os.str("");
+            os << "gain = " << _gain
+               << " +/- " << _gain_error
+               << ", mean distance = " << _mean_gain_value;
+            legend->AddEntry((TObject *) 0, os.str().c_str(), "");
+        }
         os.str("");
-        os <<  "mean peak " << i + 2 /*+ " p. e."*/ << " = "
-           << std::fixed << std::setprecision(1) << _peaks[i].GetPosition()
-           <<  " +/- " << _peaks[i].GetPositionError()
-           << ", #chi^{2} / ndf = " << _peaks[i].GetChisquare()/_peaks[i].GetNDF();
-        legend->AddEntry((TObject*)0, os.str().c_str(), "");
+        os << "mean = " << _mean << "   median = " << _median;
+        legend->AddEntry((TObject *) 0, os.str().c_str(), "");
     }
-    if(_peaks.size() > 2){
-        os.str("");
-        os << "gain = " << _gain
-           << " +/- " << _gain_error
-           <<", mean distance = "<<_mean_gain_value;
-        legend->AddEntry((TObject*)0, os.str().c_str(), "");
-    }
-    os.str("");
-    os << "mean = " << _mean << "   median = " << _median;
-    legend->AddEntry((TObject*)0, os.str().c_str(), "");
-
     return legend;
 }
 
