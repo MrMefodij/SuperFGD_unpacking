@@ -18,9 +18,6 @@
 #include <iostream>
 #include <sstream>
 
-
-
-
 class Calibration{
 public:
 
@@ -31,7 +28,7 @@ public:
     /// and string FEB_#_Channel_# (#-number) as input and use library TSpectrum to find peaks position.
     /// If any peaks were found, each of them are fitted using the Gaussian distribution curve.
     /// If position of current peak is more then previous one, peak is added into peaks vector for this histogram.
-    void SFGD_Calibration(TH1F* &hFEBCH, std::string connection);
+    void SFGD_Calibration(TH1F* &hFEBCH, std::string connection, double mean_value, double sigma_mean_value,double max_value,double sigma_max_value) ;
 
     /// Calculates the gain as the average value between the positions of the peaks
     /// without taking into account zero peak.
@@ -49,7 +46,7 @@ public:
     TLine* Calibration_Line_Median();
 
     /// Returns all gain values as map with key value:  FEB_#_Channel_#. #-number
-    std::map<std::string,double> GetGains(){return _gain_values;}
+    std::map<std::string,std::pair<double,double>> GetGains(){return _gain_values;}
 
     /// Return current gain value
     double GetGain(){return _gain;}
@@ -62,7 +59,7 @@ public:
 
 private:
     std::vector<Peaks> _peaks;
-    std::map<std::string,double> _gain_values;
+    std::map<std::string,std::pair<double,double>> _gain_values;
     unsigned int start_peak;
     double _gain,_mean_gain_value,_gain_error,_mean, _median, _max_height;
     TLegend* _legend_for_peaks;

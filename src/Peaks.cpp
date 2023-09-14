@@ -23,4 +23,6 @@ Tree::Tree() {
     tree->Branch("z", &_z, "z/i");
     tree->Branch("position", &_position, "position/i");
     tree->Branch("pcbPosition", &_pcbPosition);
+    tree->Branch("max", &_max_histogram,"max_value/i");
+    tree->Branch("entries", &_num_histogram, "entries_number/i");
 }

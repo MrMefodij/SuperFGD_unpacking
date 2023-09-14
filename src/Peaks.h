@@ -40,6 +40,7 @@ public:
     unsigned int _crate, _feb, _slot, _channel;
     double _gain,_mean,_median;
     unsigned int _x,_y,_z, _position;
+    unsigned int _num_histogram,_max_histogram;
     std::string _pcbPosition;
 private:
     TTree* tree = new TTree("tree","ttree");

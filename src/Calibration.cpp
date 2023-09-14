@@ -11,8 +11,7 @@
 void Calibration::Gain_Calculation(TGraphErrors* gr,std::string connection){
     _gain = 0;
     _gain_error=0;
-    if(_peaks.size() > start_peak + 1){
-        _peaks.erase(_peaks.begin(), _peaks.begin() + start_peak);
+    if(_peaks.size() > 2){
         _mean_gain_value = (_peaks.back().GetPosition()-_peaks[0].GetPosition())/(_peaks.size()-1);
         for (int i = 0; i < _peaks.size(); i++) {
             gr->AddPoint(i + 2, _peaks[i].GetPosition());
@@ -41,48 +40,54 @@ void Calibration::Gain_Calculation(TGraphErrors* gr,std::string connection){
         os << "#chi^{2} / ndf = " << f1->GetChisquare()<<" / "<<f1->GetNDF();
         _legend_for_peaks->AddEntry((TObject*)0, os.str().c_str(), "");
     }
-    _gain_values.insert({connection, _gain});
+    _gain_values.insert({connection, {_gain,_gain_error}});
 }
 
-void Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection){
+void Calibration::SFGD_Calibration(TH1F * &hFEBCH, std::string connection, double mean_value, double sigma_mean_value,double max_value,double sigma_max_value){
     _peaks.clear();
     int npeaks = 30;
     TSpectrum *s = new TSpectrum(2*npeaks);
     int nfound = s->Search(hFEBCH,2,"",0.001);
     double *xpeaks = s->GetPositionX();
-    if(nfound > 0 ){
-        for (auto p=0;p<std::min(nfound,15) ;p++) {
+    start_peak = 0;
+    std::sort(xpeaks, xpeaks + nfound);
+    if (xpeaks[0] < 10 && hFEBCH->GetBinContent(xpeaks[0]) > hFEBCH->GetMaximum() * 0.5) {
+        std::cout << connection << " : baseline" << std::endl;
+        ++start_peak;
+    }
+    while(start_peak < nfound - 1 && (hFEBCH->GetBinContent(xpeaks[start_peak]) < MIN_HEIGHT || hFEBCH->GetBinContent(xpeaks[start_peak+1]) < MIN_HEIGHT)){
+        ++start_peak;
+    }
+    ++start_peak;
+    if(nfound > start_peak + 1 && hFEBCH->GetMean() < 350 && hFEBCH->GetMaximum() > max_value - 2.5 *sigma_max_value ){
+        Double_t peakWidth = 8;
+        for (auto p=start_peak;p<nfound ;p++) {
             if(hFEBCH->GetBinContent(xpeaks[p]) > MIN_HEIGHT) {
-                Double_t peakWidth = 10;
                 TF1 *fit_1 = new TF1("fit_1", "gaus", xpeaks[p] - peakWidth, xpeaks[p] + peakWidth);
                 hFEBCH->Fit("fit_1", "qr+");
-                if (fit_1->GetParError(1) < 3
-                    && fit_1->GetParameter(2) < 25) {
+                if (fit_1->GetParError(1) < 2.5
+                    && fit_1->GetParameter(2) < 35) {
 
                     Peaks peak = {fit_1->GetParameter(1), fit_1->GetParError(1),
                                   hFEBCH->GetBinContent(fit_1->GetParameter(1)), fit_1->GetParameter(2),
                                   fit_1->GetChisquare(),fit_1->GetNDF()};
+
                     _peaks.push_back(peak);
                 }
             }
         }
-        if(_peaks.size()> 2) {
+        if(_peaks.size()> 0) {
             sort(_peaks.begin(), _peaks.end(), [](const Peaks &p_0, const Peaks &p_1) {
                 return p_0.GetPosition() < p_1.GetPosition();
             });
 
             for (int i = 0; i < _peaks.size() - 1; i++) {
-                if (_peaks[i].GetHeight() < 0.4 * _peaks[i + 1].GetHeight() || _peaks[i+1].GetPosition() - _peaks[i].GetPosition() < 15
+                if (_peaks[i].GetHeight() < 0.4 * _peaks[i + 1].GetHeight() || _peaks[i+1].GetPosition() - _peaks[i].GetPosition() < 10
                         ) {
                     _peaks.erase(std::next(_peaks.begin(), i));
                     i--;
                 }
             }
-            start_peak = 1;
-            if(_peaks[0].GetHeight() > 0.9 * hFEBCH->GetMaximumBin() && _peaks[1].GetPosition() - _peaks[0].GetPosition() > 2 * (_peaks[2].GetPosition() - _peaks[1].GetPosition())){
-                start_peak = 2;
-            }
-
             if(_peaks.size() > 5)
                 _peaks.erase(_peaks.begin()+5, _peaks.end());
         }
