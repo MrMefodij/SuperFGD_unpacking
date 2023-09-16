@@ -108,10 +108,10 @@ int main(int argc, char **argv){
     double max_value = fit_max->GetParameter(1);
     double sigma_max_value = fit_max->GetParameter(2);
     Tree tree;
-
-    TH2F *GainMap = new TH2F("Gain results for crate","Gain results for crate",  256,(int)0,(int)256, 14,(int)*NFEB.begin(),(int)*NFEB.begin()+14);
+    unsigned int start_slot = *NFEB.begin() & 0x0f;
+    TH2F *GainMap = new TH2F("Gain_results_for_crate","Gain results for crate",  256,(int)0,(int)256, 14,(int)*NFEB.begin()-start_slot,(int)*NFEB.begin()+14-start_slot);
     /// Get histograms with peaks
-    unsigned int crate_number;
+    unsigned int crate_number = *NFEB.begin() >> 4;
     for(unsigned int ih : NFEB){
         TDirectory *FEBdir = wfile->mkdir(("FEB_"+to_string(ih)).c_str());
         FEBdir->cd();
