@@ -1,29 +1,45 @@
-/* This file is part of BabyMINDdaq software package. This software
- * package is designed for internal use for the Baby MIND detector
+/* This file is part of SuperFGD software package. This software
+ * package is designed for internal use for the SuperFGD detector
  * collaboration and is tailored for this use primarily.
  *
- * BabyMINDdaq is free software: you can redistribute it and/or modify
+ * Unpacking is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * BabyMINDdaq is distributed in the hope that it will be useful,
+ * Unpacking is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with BabyMINDdaq.  If not, see <http://www.gnu.org/licenses/>.
+ * along with SuperFGD Unpacking.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#include <string.h>
-#include "MDargumentHandler.h"
+//
+// Created by amefodev on 13.06.2023. mrmefodij@gmail.com
+//
 
-using namespace std;
+//
+// Created by amefodev on 13.06.2023. mrmefodij@gmail.com
+//
+
+#include <string.h>
+#include <vector>
+#include "MDargumentHandler.h"
 
 
 MDargumentHandler::MDargumentHandler(string aDescription):_name(""),_description(aDescription){
+}
+
+void MDargumentHandler::Init(){
+    this->AddArgument("help", "print this message", "h");
+    this->AddArgument("directory", "Path for a data file", "d", "<string>", ".");
+    this->AddArgument("file", "Name of a data file", "f", "<string>", "test.bin");
+    this->AddArgument("begin", "Initial position in input file", "b", "<int>", "0");
+    this->AddArgument("nwords", "Number of data words to be processed", "n", "<int>", "0");
+    this->AddArgument("output_directory", "Path for output directory", "o", "<string>", "");
 }
 
 void MDargumentHandler::AddArgument( string aName, string aDescription, string aSwitch, string aFormat, string aDefault ){
@@ -68,6 +84,7 @@ int MDargumentHandler::ProcessArguments( int argc, char **argv ){
 	strcpy(buf,argv[i]);
 	buf[2]='\0';
 	search = &buf[1];
+    if(search!="o") _mode = search;
         if ( strlen(argv[i])>2 ) strncpy(buf,&argv[i][2],strlen(argv[i]));
 	else  strcpy(buf,"");
 	break;
@@ -298,4 +315,56 @@ MDargumentType_t  MDargumentHandler::ArgumentType(const char * str)
     if (strlen(str)<3) return MDARGUMENT_TYPE_ERROR;
     return MDARGUMENT_TYPE_NAME;
   }
+}
+
+vector<string> MDargumentHandler::GetDataFiles(const string& stringBuf, const string& extension){
+    vector<string> vFileNames;
+    if (this->GetMode() == "f"){
+        vFileNames.push_back(stringBuf);
+    } else if (this->GetMode() == "d"){
+        for (fs::directory_iterator it(stringBuf), end; it !=end; ++it) {
+            if (it->path().extension() == extension) {
+                std::cout << *it << std::endl;
+//                auto a =it->path().string();
+                vFileNames.push_back(it->path().string());
+            }
+        }
+    }
+    return vFileNames;
+}
+
+vector<string> MDargumentHandler::GetDirectoryFiles(const string& stringBuf, const string& extension){
+    vector<string> vFileNames;
+    for (fs::directory_iterator it(stringBuf), end; it !=end; ++it) {
+        if (it->path().extension() == extension) {
+            std::cout << *it << std::endl;
+//                auto a =it->path().string();
+            vFileNames.push_back(it->path().string());
+        }
+    }
+    return vFileNames;
+}
+
+vector<string> MDargumentHandler::GetDataFiles(const string& stringBuf, const string& extension, const string& filter){
+    vector<string> vFileNames;
+
+    if (this->GetMode() == "f"){
+        vFileNames.push_back(stringBuf);
+    } else if (this->GetMode() == "d"){
+        for (fs::directory_iterator it(stringBuf), end; it !=end; ++it) {
+            if (it->path().extension() == extension) {
+                vFileNames.push_back(it->path().string());
+            }
+        }
+    }
+    auto it = std::remove_if(vFileNames.begin(), vFileNames.end(), [&](auto &item) {
+        if (item.find(filter) != std::string::npos){
+            std::cout << item << std::endl;
+            return false;
+        }
+        return true;
+    });
+    vFileNames.erase(it, vFileNames.end());
+
+    return vFileNames;
 }

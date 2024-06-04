@@ -16,105 +16,157 @@
  */
 
 #include "MDdataFile.h"
-#include "MDdataWordBM.h"
+#include "MDdataWordSFGD.h"
 #include "MDexception.h"
 
-using namespace std;
 
-MDdateFile::MDdateFile(string fn)
-:_eventBuffer(NULL), _fileName(fn),_curPos(0)
-,_fileSize(0),_nBytesRead(0), _lastSpill(-1) {
-}
+MDdateFile::MDdateFile(std::string fn)
+            :_eventBuffer(NULL), _fileName(fn),_curPos(0),_fileSize(0),_nBytesRead(0), _lastSpill(-1) {}
 
 MDdateFile::~MDdateFile() {
-  if (_eventBuffer)
-    free(_eventBuffer);
+    if (_eventBuffer) {
+        free(_eventBuffer);
+    }
 }
 
-bool MDdateFile::open() {
-  string fullName = _fileName;
-
-  _ifs.open( fullName.c_str() );
-  if ( _ifs.fail() ) {
-    cerr << "Can not open file " << fullName.c_str() << endl;
-    return false;
-  }
-  uint32_t end;
-  _curPos = _ifs.tellg();
-  _ifs.seekg (0, ios::end);
-  end = _ifs.tellg();
-  _fileSize = end - _curPos;
-  //  cout << " File size " << _fileSize << endl;
-  if ( _fileSize%4 != 0 ) {
-    cerr << " File size is not a multiple of 4. The file " << fullName.c_str() << " is rejected!" << endl;
-    return false;
-  }
-  _ifs.seekg (0, ios::beg); // go back to the begining ( = _curPos )
-  return true;
+bool MDdateFile::open(bool print_values) {
+    std::string fullName = _fileName;
+    _ifs.open( fullName.c_str() );
+    if ( _ifs.fail() ) {
+        std::cerr << "Can not open file " << fullName.c_str() << std::endl;
+        return false;
+    }
+    uint32_t end;
+    _curPos = _ifs.tellg();
+    _ifs.seekg (0, std::ios::end);
+    end = _ifs.tellg();
+    _fileSize = end - _curPos;
+    if(print_values)
+        std::cout << " File size " << _fileSize << std::endl;
+    if ( _fileSize%4 != 0 ) {
+        std::cerr << " File size is not a multiple of 4. The file " << fullName.c_str() << " is rejected!" << std::endl;
+        return false;
+    }
+    _ifs.seekg (0, std::ios::beg); // go back to the begining ( = _curPos )
+    return true;
 }
 
 void MDdateFile::close() {
-//   if (_eventBuffer)
-//     delete _eventBuffer;
-
-  _eventBuffer = 0;
-  _ifs.close();
+    _eventBuffer = 0;
+    _ifs.close();
 }
 
 
 void MDdateFile::init() {
-  this->reset();
-  _curPos = _ifs.tellg();
-  if (_eventBuffer)
-    delete _eventBuffer;
-
-  _eventBuffer = new char[4];
-
-  while (!_ifs.eof()) {
-//     _ifs.read( _eventBuffer, sizeof( _eventBuffer ) );
-    _ifs.read( _eventBuffer, 4 );
-    MDdataWordBM dw(_eventBuffer);
-//    cout << dw << endl;
-    if (dw.GetDataType() == MDdataWordBM::SpillHeader && dw.GetSpillHeadId() ==1) {
-      _curPos = _ifs.tellg();
-//        cout << dw << endl;
-//        cout << "pos: " << _curPos << endl;
-      if (_spill_pos.size()) {
-//         uint32_t size = _curPos - _spill_pos.back() - 4;
-//         cout << "size: " << size << endl;
-        _spill_size.push_back(_curPos - _spill_pos.back() - 4);
-      }
-
-      _spill_pos.push_back(_curPos-4);
+    this->reset();
+    _curPos = _ifs.tellg();
+    if (_eventBuffer) {
+        delete _eventBuffer;
     }
-     if (_ifs.eof()){
-        _curPos = _fileSize;
-         _spill_size.push_back(_curPos - _spill_pos.back());
-         _spill_pos.push_back(_curPos);
-     }
-  }
+    _eventBuffer = new char[4];
+    _spill_header_pos.push_back({0,0, false, false});
+    while (!_ifs.eof()) {
+        _ifs.read( _eventBuffer, 4 );
+        MDdataWordSFGD dw(_eventBuffer);
+//        cout <<_curPos <<": "<< dw << endl;
+        switch (dw.GetDataType()) {
+            case MDdataWordSFGD::GateHeader:
+                if (!(dw.GetBoardId() == 0 && dw.GetGateType() == 0 && dw.GetGateNumber() == 0)) {
+//                std::cout << dw << std::endl;
+                    if (dw.GetGateHeaderID() == 0) {
+                        _ocb_event_number_vector.push_back(_ocb_event_number);
+                        _curPos = _ifs.tellg();
+                        _spill_header_pos.back().headerA = _curPos - 4;
+                        _spill_header_pos.back().headerAEx = true;
+                    } else if (dw.GetGateHeaderID() == 1) {
+                        _curPos = _ifs.tellg();
+                        _spill_header_pos.back().headerB = _curPos - 4;
+                        _spill_header_pos.back().headerBEx = true;
+                    }
+                }
+                break;
 
-  this->reset();
+            case MDdataWordSFGD::GateTrailer:
+                _curPos = _ifs.tellg();
+//                _spill_size.push_back(_curPos - GetGateHeaderPosition(_spill_header_pos.back()) + 4);
+//                _ifs.read( _eventBuffer, 4 );
+//                _spill_header_pos.push_back({0,0, false, false});
+//                _gts_tag_spill.push_back(_gtsTagBeforeSpillGate);
+                break;
+
+            case MDdataWordSFGD::OcbGateHeader:
+                _curPos = _ifs.tellg();
+                _event_header_pos.push_back( _curPos - 4 );
+                _ocb_event_number = dw.GetOcbEventNumber();
+//                std::cout <<"OcbGateHeader: "<<  _event_header_pos.back() << " event number: " <<_event_number.back() << std::endl;
+                break;
+            case MDdataWordSFGD::OcbGateTrailer:
+                _curPos = _ifs.tellg();
+                _ocb_event_size.push_back(_curPos - _event_header_pos.back());
+//                std::cout <<  _event_size.back()/4 << std::endl;
+                break;
+            case MDdataWordSFGD::FebDataTrailer:
+                _curPos = _ifs.tellg();
+                _event_size.push_back(_curPos - GetGateHeaderPosition(_spill_header_pos.back()));
+                _spill_header_pos.push_back({0,0, false, false});
+                _gts_tag_spill.push_back(_gtsTagBeforeSpillGate);
+                break;
+            case MDdataWordSFGD::EventDone:
+//                std::cout <<dw<<std::endl;
+                break;
+            default:
+                break;
+        }
+        if (_ifs.eof()){
+            _curPos = _fileSize;
+//            _spill_size.push_back(_curPos - GetGateHeaderPosition(_spill_header_pos.back()));
+            _spill_header_pos.push_back({_curPos,_curPos});
+            _gts_tag_spill.push_back(_gtsTagBeforeSpillGate);
+        }
+    }
+    this->reset();
 }
 
-char* MDdateFile::GetNextEvent() {
+char* MDdateFile::GetNextEvent(bool print_values) {
 
-  if ( (unsigned int)(++_lastSpill) >= _spill_size.size() )
+  if ( (unsigned long long int)(++_lastSpill) >= _event_size.size() )
    return NULL;
 
-  uint32_t spillSize = _spill_size[_lastSpill];
-  uint32_t spillPos  = _spill_pos[_lastSpill];
-  cout << "GetNextEvent  pos: " << spillPos/4 << "  size: " << spillSize/4 
-       << " in DW units (4 bytes)" << endl;
+//  uint32_t spillSize = _spill_size[_lastSpill];
+    uint32_t spillSize = _event_size[_lastSpill];
+    unsigned long long int spillPos  = _spill_header_pos[_lastSpill].headerA;
+//  unsigned int ocbEventNumber = _ocb_event_number_vector[_lastSpill];
+  if(print_values)
+        std::cout << "GetNextEvent  pos: " << spillPos/4 << "  size: " << spillSize/4
+            << " in DW units (4 bytes)" << std::endl;
   return GetSpill(spillPos, spillSize);
 }
 
-void MDdateFile::GoTo(uint32_t pos) {
-  _ifs.seekg (pos , ios::beg);
+unsigned int MDdateFile::GetCurrentSpillSize(){
+    return _currentSpillSize;
 }
 
-char* MDdateFile::GetSpill(uint32_t pos, uint32_t size) {
-  _ifs.seekg (pos , ios::beg);
+unsigned int MDdateFile::GetEventSize(){
+    return  _event_size[_lastSpill]/4;
+}
+
+unsigned int MDdateFile::GetOcbEventNumber(){
+    return _ocb_event_number_vector[_lastSpill];
+}
+
+unsigned int  MDdateFile::GetHeaderB() const{
+    if (!_spill_header_pos[_lastSpill].headerBEx){
+        throw MDexception("Gate header B doesn't exist");
+    }
+    return _spill_header_pos[_lastSpill].headerB;
+}
+
+void MDdateFile::GoTo(unsigned long long int pos) {
+  _ifs.seekg (pos , std::ios::beg);
+}
+
+char* MDdateFile::GetSpill(unsigned long long int pos, unsigned long long int size) {
+  _ifs.seekg (pos , std::ios::beg);
 
   if (_eventBuffer) delete _eventBuffer;
     _eventBuffer = new char[size];
@@ -133,6 +185,6 @@ void MDdateFile::reset() {
   /* go back to the begining */
   _nBytesRead = 0;
   _ifs.clear();
-  _ifs.seekg (0, ios::beg);
+  _ifs.seekg (0, std::ios::beg);
   _lastSpill = -1;
 }

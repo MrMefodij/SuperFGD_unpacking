@@ -1,0 +1,58 @@
+BootStrap: docker
+From: ubuntu:22.04
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -y
+    apt-get install wget -y
+    apt-get install dpkg-dev cmake g++ gcc binutils libx11-dev libxpm-dev \
+    libxft-dev libxext-dev python2 libssl-dev locales -y
+    locale-gen en_US.UTF-8
+    cd /opt
+    wget https://root.cern/download/root_v6.28.04.Linux-ubuntu22-x86_64-gcc11.3.tar.gz
+    tar -xzvf root_v6.28.04.Linux-ubuntu22-x86_64-gcc11.3.tar.gz
+    apt-get install libboost-filesystem-dev -y
+    wget https://boostorg.jfrog.io/artifactory/main/release/1.82.0/source/boost_1_82_0.tar.bz2
+    tar --bzip2 -xf boost_1_82_0.tar.bz2
+    cd boost_1_82_0
+    export BOOST_ROOT=`pwd`
+    cd $BOOST_ROOT && ./bootstrap.sh && ./b2
+    cd /opt
+    rm -rf *.tar.*
+    apt-get install openssh-server openssh-client git -y
+    git config --global user.name "@DEFINE_GIT_USERNAME@"
+    git config --global user.email "@DEFINE_GIT_USEREMAIL@"
+    @DEFINE_GIT_CLONE@
+    cd /opt/root/bin
+    . /opt/root/bin/thisroot.sh
+    cd /opt/unpacking/build
+    export Boost_INCLUDE_DIR=$BOOST_ROOT
+    export Boost_DIR=$BOOST_ROOT/stage/lib/cmake/Boost-1.82.0
+    cmake ../
+    make -j 8
+    mkdir -p /gpfs/group/t2k/nd280/SuperFGDCommissioning/
+    mkdir -p /hsm/t2k/t2k_JB/t2k_nd280/SuperFGDCommissioning_tmp/
+    apt-get install vim -y
+
+%files
+    # <PATH TO CLEANUP FILE HERE. CAN REMOVE THIS SECTION IF ONLY TESTING UNPACKER>/cosmic_cleanup.py /opt
+
+%environment
+    export UNPACKING_ROOT=/opt/unpacking
+    export ROOTSYS=/opt/root
+    export PATH=$ROOTSYS/bin:$UNPACKING_ROOT/bin:$PATH
+    export LD_LIBRARY_PATH=/opt/root/lib:$LD_LIBRARY_PATH
+    export PYTHONPATH=/opt/root/lib
+    export BOOST_ROOT=/opt/boost_1_82_0
+    export Boost_INCLUDE_DIR=$BOOST_ROOT
+    export Boost_DIR=$BOOST_ROOT/stage/lib/cmake/Boost-1.82.0
+
+%runscript
+    # /opt/unpacking/bin/calibration -f 
+
+%labels
+    Author Daniel Ferlewicz and Seisho Abe
+    Version v0.1.1
+
+%help
+    Container that installs the unpacking package

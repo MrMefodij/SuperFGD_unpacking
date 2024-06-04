@@ -1,21 +1,25 @@
-/* This file is part of BabyMINDdaq software package. This software
- * package is designed for internal use for the Baby MIND detector
+/* This file is part of SuperFGD software package. This software
+ * package is designed for internal use for the SuperFGD detector
  * collaboration and is tailored for this use primarily.
  *
- * BabyMINDdaq is free software: you can redistribute it and/or modify
+ * Unpacking is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * BabyMINDdaq is distributed in the hope that it will be useful,
+ * Unpacking is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with BabyMINDdaq.  If not, see <http://www.gnu.org/licenses/>.
+ * along with SuperFGD Unpacking.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+//
+// Created by amefodev on 13.06.2023. mrmefodij@gmail.com
+//
 
 #ifndef _MDARGUMENTS_H__
 #define _MDARGUMENTS_H__
@@ -29,6 +33,9 @@
 #include <list>
 #include <algorithm> // for transform
 #include <cctype> // for tolower
+
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
 
 typedef enum MDargumentStatus_t {
   MDARGUMENT_STATUS_OK             = 0,
@@ -101,7 +108,8 @@ class MDargumentHandler
 public:
   MDargumentHandler( string aDescription="" );
   virtual ~MDargumentHandler(){};
-  
+
+  void Init();
   void AddArgument( string aName, string aDescription, string aSwitch, string aFormat="", string aDefault ="" );
   void Usage();
   int ProcessArguments( int argc, char **argv );
@@ -110,7 +118,12 @@ public:
   MDargumentStatus_t GetValue( string aName, string & aVal );
   MDargumentStatus_t GetValue( string aName, int & aVal );
   MDargumentStatus_t GetValue( string aName, double & aVal );
-  
+
+  string GetMode() {return  _mode;}
+  vector<string> GetDataFiles(const string& stringBuf, const string& extension);
+  vector<string> GetDirectoryFiles(const string& stringBuf, const string& extension);
+  vector<string> GetDataFiles(const string& stringBuf, const string& extension, const string& filter);
+
 private:
   MDargument * Find( string aNameOrSwitch );
   bool       IsArgName(const char * str);
@@ -123,6 +136,7 @@ private:
   ArgList    _argList;
   string     _name;        // Program name - extracted form argv[0]
   string     _description; // Program description
+  string     _mode;
 };
 
 
